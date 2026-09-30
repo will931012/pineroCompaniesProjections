@@ -4,7 +4,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Request
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.audit.service import record_audit_event
 from app.auth.dependencies import AdminUser, DbSession, client_ip
@@ -15,9 +15,10 @@ from app.companies.routes import SecClient
 from app.companies.service import resolve_security
 from app.core.config import get_settings
 from app.core.errors import ApiError
-from app.db.models import AuditEvent, ProviderFetch, User
+from app.db.models import AuditEvent, Job, ProviderFetch, User
 from app.fundamentals.service import sync_company
 from app.ingestion.sec_directory import sync_sec_directory
+from app.jobs.queue import enqueue
 from app.providers.base import ProviderError
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -192,3 +193,86 @@ def audit_events(
 ) -> list[AuditEventOut]:
     rows = db.scalars(select(AuditEvent).order_by(AuditEvent.id.desc()).limit(limit))
     return [AuditEventOut.model_validate(r, from_attributes=True) for r in rows]
+
+
+class JobOut(BaseModel):
+    id: int
+    kind: str
+    status: str
+    attempts: int
+    run_at: datetime
+    finished_at: datetime | None
+    last_error: str | None
+    result: dict[str, Any] | None
+
+
+class JobsOverview(BaseModel):
+    counts: dict[str, dict[str, int]]
+    recent: list[JobOut]
+    worker_seen: datetime | None
+
+
+class JobIn(BaseModel):
+    kind: str = Field(max_length=60)
+    tickers: list[str] = Field(default_factory=list, max_length=25)
+
+
+@router.get("/jobs", response_model=JobsOverview)
+def jobs_overview(_: AdminUser, db: DbSession) -> JobsOverview:
+    counts: dict[str, dict[str, int]] = {}
+    for kind, status, count in db.execute(
+        select(Job.kind, Job.status, func.count()).group_by(Job.kind, Job.status)
+    ):
+        counts.setdefault(kind, {})[status] = count
+    recent = db.scalars(select(Job).order_by(Job.created_at.desc(), Job.id.desc()).limit(40))
+    return JobsOverview(
+        counts=counts,
+        recent=[
+            JobOut(
+                id=j.id,
+                kind=j.kind,
+                status=j.status,
+                attempts=j.attempts,
+                run_at=j.run_at,
+                finished_at=j.finished_at,
+                last_error=j.last_error,
+                result=j.result,
+            )
+            for j in recent
+        ],
+        worker_seen=db.scalar(select(func.max(Job.locked_at))),
+    )
+
+
+@router.post("/jobs", response_model=JobOut, status_code=201)
+def enqueue_job(body: JobIn, admin: AdminUser, db: DbSession, request: Request) -> JobOut:
+    """Queue a job now; the worker process runs it."""
+    from app.jobs.handlers import HANDLERS
+
+    if body.kind not in HANDLERS:
+        raise ApiError(422, "unknown_job", f"Job kinds: {', '.join(sorted(HANDLERS))}.")
+    payload: dict[str, Any] = {}
+    if body.tickers:
+        payload["company_ids"] = [resolve_security(db, t).company_id for t in body.tickers]
+    job_id = enqueue(db, body.kind, payload)
+    record_audit_event(
+        db,
+        action="admin.job_enqueue",
+        outcome="success",
+        actor_user_id=admin.id,
+        ip_address=client_ip(request),
+        details={"kind": body.kind, "tickers": body.tickers},
+    )
+    db.commit()
+    job = db.get(Job, job_id)
+    assert job is not None
+    return JobOut(
+        id=job.id,
+        kind=job.kind,
+        status=job.status,
+        attempts=job.attempts,
+        run_at=job.run_at,
+        finished_at=job.finished_at,
+        last_error=job.last_error,
+        result=job.result,
+    )

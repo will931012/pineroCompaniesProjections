@@ -7,9 +7,11 @@ import { useParams, usePathname, useRouter, useSearchParams } from "next/navigat
 import { Suspense } from "react";
 import { AddToWatchlist } from "@/components/AddToWatchlist";
 import { KeyMetricsPanel, metricTitle, useCompanyMetrics } from "@/components/CompanySnapshot";
+import { EarningsTab } from "@/components/EarningsTab";
 import { FinancialsTab } from "@/components/FinancialsTab";
 import { InsidersTab } from "@/components/InsidersTab";
 import { MarketHistory, useDailyBars } from "@/components/MarketHistory";
+import { NewsTab } from "@/components/NewsTab";
 import { PeersTab } from "@/components/PeersTab";
 import { SecTab } from "@/components/SecTab";
 import { Panel, SourceList, StatusPill } from "@/components/ui";
@@ -109,6 +111,10 @@ function CompanyView() {
         <SecTab ticker={ticker} />
       ) : tab === "insiders" ? (
         <InsidersTab ticker={ticker} />
+      ) : tab === "news" ? (
+        <NewsTab ticker={ticker} />
+      ) : tab === "earnings" ? (
+        <EarningsTab ticker={ticker} />
       ) : (
         <section className="company-detail-grid">
           <div className="company-main">

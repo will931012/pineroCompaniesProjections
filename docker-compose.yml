@@ -54,6 +54,8 @@ services:
       MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-}
       TIINGO_API_KEY: ${TIINGO_API_KEY:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      ALERTS_EMAIL_FROM: ${ALERTS_EMAIL_FROM:-Pinero alerts <onboarding@resend.dev>}
     ports:
       # Direct access for /docs and /metrics; the browser app does not use it.
       - "127.0.0.1:${API_PORT:-8000}:8000"
@@ -64,6 +66,28 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  # Background jobs: filings, news, and alert evaluation (Phase 4). Same image as the API.
+  worker:
+    build:
+      context: ./services/api
+      target: dev
+    command: python -m app.worker
+    environment:
+      APP_ENV: development
+      LOG_FORMAT: console
+      DATABASE_URL: postgresql+psycopg://pinero:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/pinero
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      SEC_USER_AGENT: ${SEC_USER_AGENT:-}
+      MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-}
+      TIINGO_API_KEY: ${TIINGO_API_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      ALERTS_EMAIL_FROM: ${ALERTS_EMAIL_FROM:-Pinero alerts <onboarding@resend.dev>}
+    volumes:
+      - ./services/api:/app
+    depends_on:
+      api:
+        condition: service_started
 
   web:
     build:

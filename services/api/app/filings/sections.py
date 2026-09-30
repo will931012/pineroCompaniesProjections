@@ -10,7 +10,9 @@ the document's own paragraphs, unchanged, separated by blank lines.
 import re
 from dataclasses import dataclass
 
-EXTRACTOR_VERSION = "2026.09-3"
+# 2026.09-4: earnings 8-Ks include their EX-99 press release as a section.
+# 2026.09-5: EDGAR labels at the top of exhibits are dropped.
+EXTRACTOR_VERSION = "2026.09-5"
 
 TEN_K_ITEMS: dict[str, str] = {
     "1": "Business",

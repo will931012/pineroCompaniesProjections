@@ -37,6 +37,18 @@ export type SearchResponse = Schemas["SearchResponse"];
 export type SearchHit = Schemas["SearchHitOut"];
 export type InsidersResponse = Schemas["InsidersResponse"];
 export type InsiderTransaction = Schemas["InsiderTransactionOut"];
+export type NewsResponse = Schemas["NewsResponse"];
+export type NewsItem = Schemas["NewsItemOut"];
+export type EventsResponse = Schemas["EventsResponse"];
+export type TimelineEvent = Schemas["TimelineEvent"];
+export type EarningsResponse = Schemas["EarningsResponse"];
+export type FeedResponse = Schemas["FeedResponse"];
+export type EventType = Schemas["EventTypeOut"];
+export type AlertRule = Schemas["RuleOut"];
+export type AlertRuleIn = Schemas["RuleIn"];
+export type AlertsResponse = Schemas["AlertsResponse"];
+export type AlertStatus = Schemas["AlertStatus"];
+export type JobsOverview = Schemas["JobsOverview"];
 
 const companyPath = (ticker: string) => `/companies/${encodeURIComponent(ticker)}`;
 
@@ -96,6 +108,36 @@ export const api = {
     apiRequest<SearchResponse>("/search/filings", {
       query: { q, tickers: tickers || undefined, forms: forms || undefined, limit: 20 },
     }),
+
+  news: (ticker: string, days: number, confidence: "high" | "all") =>
+    apiRequest<NewsResponse>(`${companyPath(ticker)}/news`, { query: { days, confidence } }),
+  refreshNews: (ticker: string) =>
+    apiRequest<Schemas["NewsRefreshOut"]>(`${companyPath(ticker)}/news/refresh`, { method: "POST" }),
+  events: (ticker: string, days: number, includeRepeats = false) =>
+    apiRequest<EventsResponse>(`${companyPath(ticker)}/events`, {
+      query: { days, include_repeats: includeRepeats ? "true" : undefined },
+    }),
+  earnings: (ticker: string) => apiRequest<EarningsResponse>(`${companyPath(ticker)}/earnings`),
+  eventTypes: () => apiRequest<EventType[]>("/events/types"),
+  feed: (days = 7) => apiRequest<FeedResponse>("/feed", { query: { days } }),
+
+  alertRules: () => apiRequest<AlertRule[]>("/alerts/rules"),
+  createAlertRule: (body: AlertRuleIn) =>
+    apiRequest<AlertRule>("/alerts/rules", { method: "POST", body }),
+  updateAlertRule: (id: string, body: Schemas["RuleUpdate"]) =>
+    apiRequest<AlertRule>(`/alerts/rules/${id}`, { method: "PATCH", body }),
+  deleteAlertRule: (id: string) => apiRequest<void>(`/alerts/rules/${id}`, { method: "DELETE" }),
+  evaluateAlertRule: (id: string) =>
+    apiRequest<Schemas["EvaluateOut"]>(`/alerts/rules/${id}/evaluate`, { method: "POST" }),
+  alerts: () => apiRequest<AlertsResponse>("/alerts"),
+  markAlertsRead: (ids?: number[]) =>
+    apiRequest<void>("/alerts/read", { method: "POST", body: { ids: ids ?? null } }),
+  alertStatus: () => apiRequest<AlertStatus>("/alerts/status"),
+  testAlertEmail: () => apiRequest<void>("/alerts/test-email", { method: "POST" }),
+
+  adminJobs: () => apiRequest<JobsOverview>("/admin/jobs"),
+  enqueueJob: (kind: string, tickers: string[] = []) =>
+    apiRequest<Schemas["JobOut"]>("/admin/jobs", { method: "POST", body: { kind, tickers } }),
 
   watchlists: () => apiRequest<Watchlist[]>("/watchlists"),
   createWatchlist: (name: string) =>

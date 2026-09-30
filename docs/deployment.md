@@ -75,6 +75,20 @@ the root directory, so it needs an absolute repository path. Until it is set, th
 `railway.json` files in this repository are inert, which is why migrations have to
 be run by hand.
 
+## Not yet deployed: the Phase 4 worker
+
+Phases 2–4 add migrations `0003`–`0005` and a background **worker** (filings every 30 min,
+news every hour, alert rules every 5 min). When deploying them:
+
+- Create a service `worker` from this repository: Root Directory `/services/api`, config path
+  `/services/api/railway.worker.json` (start command `python -m app.worker`, no public domain,
+  no port). Give it the same variables as `api` (at least `DATABASE_URL`, `SEC_USER_AGENT`).
+- For alert emails set `RESEND_API_KEY` and `ALERTS_EMAIL_FROM` on both `api` and `worker`.
+  The sender must be on a domain verified in Resend; the default `onboarding@resend.dev` only
+  reaches the Resend account owner.
+- The API image now includes the embedding model (about 250 MB larger); the model loads into
+  memory (150–250 MB) only when passages or headlines are embedded.
+
 ## Operations
 
 ```powershell

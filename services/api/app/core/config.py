@@ -64,6 +64,17 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     embedding_cache_dir: str | None = None
 
+    # News: the GDELT index needs no key; the contact goes in the User-Agent. Tracked
+    # companies (watchlists and alert rules) are polled by the worker.
+    news_poll_minutes: int = 60
+    filings_poll_minutes: int = 30
+
+    # Alerts by email through Resend. Resend's test sender (onboarding@resend.dev) only
+    # delivers to the Resend account's own address; verify a domain for anything else.
+    resend_api_key: SecretStr | None = None
+    alerts_email_from: str = "Pinero alerts <onboarding@resend.dev>"
+    alerts_poll_minutes: int = 5
+
     # Market data
     market_data_provider: str | None = None
     tiingo_api_key: SecretStr | None = None

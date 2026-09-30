@@ -10,6 +10,7 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.admin.routes import router as admin_router
+from app.alerts.routes import router as alerts_router
 from app.auth.dependencies import UNSAFE_METHODS
 from app.auth.routes import router as auth_router
 from app.companies.routes import router as companies_router
@@ -17,6 +18,7 @@ from app.core.config import Settings, get_settings
 from app.core.errors import error_body, register_error_handlers
 from app.core.logging import configure_logging, set_request_id
 from app.core.metrics import HTTP_REQUEST_DURATION
+from app.events.routes import router as events_router
 from app.filings.routes import router as filings_router
 from app.fundamentals.routes import router as fundamentals_router
 from app.market_data.routes import router as market_data_router
@@ -138,7 +140,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     for router in (
         auth_router,
         companies_router,
+        events_router,
         filings_router,
+        alerts_router,
         fundamentals_router,
         market_data_router,
         screener_router,

@@ -55,6 +55,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Jobs Overview */
+        get: operations["jobs_overview_api_v1_admin_jobs_get"];
+        put?: never;
+        /**
+         * Enqueue Job
+         * @description Queue a job now; the worker process runs it.
+         */
+        post: operations["enqueue_job_api_v1_admin_jobs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/provider-fetches": {
         parameters: {
             query?: never;
@@ -104,6 +125,130 @@ export interface paths {
         head?: never;
         /** Update User */
         patch: operations["update_user_api_v1_admin_users__user_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Alerts */
+        get: operations["list_alerts_api_v1_alerts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/alerts/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Read */
+        post: operations["mark_read_api_v1_alerts_read_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/alerts/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Rules */
+        get: operations["list_rules_api_v1_alerts_rules_get"];
+        put?: never;
+        /** Create Rule */
+        post: operations["create_rule_api_v1_alerts_rules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/alerts/rules/{rule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Rule */
+        delete: operations["delete_rule_api_v1_alerts_rules__rule_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Rule */
+        patch: operations["update_rule_api_v1_alerts_rules__rule_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/alerts/rules/{rule_id}/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Evaluate Now
+         * @description Run one rule against data already stored (the worker does this every few minutes).
+         */
+        post: operations["evaluate_now_api_v1_alerts_rules__rule_id__evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/alerts/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Alert Status */
+        get: operations["alert_status_api_v1_alerts_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/alerts/test-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Test Email */
+        post: operations["test_email_api_v1_alerts_test_email_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/auth/config": {
@@ -234,6 +379,40 @@ export interface paths {
         };
         /** Company Profile */
         get: operations["company_profile_api_v1_companies__ticker__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/earnings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Earnings */
+        get: operations["company_earnings_api_v1_companies__ticker__earnings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Events */
+        get: operations["company_events_api_v1_companies__ticker__events_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -381,6 +560,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/companies/{ticker}/news": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company News */
+        get: operations["company_news_api_v1_companies__ticker__news_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/news/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh News
+         * @description Search the news index now (one GDELT request; GDELT allows one every 5 seconds).
+         */
+        post: operations["refresh_news_api_v1_companies__ticker__news_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies/{ticker}/peers": {
         parameters: {
             query?: never;
@@ -390,6 +606,43 @@ export interface paths {
         };
         /** Peers */
         get: operations["peers_api_v1_companies__ticker__peers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/events/types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Event Types */
+        get: operations["event_types_api_v1_events_types_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Feed
+         * @description First reports of events for companies on the user's watchlists.
+         */
+        get: operations["feed_api_v1_feed_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -640,6 +893,63 @@ export interface components {
             /** Role */
             role?: ("viewer" | "analyst" | "admin") | null;
         };
+        /** AlertOut */
+        AlertOut: {
+            /** Body */
+            body: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email Error */
+            email_error: string | null;
+            /**
+             * Email Status
+             * @enum {string}
+             */
+            email_status: "pending" | "sent" | "failed" | "not_configured" | "disabled";
+            /** Id */
+            id: number;
+            /** Link */
+            link: string | null;
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Read */
+            read: boolean;
+            /**
+             * Rule Id
+             * Format: uuid
+             */
+            rule_id: string;
+            /** Rule Name */
+            rule_name: string;
+            /** Title */
+            title: string;
+        };
+        /** AlertStatus */
+        AlertStatus: {
+            /** Email Configured */
+            email_configured: boolean;
+            /** Email From */
+            email_from: string;
+            /** Email Provider */
+            email_provider: string | null;
+            /** Jobs */
+            jobs: components["schemas"]["JobRunOut"][];
+            /** Recipient */
+            recipient: string;
+        };
+        /** AlertsResponse */
+        AlertsResponse: {
+            /** Alerts */
+            alerts: components["schemas"]["AlertOut"][];
+            /** Unread */
+            unread: number;
+        };
         /** AuditEventOut */
         AuditEventOut: {
             /** Action */
@@ -883,6 +1193,98 @@ export interface components {
             /** Last Synced At */
             last_synced_at: string | null;
         };
+        /** EarningsRelease */
+        EarningsRelease: {
+            /** Document Status */
+            document_status: string;
+            /** Event Id */
+            event_id: number;
+            filing: components["schemas"]["FilingRef"];
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Press Release Chars */
+            press_release_chars: number | null;
+            /** Press Release Excerpt */
+            press_release_excerpt: string | null;
+        };
+        /** EarningsResponse */
+        EarningsResponse: {
+            /** Note */
+            note: string;
+            /** Releases */
+            releases: components["schemas"]["EarningsRelease"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** EvaluateOut */
+        EvaluateOut: {
+            /** Created */
+            created: number;
+            /** Failed */
+            failed: number;
+            /** Sent */
+            sent: number;
+        };
+        /** EventBrief */
+        EventBrief: {
+            /** Cluster Id */
+            cluster_id: number | null;
+            /** Cluster Size */
+            cluster_size: number;
+            /** Event Type */
+            event_type: string;
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
+            /**
+             * Novelty
+             * @enum {string}
+             */
+            novelty: "first" | "repeat";
+            /** Prior Similarity */
+            prior_similarity: number | null;
+        };
+        /** EventTypeOut */
+        EventTypeOut: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+        };
+        /** EventsResponse */
+        EventsResponse: {
+            /** Classifier Version */
+            classifier_version: string;
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** Days */
+            days: number;
+            /** Events */
+            events: components["schemas"]["TimelineEvent"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** FeedItem */
+        FeedItem: {
+            /** Company Name */
+            company_name: string;
+            event: components["schemas"]["TimelineEvent"];
+            /** Ticker */
+            ticker: string;
+        };
+        /** FeedResponse */
+        FeedResponse: {
+            /** Companies */
+            companies: number;
+            /** Items */
+            items: components["schemas"]["FeedItem"][];
+        };
         /** FilingDetail */
         FilingDetail: {
             /** Extractor Version */
@@ -928,6 +1330,24 @@ export interface components {
             sec_url: string;
             /** Size */
             size: number | null;
+        };
+        /** FilingRef */
+        FilingRef: {
+            /** Accession */
+            accession: string;
+            /** App Path */
+            app_path: string;
+            /**
+             * Filed Date
+             * Format: date
+             */
+            filed_date: string;
+            /** Form */
+            form: string;
+            /** Items */
+            items: string[];
+            /** Sec Url */
+            sec_url: string;
         };
         /** FilingsResponse */
         FilingsResponse: {
@@ -1161,6 +1581,65 @@ export interface components {
             /** Transactions */
             transactions: components["schemas"]["InsiderTransactionOut"][];
         };
+        /** JobIn */
+        JobIn: {
+            /** Kind */
+            kind: string;
+            /** Tickers */
+            tickers?: string[];
+        };
+        /** JobOut */
+        JobOut: {
+            /** Attempts */
+            attempts: number;
+            /** Finished At */
+            finished_at: string | null;
+            /** Id */
+            id: number;
+            /** Kind */
+            kind: string;
+            /** Last Error */
+            last_error: string | null;
+            /** Result */
+            result: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Run At
+             * Format: date-time
+             */
+            run_at: string;
+            /** Status */
+            status: string;
+        };
+        /** JobRunOut */
+        JobRunOut: {
+            /** Finished At */
+            finished_at: string | null;
+            /** Kind */
+            kind: string;
+            /** Last Error */
+            last_error: string | null;
+            /** Result */
+            result: {
+                [key: string]: unknown;
+            } | null;
+            /** Status */
+            status: string;
+        };
+        /** JobsOverview */
+        JobsOverview: {
+            /** Counts */
+            counts: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /** Recent */
+            recent: components["schemas"]["JobOut"][];
+            /** Worker Seen */
+            worker_seen: string | null;
+        };
         /** LineItemOut */
         LineItemOut: {
             /** Cells */
@@ -1240,6 +1719,83 @@ export interface components {
             unit: "percent" | "ratio" | "currency" | "shares" | "per_share";
             /** Values */
             values: components["schemas"]["MetricPointOut"][];
+        };
+        /** NewsItemOut */
+        NewsItemOut: {
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "high" | "low";
+            /** Domain */
+            domain: string | null;
+            event: components["schemas"]["EventBrief"] | null;
+            /** Id */
+            id: number;
+            /**
+             * Link Method
+             * @enum {string}
+             */
+            link_method: "title_ticker" | "title_name" | "query_only";
+            /**
+             * Seen At
+             * Format: date-time
+             */
+            seen_at: string;
+            /** Source Country */
+            source_country: string | null;
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
+        };
+        /** NewsRef */
+        NewsRef: {
+            /** Domain */
+            domain: string | null;
+            /** Url */
+            url: string;
+        };
+        /** NewsRefreshOut */
+        NewsRefreshOut: {
+            /**
+             * Articles
+             * @default 0
+             */
+            articles: number;
+            /**
+             * Events
+             * @default 0
+             */
+            events: number;
+            /** Message */
+            message?: string | null;
+            /**
+             * New
+             * @default 0
+             */
+            new: number;
+            /** Status */
+            status: string;
+            /** Ticker */
+            ticker: string;
+        };
+        /** NewsResponse */
+        NewsResponse: {
+            /** Attribution */
+            attribution: string;
+            /** Days */
+            days: number;
+            /** Items */
+            items: components["schemas"]["NewsItemOut"][];
+            /** Last Refreshed */
+            last_refreshed: string | null;
+            /** Low Confidence Hidden */
+            low_confidence_hidden: number;
+            /** Sources */
+            sources: components["schemas"]["SourceRef"][];
+            /** Ticker */
+            ticker: string;
         };
         /** PeerRow */
         PeerRow: {
@@ -1363,6 +1919,11 @@ export interface components {
             /** Name */
             name: string | null;
         };
+        /** ReadIn */
+        ReadIn: {
+            /** Ids */
+            ids?: number[] | null;
+        };
         /** RegisterIn */
         RegisterIn: {
             /** Display Name */
@@ -1374,6 +1935,101 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** RuleIn */
+        RuleIn: {
+            /**
+             * Active
+             * @default true
+             */
+            active: boolean;
+            /**
+             * Email
+             * @default true
+             */
+            email: boolean;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "filing" | "earnings" | "news" | "insider" | "price";
+            /** Name */
+            name: string;
+            params?: components["schemas"]["RuleParams"];
+            /** Tickers */
+            tickers?: string[];
+            /** Watchlist Id */
+            watchlist_id?: string | null;
+        };
+        /** RuleOut */
+        RuleOut: {
+            /** Active */
+            active: boolean;
+            /** Companies */
+            companies: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: boolean;
+            /** Evaluated At */
+            evaluated_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "filing" | "earnings" | "news" | "insider" | "price";
+            /** Name */
+            name: string;
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Tickers */
+            tickers: string[];
+            /** Watchlist Id */
+            watchlist_id: string | null;
+            /** Watchlist Name */
+            watchlist_name: string | null;
+        };
+        /** RuleParams */
+        RuleParams: {
+            /** Codes */
+            codes?: string[] | null;
+            /** Event Types */
+            event_types?: string[] | null;
+            /**
+             * First Only
+             * @default true
+             */
+            first_only: boolean;
+            /** Forms */
+            forms?: string[] | null;
+            /** Min Move Pct */
+            min_move_pct?: number | null;
+            /** Min Value */
+            min_value?: number | null;
+        };
+        /** RuleUpdate */
+        RuleUpdate: {
+            /** Active */
+            active?: boolean | null;
+            /** Email */
+            email?: boolean | null;
+            /** Name */
+            name?: string | null;
+            params?: components["schemas"]["RuleParams"] | null;
+            /** Tickers */
+            tickers?: string[] | null;
+            /** Watchlist Id */
+            watchlist_id?: string | null;
         };
         /** ScreenMetricOut */
         ScreenMetricOut: {
@@ -1603,6 +2259,44 @@ export interface components {
             /** Providers */
             providers: components["schemas"]["ProviderHealth"][];
         };
+        /** TimelineEvent */
+        TimelineEvent: {
+            /** Cluster Id */
+            cluster_id: number | null;
+            /** Cluster Size */
+            cluster_size: number;
+            /** Event Type */
+            event_type: string;
+            /** Evidence */
+            evidence: {
+                [key: string]: unknown;
+            };
+            filing: components["schemas"]["FilingRef"] | null;
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
+            news: components["schemas"]["NewsRef"] | null;
+            /**
+             * Novelty
+             * @enum {string}
+             */
+            novelty: "first" | "repeat";
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Outlets */
+            outlets: string[];
+            /**
+             * Source Kind
+             * @enum {string}
+             */
+            source_kind: "filing" | "news";
+            /** Title */
+            title: string;
+        };
         /** TradeTotals */
         TradeTotals: {
             /** Insiders */
@@ -1792,6 +2486,59 @@ export interface operations {
             };
         };
     };
+    jobs_overview_api_v1_admin_jobs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobsOverview"];
+                };
+            };
+        };
+    };
+    enqueue_job_api_v1_admin_jobs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     provider_fetches_api_v1_admin_provider_fetches_get: {
         parameters: {
             query?: {
@@ -1875,6 +2622,254 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    list_alerts_api_v1_alerts_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlertsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_read_api_v1_alerts_read_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_rules_api_v1_alerts_rules_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"][];
+                };
+            };
+        };
+    };
+    create_rule_api_v1_alerts_rules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_rule_api_v1_alerts_rules__rule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_rule_api_v1_alerts_rules__rule_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RuleUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluate_now_api_v1_alerts_rules__rule_id__evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvaluateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    alert_status_api_v1_alerts_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlertStatus"];
+                };
+            };
+        };
+    };
+    test_email_api_v1_alerts_test_email_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -2072,6 +3067,71 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CompanyProfile"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_earnings_api_v1_companies__ticker__earnings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EarningsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_events_api_v1_companies__ticker__events_get: {
+        parameters: {
+            query?: {
+                days?: number;
+                include_repeats?: boolean;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -2356,6 +3416,72 @@ export interface operations {
             };
         };
     };
+    company_news_api_v1_companies__ticker__news_get: {
+        parameters: {
+            query?: {
+                days?: number;
+                confidence?: "high" | "all";
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_news_api_v1_companies__ticker__news_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewsRefreshOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     peers_api_v1_companies__ticker__peers_get: {
         parameters: {
             query?: {
@@ -2378,6 +3504,58 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PeersResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    event_types_api_v1_events_types_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventTypeOut"][];
+                };
+            };
+        };
+    };
+    feed_api_v1_feed_get: {
+        parameters: {
+            query?: {
+                days?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedResponse"];
                 };
             };
             /** @description Validation Error */

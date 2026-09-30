@@ -30,11 +30,15 @@ cites its filing, section, and character span. See [phase-3-report.md](phase-3-r
 13F institutional holdings were deferred to Phase 6: 13F lists positions by CUSIP, and SEC's
 ticker file has no CUSIP mapping, so linking holdings to companies needs a mapping source.
 
-## Phase 4 — News, events, alerts
+## Phase 4 — News, events, alerts ✔ (2026-09-30)
 
-Licensed/RSS adapters with license tracking; entity linking; event taxonomy; materiality and
-novelty evidence (not naive sentiment); event graph; earnings events; alert rules + worker
-(Redis-backed job queue introduced here).
+News from the GDELT open index (headlines and links only, within its published rules) and SEC
+8-K events; company linking with recorded method and confidence; a deterministic event
+taxonomy with evidence; novelty and story clustering with the local embedding model; earnings
+releases with their EX-99 press releases; alert rules delivered by email (Resend) from a
+Postgres-backed background worker. Yahoo Finance was dropped because its robots.txt forbids
+automated access. Upcoming earnings dates need a calendar source and are not included. See
+[phase-4-report.md](phase-4-report.md).
 
 ## Phase 5 — Valuation
 

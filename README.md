@@ -4,7 +4,8 @@ A web-first, source-first platform for public-company research. Every value it s
 where it came from; nothing is estimated, sampled, or filled in. Deterministic calculations,
 model outputs, and AI interpretation are kept as separate systems.
 
-**Status:** Phase 3 (SEC filings and retrieval) complete. See [docs/phase-3-report.md](docs/phase-3-report.md),
+**Status:** Phase 4 (News, events, alerts) complete. See [docs/phase-4-report.md](docs/phase-4-report.md),
+[docs/phase-3-report.md](docs/phase-3-report.md),
 [docs/phase-2-report.md](docs/phase-2-report.md), [docs/phase-1-report.md](docs/phase-1-report.md),
 [docs/architecture.md](docs/architecture.md), and [docs/roadmap.md](docs/roadmap.md).
 
@@ -23,6 +24,9 @@ docker compose exec api python -m app.cli sync-sec-directory
 docker compose exec api python -m app.cli sync-fundamentals --tickers AAPL,MSFT,NVDA   # or --all-active
 docker compose exec api python -m app.cli sync-filings --tickers AAPL,MSFT,NVDA        # filings, Form 4s, search index
 ```
+
+The `worker` service runs background jobs (filings, news, alerts) for companies on watchlists
+and in alert rules. Without Docker, run `python -m app.worker` next to the API.
 
 Open <http://localhost:3000> and sign in. API docs: <http://localhost:8000/docs>.
 If a port is taken, set `WEB_PORT`, `API_PORT`, `POSTGRES_PORT`, or `REDIS_PORT` in `.env`.
@@ -58,6 +62,7 @@ credentials the app runs and states exactly what is missing:
 | `SEC_USER_AGENT` | Company directory sync and SEC company profiles (free; must identify you) |
 | `MARKET_DATA_PROVIDER=tiingo`, `TIINGO_API_KEY` | Daily price history and last close |
 | `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `AUTH_SECRET` | Optional single sign-on |
+| `RESEND_API_KEY`, `ALERTS_EMAIL_FROM` (API and worker) | Alert emails through Resend; the from-address must be on a verified domain |
 
 ## Checks
 

@@ -1,5 +1,6 @@
 import hashlib
 import logging
+import re
 from collections.abc import Sequence
 from datetime import timedelta
 
@@ -11,10 +12,11 @@ from app.core.config import Settings
 from app.db.base import utcnow
 from app.db.models import Company, Filing, FilingChunk, FilingSection, InsiderTransaction
 from app.filings.chunks import chunk_section
+from app.filings.exhibits import parse_exhibits, press_release
 from app.filings.form4 import FORM4_PARSER_VERSION, Form4Error, parse_form4, raw_xml_name
 from app.filings.html_text import document_paragraphs
 from app.filings.index import store_filing_index
-from app.filings.sections import EXTRACTOR_VERSION, extract_sections, form_family
+from app.filings.sections import EXTRACTOR_VERSION, Section, extract_sections, form_family
 from app.providers.base import ProviderError, record_fetch
 from app.providers.embeddings import EmbeddingProvider
 from app.providers.sec_edgar import SecEdgarClient
@@ -25,6 +27,9 @@ INSIDER_FORMS = ("4", "4/A")
 # Forms whose primary document is split into items and indexed for search by default.
 CORE_FORMS = ("10-K", "10-K/A", "10-Q", "10-Q/A", "8-K", "8-K/A")
 _TEXT_DOCUMENTS = (".htm", ".html", ".xhtml", ".txt")
+_EXHIBIT_LABEL = re.compile(
+    r"^(ex-\d+(\.\d+)?|exhibit \d+(\.\d+)?|[\w.-]+\.(htm|html|txt))\.?$", re.IGNORECASE
+)
 NOT_EMBEDDED_SECTIONS = ("item_8", "item_15", "part1_item_1", "part2_item_6", "item_9.01")
 _EMBED_BATCH = 32
 
@@ -138,6 +143,37 @@ def embed_missing(
     return done, total - embedded
 
 
+def _earnings_release(
+    db: Session, company: Company, filing: Filing, client: SecEdgarClient
+) -> str | None:
+    """Text of an earnings 8-K's press release (its EX-99 exhibit), or None.
+
+    The 8-K itself usually just says results were furnished as Exhibit 99.1; the numbers
+    and commentary live in the exhibit. A failure here never fails the filing.
+    """
+    assert company.cik is not None
+    try:
+        index = client.fetch_filing_document(
+            company.cik, filing.accession, f"{filing.accession}-index.htm"
+        )
+        record_fetch(db, index.meta, status="success")
+        exhibit = press_release(parse_exhibits(index.data))
+        if exhibit is None:
+            return None
+        document = client.fetch_filing_document(company.cik, filing.accession, exhibit.document)
+        record_fetch(db, document.meta, status="success", record_count=1)
+    except ProviderError as error:
+        if error.meta is not None:
+            record_fetch(db, error.meta, status="error", error=error)
+        logger.warning("exhibit_unavailable", extra={"accession": filing.accession})
+        return None
+    paragraphs = document_paragraphs(document.data, exhibit.document)
+    # Exhibits often open with EDGAR labels ("EX-99.1", the file name, "Exhibit 99.1").
+    while paragraphs and _EXHIBIT_LABEL.match(paragraphs[0]):
+        paragraphs = paragraphs[1:]
+    return "\n\n".join(paragraphs) or None
+
+
 def load_filing_document(
     db: Session,
     company: Company,
@@ -174,6 +210,14 @@ def load_filing_document(
     paragraphs = document_paragraphs(result.data, document)
     sections = extract_sections(paragraphs, filing.form, filing.description or filing.form)
     fetch = record_fetch(db, result.meta, status="success", record_count=len(sections))
+    if "2.02" in (filing.items or "").split(","):
+        release = _earnings_release(db, company, filing, client)
+        if release:
+            sections.append(
+                Section(
+                    "exhibit_99", None, "99", "Exhibit 99 · Press release", len(sections), release
+                )
+            )
     db.execute(delete(FilingSection).where(FilingSection.filing_id == filing.id))
 
     stored: list[FilingChunk] = []

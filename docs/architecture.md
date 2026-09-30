@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 3 (SEC filings and retrieval) complete. Last updated 2026-09-30.
+Status: Phase 4 (News, events, alerts) complete. Last updated 2026-09-30.
 
 ## 1. Starting point (what existed)
 
@@ -52,14 +52,14 @@ extraction. Planned locations:
 | market-data | `app/market_data`, `app/providers/market_data` | 1 ✔ |
 | fundamentals | `app/fundamentals`, `app/analytics/fundamentals.py`, `app/screener` (+ SEC XBRL companyfacts adapter) | 2 ✔ |
 | sec | `app/filings`, `app/providers/sec_edgar.py`, `app/analytics/text_diff.py` | 3 ✔ |
-| news | `app/news` + licensed feed adapters | 4 |
+| news | `app/events`, `app/providers/gdelt.py` | 4 ✔ |
 | nlp | `app/providers/embeddings.py` (embedding port, 3 ✔), `app/nlp` (LLM port, RAG) | 3–8 |
 | valuation | `app/valuation` → `packages/financial-models` | 5 |
 | quant, ml | `app/quant` + top-level `ml/` (features, training, evaluation) | 6 |
 | backtesting | `app/backtesting` | 7 |
 | portfolio, risk | `app/portfolio`, `app/risk` | 9 |
 | paper trading | `app/execution` (PaperBrokerAdapter only) | 10 |
-| alerts | `app/alerts` (+ worker) | 4 |
+| alerts | `app/alerts`, `app/jobs`, `app/worker.py`, `app/providers/email.py` | 4 ✔ |
 | packages/types | `packages/types/openapi.json` (generated contract) | 1 ✔ |
 
 ### Invariants
@@ -101,10 +101,16 @@ Implemented (migrations `0001`–`0004`):
 Statements are not stored: they are rebuilt from `financial_facts` for any as-of date. Filing
 text is stored; raw HTML is not (each filing links to its sec.gov original).
 
-Planned tables by phase: `institutional_holdings` (6, deferred from 3);
-`news`, `events`, `earnings`, `transcripts` (4); `valuations` (5); `macro_data`, `features`,
+Phase 4 tables (migration `0005`): `jobs` (work queue; partial unique dedupe key for active
+jobs), `news_items` (headline, outlet, link, seen time, embedding; unique per provider URL),
+`news_mentions` (company link with method and confidence), `events` (8-K or news; type,
+novelty, story cluster, evidence JSON, classifier version), `alert_rules` (owner, kind,
+params, tickers/watchlist scope), `alerts` (unique per rule and subject; email outcome).
+
+Planned tables by phase: `institutional_holdings` (6, deferred from 3); `transcripts`;
+`valuations` (5); `macro_data`, `features`,
 `predictions`, `prediction_outcomes`, `model_versions` (6); `backtests` (7); `investment_theses` (8);
-`portfolios`, `positions` (9); `orders`, `trades` (10); `alerts` (4).
+`portfolios`, `positions` (9); `orders`, `trades` (10).
 Every externally sourced table carries `fetch_id` plus an **availability timestamp** (when the
 information became public) distinct from its **effective/period date**, which is what makes
 point-in-time feature reconstruction possible. TimescaleDB is deferred until price/feature volume

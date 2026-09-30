@@ -1,6 +1,6 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Activity, LogOut, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,6 +23,13 @@ function Workspace({ pathname, children }: { pathname: string; children: ReactNo
   const router = useRouter();
   const queryClient = useQueryClient();
   const user = session.data?.user;
+  const alerts = useQuery({
+    queryKey: ["alerts"],
+    queryFn: api.alerts,
+    enabled: Boolean(user),
+    refetchInterval: 60_000,
+  });
+  const unread = alerts.data?.unread ?? 0;
   const current = pathname.startsWith("/admin")
     ? { label: "Administration", phase: 1 }
     : activeModule(pathname);
@@ -59,6 +66,7 @@ function Workspace({ pathname, children }: { pathname: string; children: ReactNo
                 <Icon size={17} strokeWidth={1.8} />
                 <span>{label}</span>
                 {!isLive(phase) && <span className="nav-phase">P{phase}</span>}
+                {slug === "alerts" && unread > 0 && <span className="nav-badge" aria-label={`${unread} unread alerts`}>{unread}</span>}
               </Link>
             );
           })}

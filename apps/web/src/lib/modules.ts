@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 
 /** The latest completed roadmap phase. Modules and tabs at or below it are live. */
-export const CURRENT_PHASE = 3;
-export const CURRENT_PHASE_NAME = "SEC filings";
+export const CURRENT_PHASE = 4;
+export const CURRENT_PHASE_NAME = "News & alerts";
 
 export function isLive(phase: number): boolean {
   return phase <= CURRENT_PHASE;
@@ -56,9 +56,8 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "news", href: "/news", label: "News", icon: Newspaper, phase: 4,
-    summary: "Licensed news ingestion with entity linking and event classification.",
-    planned: ["Company, sector, and people linking", "Event taxonomy (earnings, M&A, guidance…)",
-      "Materiality and novelty evidence rather than naive sentiment"],
+    summary: "News and SEC events for your watchlists, linked to companies and classified.",
+    planned: [],
   },
   {
     slug: "screener", href: "/screener", label: "Screener", icon: ListFilter, phase: 2,
@@ -92,9 +91,8 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "alerts", href: "/alerts", label: "Alerts", icon: Bell, phase: 4,
-    summary: "Rules on prices, filings, news, and thesis changes.",
-    planned: ["Filing and news event alerts", "Price and data-quality alerts",
-      "Thesis-assumption alerts (Phase 8)"],
+    summary: "Email alerts on filings, earnings, news events, insider trades, and price moves.",
+    planned: [],
   },
 ];
 

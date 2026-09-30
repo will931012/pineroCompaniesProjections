@@ -181,3 +181,22 @@ DOCUMENTS: dict[str, bytes] = {
     archive("0000999001-24-000049", "other.xml"): form4_xml(OTHER_ISSUER_CIK),
 }
 PAGES = {f"CIK{CIK:010d}-submissions-001.json": columns([OLD_FILING])}
+
+
+# The earnings 8-K's filing index page (the real page lists exhibits in a tableFile table).
+EIGHT_K_INDEX = b"""<html><body><table class="tableFile" summary="Document Format Files">
+<tr><th>Seq</th><th>Description</th><th>Document</th><th>Type</th><th>Size</th></tr>
+<tr><td>1</td><td>8-K</td><td><a href="/ix?doc=/Archives/edgar/data/999001/000099900124000035/exdv-8k.htm">exdv-8k.htm</a> iXBRL</td><td>8-K</td><td>38350</td></tr>
+<tr><td>2</td><td>EX-99.1</td><td><a href="/Archives/edgar/data/999001/000099900124000035/exdv-ex991.htm">exdv-ex991.htm</a></td><td>EX-99.1</td><td>173484</td></tr>
+<tr><td>3</td><td></td><td><a href="/Archives/edgar/data/999001/000099900124000035/logo.jpg">logo.jpg</a></td><td>GRAPHIC</td><td>1264</td></tr>
+</table></body></html>"""
+
+PRESS_RELEASE = b"""<html><body>
+<p>EX-99.1</p><p>exdv-ex991.htm</p><p>Exhibit 99.1</p>
+<p>Example Devices Reports Fourth Quarter Results</p>
+<p>Revenue of $1.2 billion, up 8 percent year over year; services revenue reached an all-time high.</p>
+<p>The board declared a cash dividend of $0.25 per share.</p>
+</body></html>"""
+
+DOCUMENTS[archive("0000999001-24-000035", "0000999001-24-000035-index.htm")] = EIGHT_K_INDEX
+DOCUMENTS[archive("0000999001-24-000035", "exdv-ex991.htm")] = PRESS_RELEASE

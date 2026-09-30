@@ -27,11 +27,61 @@ export default function AdminPage() {
       <div className="admin-grid">
         <Ingestion />
         <FundamentalsIngestion />
+        <JobsPanel />
         <Users currentUserId={session?.user.id} />
         <ProviderLog />
         <AuditLog />
       </div>
     </>
+  );
+}
+
+const JOB_KINDS = ["refresh_filings", "poll_news", "evaluate_alerts", "refresh_prices"];
+
+function JobsPanel() {
+  const queryClient = useQueryClient();
+  const jobs = useQuery({ queryKey: ["admin-jobs"], queryFn: api.adminJobs, refetchInterval: 15_000 });
+  const run = useMutation({
+    mutationFn: (kind: string) => api.enqueueJob(kind),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-jobs"] }),
+  });
+  const data = jobs.data;
+  return (
+    <Panel kicker="BACKGROUND WORKER" title="Jobs" className="admin-wide">
+      <p className="panel-copy">
+        Jobs run in the worker process (<code>python -m app.worker</code>). Last worker activity:{" "}
+        {data?.worker_seen ? formatDateTime(data.worker_seen) : "never — is the worker running?"}
+      </p>
+      <div className="index-controls">
+        {JOB_KINDS.map((kind) => (
+          <button className="button-secondary" disabled={run.isPending} key={kind} onClick={() => run.mutate(kind)} type="button">
+            Run {kind.replaceAll("_", " ")}
+          </button>
+        ))}
+      </div>
+      {run.isError && <ErrorNotice error={run.error} title="Could not queue the job" />}
+      {jobs.isError && <ErrorNotice error={jobs.error} title="Jobs unavailable" />}
+      {data && data.recent.length > 0 && (
+        <div className="table-wrap">
+          <table className="data-table">
+            <thead><tr><th>Job</th><th>Status</th><th>Attempts</th><th>Finished</th><th>Result</th></tr></thead>
+            <tbody>
+              {data.recent.slice(0, 15).map((job) => (
+                <tr key={job.id}>
+                  <td>{job.kind.replaceAll("_", " ")}<small>#{job.id}</small></td>
+                  <td><StatusPill tone={job.status === "done" ? "ok" : job.status === "failed" ? "warn" : "neutral"}>{job.status.toUpperCase()}</StatusPill></td>
+                  <td className="num">{job.attempts}</td>
+                  <td className="mono">{job.finished_at ? formatDateTime(job.finished_at) : "—"}</td>
+                  <td className="mono job-result" title={job.last_error ?? undefined}>
+                    {job.last_error ? job.last_error.slice(0, 80) : job.result ? JSON.stringify(job.result).slice(0, 80) : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Panel>
   );
 }
 
