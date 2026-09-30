@@ -214,7 +214,14 @@ def build_company_profile(
                 status="available" if market.configured else "not_configured",
                 detail=market.message,
             ),
-            "fundamentals": DataAvailability(status="planned", detail="Phase 2"),
+            "fundamentals": DataAvailability(
+                status="available"
+                if company.fundamentals_refreshed_at or settings.sec_user_agent
+                else "not_configured",
+                detail="SEC XBRL company facts"
+                if company.cik
+                else "No SEC CIK; SEC financial data unavailable",
+            ),
             "sec_filings": DataAvailability(status="planned", detail="Phase 3"),
             "news": DataAvailability(status="planned", detail="Phase 4"),
             "valuation": DataAvailability(status="planned", detail="Phase 5"),

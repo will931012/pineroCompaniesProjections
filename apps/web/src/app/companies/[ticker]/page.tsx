@@ -3,14 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Building2, CircleAlert } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { AddToWatchlist } from "@/components/AddToWatchlist";
+import { KeyMetricsPanel, metricTitle, useCompanyMetrics } from "@/components/CompanySnapshot";
+import { FinancialsTab } from "@/components/FinancialsTab";
 import { MarketHistory, useDailyBars } from "@/components/MarketHistory";
+import { PeersTab } from "@/components/PeersTab";
 import { Panel, SourceList, StatusPill } from "@/components/ui";
 import { isApiError } from "@/lib/api/client";
 import { api, type CompanyProfile } from "@/lib/api/endpoints";
-import { formatDate, formatFiscalYearEnd, formatPercent, formatPrice, formatSignedNumber, titleCase } from "@/lib/format";
-import { COMPANY_TABS } from "@/lib/modules";
+import { formatDate, formatFiscalYearEnd, formatPercent, formatPrice, formatSignedNumber, formatValue, titleCase } from "@/lib/format";
+import { COMPANY_TABS, isLive } from "@/lib/modules";
 import { usePreferences } from "@/stores/preferences";
 
 const AVAILABILITY_LABELS: Record<string, string> = {
@@ -30,10 +34,32 @@ const PROFILE_STATUS: Record<CompanyProfile["profile_status"], { tone: "ok" | "w
   not_applicable: { tone: "off", label: "NO SEC CIK" },
 };
 
+const tabSlug = (label: string) => label.toLowerCase().replaceAll(" ", "-");
+
 export default function CompanyPage() {
+  return (
+    <Suspense>
+      <CompanyView />
+    </Suspense>
+  );
+}
+
+function CompanyView() {
   const params = useParams<{ ticker: string }>();
   const ticker = decodeURIComponent(params.ticker).toUpperCase();
   const profile = useQuery({ queryKey: ["company", ticker], queryFn: () => api.company(ticker) });
+  const search = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const liveTabs = COMPANY_TABS.filter((tab) => isLive(tab.phase)).map((tab) => tabSlug(tab.label));
+  const tab = liveTabs.find((slug) => slug === search.get("tab")) ?? "overview";
+
+  function selectTab(slug: string) {
+    const next = new URLSearchParams(search);
+    if (slug === "overview") next.delete("tab");
+    else next.set("tab", slug);
+    router.replace(next.size ? `${pathname}?${next}` : pathname, { scroll: false });
+  }
 
   if (profile.isError) {
     const notFound = isApiError(profile.error, "company_not_found");
@@ -60,15 +86,23 @@ export default function CompanyPage() {
       </div>
       <CompanyHeader ticker={ticker} company={company} />
       <nav className="company-tabs" aria-label="Company sections">
-        {COMPANY_TABS.map((tab) => (
-          <span className={`company-tab${tab.phase === 1 ? " active" : " disabled"}`} key={tab.label}
-            title={tab.phase > 1 ? `Planned for Phase ${tab.phase}` : undefined}>
-            {tab.label}{tab.phase > 1 && <sup>P{tab.phase}</sup>}
+        {COMPANY_TABS.map(({ label, phase }) => isLive(phase) ? (
+          <button aria-current={tab === tabSlug(label) ? "page" : undefined} key={label} type="button"
+            className={`company-tab${tab === tabSlug(label) ? " active" : ""}`} onClick={() => selectTab(tabSlug(label))}>
+            {label}
+          </button>
+        ) : (
+          <span className="company-tab disabled" key={label} title={`Planned for Phase ${phase}`}>
+            {label}<sup>P{phase}</sup>
           </span>
         ))}
       </nav>
       {!company ? (
         <div className="page-loading" aria-busy="true">Loading company profile…</div>
+      ) : tab === "financials" ? (
+        <section className="company-tab-body"><FinancialsTab ticker={ticker} /></section>
+      ) : tab === "peers" ? (
+        <section className="company-tab-body"><PeersTab ticker={ticker} /></section>
       ) : (
         <section className="company-detail-grid">
           <div className="company-main">
@@ -90,6 +124,7 @@ export default function CompanyPage() {
             </Panel>
           </div>
           <div className="company-side">
+            <OverviewMetrics ticker={ticker} />
             <IdentityPanel company={company} />
             <Panel kicker="PROVENANCE" title="Sources">
               <SourceList sources={company.sources} />
@@ -105,6 +140,10 @@ function CompanyHeader({ ticker, company }: { ticker: string; company?: CompanyP
   const range = usePreferences((state) => state.chartRange);
   const bars = useDailyBars(ticker, range);
   const summary = bars.data?.summary;
+  const metrics = useCompanyMetrics(ticker, bars);
+  const byKey = new Map((metrics.data?.metrics ?? []).map((m) => [m.key, m]));
+  const marketCap = byKey.get("market_cap");
+  const enterpriseValue = byKey.get("enterprise_value");
   const status = company ? PROFILE_STATUS[company.profile_status] : null;
   const direction = (summary?.change ?? 0) > 0 ? "up" : (summary?.change ?? 0) < 0 ? "down" : "flat";
 
@@ -132,11 +171,27 @@ function CompanyHeader({ ticker, company }: { ticker: string; company?: CompanyP
             ? `${formatSignedNumber(summary.change)} (${formatPercent(summary.change_percent)})`
             : bars.isError ? "Market data unavailable" : bars.isPending ? "Loading…" : "—"}
         </small>
-        <small className="price-meta">Market cap — · shares outstanding arrive with Phase 2 fundamentals</small>
+        <small className="price-meta">
+          <span title={marketCap ? metricTitle(marketCap) : "Needs a stored close and SEC cover-page shares outstanding"}>
+            Market cap {formatValue(marketCap?.value, "currency")}
+          </span>
+          {" · "}
+          <span title={enterpriseValue ? metricTitle(enterpriseValue) : "Needs market cap, debt, and cash"}>
+            EV {formatValue(enterpriseValue?.value, "currency")}
+          </span>
+        </small>
         {company && <AddToWatchlist ticker={ticker} />}
       </div>
     </section>
   );
+}
+
+function OverviewMetrics({ ticker }: { ticker: string }) {
+  const range = usePreferences((state) => state.chartRange);
+  const bars = useDailyBars(ticker, range);
+  const metrics = useCompanyMetrics(ticker, bars);
+  if (!metrics.data) return null;
+  return <KeyMetricsPanel metrics={metrics.data.metrics} computedAt={metrics.data.computed_at} />;
 }
 
 function IdentityPanel({ company }: { company: CompanyProfile }) {

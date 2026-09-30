@@ -76,3 +76,45 @@ export function titleCase(value: string | null | undefined): string {
   if (!value) return EMPTY;
   return value.toLowerCase().replace(/\b([a-z])/g, (match) => match.toUpperCase());
 }
+
+export type ValueUnit =
+  | "percent"
+  | "ratio"
+  | "multiple"
+  | "currency"
+  | "shares"
+  | "per_share"
+  | "USD"
+  | "USD/shares";
+
+/** 1234 → "1.23K", 4.2e9 → "4.20B"; keeps the sign. */
+export function formatCompact(value: number, digits = 2): string {
+  const abs = Math.abs(value);
+  const units: [number, string][] = [[1e12, "T"], [1e9, "B"], [1e6, "M"], [1e3, "K"]];
+  const sign = value < 0 ? "−" : "";
+  for (const [size, suffix] of units) {
+    if (abs >= size) return `${sign}${(abs / size).toFixed(digits)}${suffix}`;
+  }
+  return `${sign}${abs.toFixed(abs >= 100 ? 0 : digits)}`;
+}
+
+/** Format a metric or line-item value by its unit. Fractions are shown as percentages. */
+export function formatValue(value: number | null | undefined, unit: ValueUnit): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return EMPTY;
+  switch (unit) {
+    case "percent":
+      return `${(value * 100).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
+    case "ratio":
+      return value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    case "multiple":
+      return `${value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}×`;
+    case "currency":
+    case "USD":
+      return `${value < 0 ? "−" : ""}$${formatCompact(Math.abs(value))}`;
+    case "per_share":
+    case "USD/shares":
+      return `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(2)}`;
+    case "shares":
+      return formatCompact(value);
+  }
+}

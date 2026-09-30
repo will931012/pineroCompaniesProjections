@@ -8,7 +8,7 @@ import { SystemStatusPanel, useSystemStatus } from "@/components/SystemStatusPan
 import { PageHeading, Panel } from "@/components/ui";
 import { WatchlistPanel } from "@/components/WatchlistPanel";
 import { formatDateTime, formatInteger } from "@/lib/format";
-import { MODULES } from "@/lib/modules";
+import { CURRENT_PHASE, MODULES, isLive } from "@/lib/modules";
 import { useSession } from "@/lib/session";
 
 const PLANNED_WIDGETS = [
@@ -81,17 +81,17 @@ export default function DashboardPage() {
       <section className="lower-grid">
         <WatchlistPanel />
         <aside className="phase-card">
-          <div className="phase-card-top"><span>BUILD STATUS</span><span className="phase-number">01 / 10</span></div>
-          <h2>Foundation in place.</h2>
-          <p>Identity, provenance, the company directory, and the market-data port. Analytics modules arrive phase by phase.</p>
-          <div className="phase-track"><span /></div>
+          <div className="phase-card-top"><span>BUILD STATUS</span><span className="phase-number">{String(CURRENT_PHASE).padStart(2, "0")} / 10</span></div>
+          <h2>Fundamentals live.</h2>
+          <p>Point-in-time SEC financial statements, deterministic ratios, peers, and the screener. SEC filings arrive next.</p>
+          <div className="phase-track"><span style={{ width: `${CURRENT_PHASE * 10}%` }} /></div>
           <ul className="planned-widgets">
             {PLANNED_WIDGETS.map((widget) => (
               <li key={widget.title}><span>{widget.title}</span><b>P{widget.phase}</b></li>
             ))}
           </ul>
           <div className="phase-card-bottom">
-            <span>{MODULES.filter((m) => m.phase === 1).length} live modules · {MODULES.filter((m) => m.phase > 1).length} planned</span>
+            <span>{MODULES.filter((m) => isLive(m.phase)).length} live modules · {MODULES.filter((m) => !isLive(m.phase)).length} planned</span>
             <span className="phase-dot" />
           </div>
         </aside>

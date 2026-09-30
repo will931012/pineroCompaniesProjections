@@ -48,6 +48,10 @@ class Company(TimestampMixin, Base):
         BigInteger, ForeignKey("provider_fetches.id", ondelete="SET NULL")
     )
     profile_refreshed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    fundamentals_fetch_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey("provider_fetches.id", ondelete="SET NULL")
+    )
+    fundamentals_refreshed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     securities: Mapped[list["Security"]] = relationship(back_populates="company")
 

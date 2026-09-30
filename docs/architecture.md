@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 1 (Foundation) complete. Last updated 2026-09-29.
+Status: Phase 2 (Fundamentals) complete. Last updated 2026-09-30.
 
 ## 1. Starting point (what existed)
 
@@ -50,7 +50,7 @@ extraction. Planned locations:
 | Requested service | Package (now or planned) | Phase |
 |---|---|---|
 | market-data | `app/market_data`, `app/providers/market_data` | 1 ✔ |
-| fundamentals | `app/fundamentals` (+ SEC XBRL companyfacts adapter) | 2 |
+| fundamentals | `app/fundamentals`, `app/analytics/fundamentals.py`, `app/screener` (+ SEC XBRL companyfacts adapter) | 2 ✔ |
 | sec | `app/sec`, `app/providers/sec_edgar.py` (started) | 3 |
 | news | `app/news` + licensed feed adapters | 4 |
 | nlp | `app/nlp` (provider-neutral LLM port, RAG, citations) | 3–8 |
@@ -77,7 +77,7 @@ extraction. Planned locations:
 
 ## 3. Database schema
 
-Implemented (migrations `0001`, `0002`):
+Implemented (migrations `0001`–`0003`):
 
 | Table | Purpose / key constraints |
 |---|---|
@@ -90,8 +90,12 @@ Implemented (migrations `0001`, `0002`):
 | `user_sessions` | SHA-256 of cookie token (unique), CSRF token, absolute + idle expiry, revocation |
 | `audit_events` | Append-only security log; indexes (actor, time), (action, time) |
 | `watchlists`, `watchlist_items` | Owner-scoped; unique (owner, name) |
+| `financial_facts` | One row per distinct XBRL value, dated by the first filing that made it public (`filed_date`); unique (company, taxonomy, concept, unit, start, end, value) NULLS NOT DISTINCT; restatements are new rows; `fetch_id` |
+| `company_metrics` | PK (company, metric); latest screenable value with basis label, period end, availability date, price-derived flag, formula version |
 
-Planned tables by phase: `financial_statements`, `financial_metrics` (2); `filings`,
+Statements are not stored: they are rebuilt from `financial_facts` for any as-of date.
+
+Planned tables by phase: `filings`,
 `filing_sections` (+ pgvector embeddings), `insider_transactions`, `institutional_holdings` (3);
 `news`, `events`, `earnings`, `transcripts` (4); `valuations` (5); `macro_data`, `features`,
 `predictions`, `prediction_outcomes`, `model_versions` (6); `backtests` (7); `investment_theses` (8);

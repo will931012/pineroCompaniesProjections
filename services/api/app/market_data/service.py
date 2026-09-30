@@ -7,16 +7,17 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.analytics.price_metrics import daily_change
-from app.companies.schemas import SourceRef
 from app.companies.service import resolve_security
 from app.core.config import Settings
 from app.core.errors import ApiError
 from app.db.base import utcnow
 from app.db.models import DailyPrice, ProviderFetch, Security
+from app.fundamentals.service import refresh_company_metrics
 from app.market_data.schemas import DailyBarOut, DataQuality, MarketBarsResponse, PriceSummary
 from app.providers.base import ProviderError, record_fetch
 from app.providers.market_data.base import MarketDataProvider
 from app.providers.market_data.registry import market_data_status
+from app.providers.schemas import source_refs
 
 logger = logging.getLogger(__name__)
 
@@ -175,17 +176,7 @@ def _response(
         bars=[_to_out(bar) for bar in bars],
         summary=_summary(bars),
         quality=quality,
-        sources=[
-            SourceRef(
-                fetch_id=f.id,
-                provider=f.provider,
-                dataset=f.dataset,
-                source_url=f.source_url,
-                retrieved_at=f.retrieved_at,
-                license_note=f.license_note,
-            )
-            for f in sorted(fetches, key=lambda f: f.id)
-        ],
+        sources=source_refs(fetches),
     )
 
 
@@ -265,6 +256,8 @@ def get_daily_bars(
         rejected_count=result.rejected_count,
     )
     _upsert_bars(db, security, name, fetch, result.data)
+    # Price-based metrics (market cap, multiples, momentum) depend on the new bars.
+    refresh_company_metrics(db, security.company)
     db.commit()
     warnings = (
         [f"{result.rejected_count} provider rows failed validation and were excluded."]

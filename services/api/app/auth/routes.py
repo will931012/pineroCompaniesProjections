@@ -15,7 +15,7 @@ from app.auth.dependencies import (
 )
 from app.auth.oidc import OAuthError, get_oidc_client, oidc_callback_url
 from app.auth.schemas import AuthConfigOut, LoginIn, RegisterIn, SessionOut, UserOut
-from app.auth.service import authenticate_password, create_user, resolve_oidc_user
+from app.auth.service import authenticate_password, create_user, local_user, resolve_oidc_user
 from app.auth.sessions import (
     IssuedSession,
     issue_session,
@@ -59,14 +59,37 @@ def auth_config(settings: AppSettings) -> AuthConfigOut:
         password_login=settings.auth_password_login_enabled,
         registration=settings.auth_allow_registration and settings.auth_password_login_enabled,
         oidc=settings.oidc_configured,
+        auth_disabled=settings.auth_disabled,
     )
 
 
 @router.get("/session", response_model=SessionOut)
 def current_session(
+    request: Request,
+    response: Response,
     record: Annotated[UserSession | None, Depends(get_optional_session)],
+    db: DbSession,
     settings: AppSettings,
 ) -> SessionOut:
+    if record is None and settings.auth_disabled:
+        # Sign-in is switched off: issue a real session for the local admin, so CSRF,
+        # roles, and auditing keep working exactly as with a password login.
+        user = local_user(db)
+        ip = client_ip(request)
+        issued = issue_session(
+            db,
+            user,
+            settings,
+            auth_method="auth_disabled",
+            ip_address=ip,
+            user_agent=request.headers.get("user-agent"),
+        )
+        record_audit_event(
+            db, action="auth.auto_login", outcome="success", actor_user_id=user.id, ip_address=ip
+        )
+        db.commit()
+        _set_session_cookie(response, issued, settings)
+        return _session_out(issued.session, user, settings)
     if record is None:
         raise ApiError(401, "authentication_required", "No active session.")
     return _session_out(record, record.user, settings)

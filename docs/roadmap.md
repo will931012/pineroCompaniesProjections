@@ -10,16 +10,14 @@ model; SEC-sourced company directory and profiles; market-data port with Tiingo 
 persisted daily bars; watchlists; admin console; web shell with all navigation; structured
 logging, metrics, health; Docker/CI. See [phase-1-report.md](phase-1-report.md).
 
-## Phase 2 — Fundamentals
+## Phase 2 — Fundamentals ✔ (2026-09-30)
 
-- SEC XBRL `companyfacts` adapter (no key needed) → `financial_statements` with period end,
-  filing accession, **filed/available date**, unit, and original concept.
-- Normalisation map from us-gaap concepts to a canonical statement model; unmapped concepts kept.
-- Deterministic metrics in `analytics/fundamentals.py` (growth, margins, ROE/ROA/ROIC, liquidity,
-  leverage, coverage, FCF, dilution, SBC, buyback yield) with formula test vectors.
-- Shares outstanding → market cap and enterprise value on the company header.
-- Financials tab, historical charts, peer comparison (SIC-based peers + user-selected).
-- Screener v1 on fundamentals.
+SEC XBRL `companyfacts` ingestion into point-in-time `financial_facts` (accession, form,
+filed date, unit, original concept); canonical statements rebuilt as of any date, with derived
+quarters, in-progress fiscal years, and stock-split restatement; deterministic metrics with
+formula test vectors; market cap and EV on the company header; Financials and Peers tabs with
+historical charts; screener v1. Only tracked concepts are stored; mapping more (for example
+bank line items) is a follow-up. See [phase-2-report.md](phase-2-report.md).
 
 ## Phase 3 — SEC filings and retrieval
 

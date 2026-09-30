@@ -3,16 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-
-class SourceRef(BaseModel):
-    """Where a set of values came from. Every externally sourced field links to one."""
-
-    fetch_id: int
-    provider: str
-    dataset: str
-    source_url: str
-    retrieved_at: datetime
-    license_note: str | None
+from app.providers.schemas import SourceRef
 
 
 class CompanySummary(BaseModel):

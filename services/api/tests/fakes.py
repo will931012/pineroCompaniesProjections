@@ -57,6 +57,7 @@ def submissions_payload(cik: int, **overrides: Any) -> dict[str, Any]:
 def sec_client_with(
     directory_rows: list[list[object]] | None = None,
     submissions: dict[int, dict[str, Any]] | None = None,
+    facts: dict[int, dict[str, Any]] | None = None,
     status: int = 200,
     user_agent: str | None = TEST_USER_AGENT,
     calls: list[httpx.Request] | None = None,
@@ -70,6 +71,10 @@ def sec_client_with(
         if request.url.path.endswith("company_tickers_exchange.json"):
             return json_response(directory_payload(directory_rows or []))
         cik = int(request.url.path.rsplit("CIK", 1)[1].removesuffix(".json"))
+        if "/api/xbrl/companyfacts/" in request.url.path:
+            if facts and cik in facts:
+                return json_response(facts[cik])
+            return httpx.Response(404)
         if submissions and cik in submissions:
             return json_response(submissions[cik])
         return httpx.Response(404)

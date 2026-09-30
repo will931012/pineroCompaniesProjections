@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { setCsrfToken } from "@/lib/api/client";
 import { api } from "@/lib/api/endpoints";
-import { MODULES, activeModule } from "@/lib/modules";
+import { CURRENT_PHASE, CURRENT_PHASE_NAME, MODULES, activeModule, isLive } from "@/lib/modules";
 import { hasRole, useSession } from "@/lib/session";
 
 const BARE_ROUTES = ["/login", "/register"];
@@ -54,11 +54,11 @@ function Workspace({ pathname, children }: { pathname: string; children: ReactNo
                 className={`nav-item${active ? " is-active" : ""}`}
                 href={href}
                 key={slug}
-                title={phase > 1 ? `${label} — planned for Phase ${phase}` : label}
+                title={isLive(phase) ? label : `${label} — planned for Phase ${phase}`}
               >
                 <Icon size={17} strokeWidth={1.8} />
                 <span>{label}</span>
-                {phase > 1 && <span className="nav-phase">P{phase}</span>}
+                {!isLive(phase) && <span className="nav-phase">P{phase}</span>}
               </Link>
             );
           })}
@@ -80,10 +80,13 @@ function Workspace({ pathname, children }: { pathname: string; children: ReactNo
               {user?.display_name ?? "Loading…"}
               <small>{user ? `${user.role} · ${user.email}` : "Checking session"}</small>
             </span>
-            <button className="icon-button sidebar-icon" type="button" onClick={signOut}
-              aria-label="Sign out" title="Sign out">
-              <LogOut size={15} />
-            </button>
+            {/* With sign-in disabled, signing out would only sign straight back in. */}
+            {session.data?.auth_method !== "auth_disabled" && (
+              <button className="icon-button sidebar-icon" type="button" onClick={signOut}
+                aria-label="Sign out" title="Sign out">
+                <LogOut size={15} />
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -98,7 +101,9 @@ function Workspace({ pathname, children }: { pathname: string; children: ReactNo
           <div className="topbar-actions">
             <span className="environment-badge">
               <span className="status-dot" />
-              {current.phase > 1 ? `PLANNED · PHASE ${current.phase}` : "PHASE 1 · FOUNDATION"}
+              {isLive(current.phase)
+                ? `PHASE ${CURRENT_PHASE} · ${CURRENT_PHASE_NAME.toUpperCase()}`
+                : `PLANNED · PHASE ${current.phase}`}
             </span>
           </div>
         </header>

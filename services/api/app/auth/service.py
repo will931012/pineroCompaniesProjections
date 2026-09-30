@@ -12,10 +12,22 @@ from app.db.models import User, UserIdentity
 
 MAX_FAILED_LOGINS = 10
 LOCKOUT = timedelta(minutes=15)
+LOCAL_USER_EMAIL = "local@pinero.local"
 
 
 def normalize_email(email: str) -> str:
     return email.strip().lower()
+
+
+def local_user(db: Session) -> User:
+    """The built-in admin every visitor acts as while AUTH_DISABLED is set."""
+    user = db.scalar(select(User).where(User.email == LOCAL_USER_EMAIL))
+    if user is None:
+        return create_user(
+            db, email=LOCAL_USER_EMAIL, display_name="Local access", password=None, role="admin"
+        )
+    user.role, user.is_active = "admin", True
+    return user
 
 
 def create_user(

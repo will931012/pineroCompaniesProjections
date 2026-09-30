@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { AuthCard } from "@/components/AuthCard";
 import { api } from "@/lib/api/endpoints";
 import { safeNextPath, useAcceptSession } from "@/lib/session";
@@ -30,6 +30,12 @@ function LoginForm() {
     },
   });
   const ssoError = params.get("error");
+  const authDisabled = config.data?.auth_disabled === true;
+
+  // Sign-in is switched off on the API: go straight to the app, which signs in automatically.
+  useEffect(() => {
+    if (authDisabled) router.replace(safeNextPath(params.get("next")));
+  }, [authDisabled, params, router]);
 
   function submit(event: FormEvent) {
     event.preventDefault();

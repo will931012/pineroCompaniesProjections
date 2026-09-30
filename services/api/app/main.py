@@ -17,7 +17,9 @@ from app.core.config import Settings, get_settings
 from app.core.errors import error_body, register_error_handlers
 from app.core.logging import configure_logging, set_request_id
 from app.core.metrics import HTTP_REQUEST_DURATION
+from app.fundamentals.routes import router as fundamentals_router
 from app.market_data.routes import router as market_data_router
+from app.screener.routes import router as screener_router
 from app.system.routes import health_router
 from app.system.routes import router as system_router
 from app.workspace.routes import router as workspace_router
@@ -49,6 +51,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings.log_level, settings.log_format)
     _init_sentry(settings)
+    if settings.auth_disabled:
+        logging.getLogger(__name__).warning(
+            "auth_disabled", extra={"detail": "AUTH_DISABLED is set: every visitor is an admin."}
+        )
 
     app = FastAPI(
         title=settings.app_name,
@@ -131,7 +137,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     for router in (
         auth_router,
         companies_router,
+        fundamentals_router,
         market_data_router,
+        screener_router,
         workspace_router,
         system_router,
         admin_router,

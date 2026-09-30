@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/ingestion/fundamentals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Trigger Fundamentals Sync */
+        post: operations["trigger_fundamentals_sync_api_v1_admin_ingestion_fundamentals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/ingestion/sec-directory": {
         parameters: {
             query?: never;
@@ -225,6 +242,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/companies/{ticker}/fundamentals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fundamentals */
+        get: operations["fundamentals_api_v1_companies__ticker__fundamentals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Latest Metrics */
+        get: operations["latest_metrics_api_v1_companies__ticker__metrics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/peers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Peers */
+        get: operations["peers_api_v1_companies__ticker__peers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/market-data/{ticker}/bars": {
         parameters: {
             query?: never;
@@ -234,6 +302,57 @@ export interface paths {
         };
         /** Daily Bars */
         get: operations["daily_bars_api_v1_market_data__ticker__bars_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/screener": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Screen */
+        post: operations["screen_api_v1_screener_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/screener/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Metric Catalog */
+        get: operations["metric_catalog_api_v1_screener_metrics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/screener/sectors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sectors */
+        get: operations["sectors_api_v1_screener_sectors_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -427,12 +546,32 @@ export interface components {
         };
         /** AuthConfigOut */
         AuthConfigOut: {
+            /** Auth Disabled */
+            auth_disabled: boolean;
             /** Oidc */
             oidc: boolean;
             /** Password Login */
             password_login: boolean;
             /** Registration */
             registration: boolean;
+        };
+        /** CellOut */
+        CellOut: {
+            /** Accession */
+            accession: string | null;
+            /** Concept */
+            concept: string | null;
+            /** Derivation */
+            derivation: string | null;
+            /**
+             * Filed Date
+             * Format: date
+             */
+            filed_date: string;
+            /** Period Key */
+            period_key: string;
+            /** Value */
+            value: number;
         };
         /** Classification */
         Classification: {
@@ -447,6 +586,17 @@ export interface components {
              * @constant
              */
             system: "SIC";
+        };
+        /** CompanyMetricsResponse */
+        CompanyMetricsResponse: {
+            /** Computed At */
+            computed_at: string | null;
+            /** Formula Version */
+            formula_version: string | null;
+            /** Metrics */
+            metrics: components["schemas"]["SnapshotMetricOut"][];
+            /** Ticker */
+            ticker: string;
         };
         /** CompanyProfile */
         CompanyProfile: {
@@ -582,6 +732,15 @@ export interface components {
             /** Last Synced At */
             last_synced_at: string | null;
         };
+        /** Filter */
+        Filter: {
+            /** Max */
+            max?: number | null;
+            /** Metric */
+            metric: string;
+            /** Min */
+            min?: number | null;
+        };
         /** FormerName */
         FormerName: {
             /** Date From */
@@ -591,10 +750,70 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** FundamentalsResponse */
+        FundamentalsResponse: {
+            /** As Of */
+            as_of: string | null;
+            /** Cik */
+            cik: number | null;
+            /** Formula Version */
+            formula_version: string;
+            /** Mapping Version */
+            mapping_version: string;
+            /** Message */
+            message: string | null;
+            /** Metrics */
+            metrics: components["schemas"]["MetricSeriesOut"][];
+            /**
+             * Period Type
+             * @enum {string}
+             */
+            period_type: "annual" | "quarterly";
+            /** Periods */
+            periods: components["schemas"]["PeriodOut"][];
+            /** Sources */
+            sources: components["schemas"]["SourceRef"][];
+            statements: components["schemas"]["StatementsOut"];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "stale" | "unavailable" | "not_configured" | "not_applicable" | "not_available";
+            /** Ticker */
+            ticker: string;
+        };
+        /** FundamentalsSyncIn */
+        FundamentalsSyncIn: {
+            /** Tickers */
+            tickers: string[];
+        };
+        /** FundamentalsSyncResult */
+        FundamentalsSyncResult: {
+            /** Message */
+            message: string | null;
+            /** Status */
+            status: string;
+            /** Ticker */
+            ticker: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** LineItemOut */
+        LineItemOut: {
+            /** Cells */
+            cells: components["schemas"]["CellOut"][];
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "USD" | "USD/shares" | "shares";
         };
         /** ListingOut */
         ListingOut: {
@@ -636,6 +855,80 @@ export interface components {
             summary: components["schemas"]["PriceSummary"] | null;
             /** Ticker */
             ticker: string;
+        };
+        /** MetricPointOut */
+        MetricPointOut: {
+            /** Period Key */
+            period_key: string;
+            /** Value */
+            value: number;
+        };
+        /** MetricSeriesOut */
+        MetricSeriesOut: {
+            /** Category */
+            category: string;
+            /** Formula */
+            formula: string;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "percent" | "ratio" | "currency" | "shares" | "per_share";
+            /** Values */
+            values: components["schemas"]["MetricPointOut"][];
+        };
+        /** PeerRow */
+        PeerRow: {
+            /** Industry */
+            industry: string | null;
+            /** Is Subject */
+            is_subject: boolean;
+            /** Metrics */
+            metrics: {
+                [key: string]: number;
+            };
+            /** Name */
+            name: string;
+            /** Sic Code */
+            sic_code: string | null;
+            /** Ticker */
+            ticker: string;
+        };
+        /** PeersResponse */
+        PeersResponse: {
+            /** Basis */
+            basis: string;
+            /** Columns */
+            columns: string[];
+            /** Rows */
+            rows: components["schemas"]["PeerRow"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** PeriodOut */
+        PeriodOut: {
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /** Fiscal Quarter */
+            fiscal_quarter: number | null;
+            /** Fiscal Year */
+            fiscal_year: number;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
         };
         /** PriceSummary */
         PriceSummary: {
@@ -722,6 +1015,86 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** ScreenMetricOut */
+        ScreenMetricOut: {
+            /** Category */
+            category: string;
+            /** Description */
+            description: string;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Price Based */
+            price_based: boolean;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "percent" | "ratio" | "currency" | "multiple";
+        };
+        /** ScreenRequest */
+        ScreenRequest: {
+            /** Columns */
+            columns?: string[];
+            /** Filters */
+            filters?: components["schemas"]["Filter"][];
+            /**
+             * Limit
+             * @default 50
+             */
+            limit: number;
+            /**
+             * Offset
+             * @default 0
+             */
+            offset: number;
+            /** Sector */
+            sector?: string | null;
+            /**
+             * Sort By
+             * @default market_cap
+             */
+            sort_by: string;
+            /**
+             * Sort Dir
+             * @default desc
+             * @enum {string}
+             */
+            sort_dir: "asc" | "desc";
+        };
+        /** ScreenResponse */
+        ScreenResponse: {
+            /** Columns */
+            columns: string[];
+            /** Rows */
+            rows: components["schemas"]["ScreenRow"][];
+            /** Total */
+            total: number;
+            /** Universe */
+            universe: number;
+        };
+        /** ScreenRow */
+        ScreenRow: {
+            /** Exchange */
+            exchange: string | null;
+            /** Industry */
+            industry: string | null;
+            /** Metrics */
+            metrics: {
+                [key: string]: number;
+            };
+            /** Metrics As Of */
+            metrics_as_of: {
+                [key: string]: string | null;
+            };
+            /** Name */
+            name: string;
+            /** Sector */
+            sector: string | null;
+            /** Ticker */
+            ticker: string;
+        };
         /** SessionOut */
         SessionOut: {
             /** Auth Method */
@@ -734,6 +1107,32 @@ export interface components {
              */
             expires_at: string;
             user: components["schemas"]["UserOut"];
+        };
+        /** SnapshotMetricOut */
+        SnapshotMetricOut: {
+            /** Available Date */
+            available_date: string | null;
+            /** Basis */
+            basis: string;
+            /** Category */
+            category: string;
+            /** Description */
+            description: string;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Period End */
+            period_end: string | null;
+            /** Price Based */
+            price_based: boolean;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "percent" | "ratio" | "currency" | "multiple";
+            /** Value */
+            value: number;
         };
         /**
          * SourceRef
@@ -755,6 +1154,15 @@ export interface components {
             retrieved_at: string;
             /** Source Url */
             source_url: string;
+        };
+        /** StatementsOut */
+        StatementsOut: {
+            /** Balance */
+            balance: components["schemas"]["LineItemOut"][];
+            /** Cash Flow */
+            cash_flow: components["schemas"]["LineItemOut"][];
+            /** Income */
+            income: components["schemas"]["LineItemOut"][];
         };
         /** SystemStatus */
         SystemStatus: {
@@ -864,6 +1272,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuditEventOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_fundamentals_sync_api_v1_admin_ingestion_fundamentals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FundamentalsSyncIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundamentalsSyncResult"][];
                 };
             };
             /** @description Validation Error */
@@ -1192,6 +1633,108 @@ export interface operations {
             };
         };
     };
+    fundamentals_api_v1_companies__ticker__fundamentals_get: {
+        parameters: {
+            query?: {
+                period?: "annual" | "quarterly";
+                /** @description Only data public on or before */
+                as_of?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundamentalsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    latest_metrics_api_v1_companies__ticker__metrics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyMetricsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    peers_api_v1_companies__ticker__peers_get: {
+        parameters: {
+            query?: {
+                /** @description Comma-separated extra peers */
+                tickers?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PeersResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     daily_bars_api_v1_market_data__ticker__bars_get: {
         parameters: {
             query: {
@@ -1223,6 +1766,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    screen_api_v1_screener_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScreenRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScreenResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    metric_catalog_api_v1_screener_metrics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScreenMetricOut"][];
+                };
+            };
+        };
+    };
+    sectors_api_v1_screener_sectors_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
                 };
             };
         };

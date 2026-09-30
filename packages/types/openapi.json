@@ -178,6 +178,10 @@
       },
       "AuthConfigOut": {
         "properties": {
+          "auth_disabled": {
+            "title": "Auth Disabled",
+            "type": "boolean"
+          },
           "oidc": {
             "title": "Oidc",
             "type": "boolean"
@@ -194,9 +198,70 @@
         "required": [
           "password_login",
           "registration",
-          "oidc"
+          "oidc",
+          "auth_disabled"
         ],
         "title": "AuthConfigOut",
+        "type": "object"
+      },
+      "CellOut": {
+        "properties": {
+          "accession": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accession"
+          },
+          "concept": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Concept"
+          },
+          "derivation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derivation"
+          },
+          "filed_date": {
+            "format": "date",
+            "title": "Filed Date",
+            "type": "string"
+          },
+          "period_key": {
+            "title": "Period Key",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period_key",
+          "value",
+          "concept",
+          "accession",
+          "filed_date",
+          "derivation"
+        ],
+        "title": "CellOut",
         "type": "object"
       },
       "Classification": {
@@ -240,6 +305,52 @@
           "industry"
         ],
         "title": "Classification",
+        "type": "object"
+      },
+      "CompanyMetricsResponse": {
+        "properties": {
+          "computed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Computed At"
+          },
+          "formula_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula Version"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/SnapshotMetricOut"
+            },
+            "title": "Metrics",
+            "type": "array"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "computed_at",
+          "formula_version",
+          "metrics"
+        ],
+        "title": "CompanyMetricsResponse",
         "type": "object"
       },
       "CompanyProfile": {
@@ -752,6 +863,41 @@
         "title": "DirectoryStats",
         "type": "object"
       },
+      "Filter": {
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          }
+        },
+        "required": [
+          "metric"
+        ],
+        "title": "Filter",
+        "type": "object"
+      },
       "FormerName": {
         "properties": {
           "date_from": {
@@ -789,6 +935,164 @@
         "title": "FormerName",
         "type": "object"
       },
+      "FundamentalsResponse": {
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cik"
+          },
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "mapping_version": {
+            "title": "Mapping Version",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/MetricSeriesOut"
+            },
+            "title": "Metrics",
+            "type": "array"
+          },
+          "period_type": {
+            "enum": [
+              "annual",
+              "quarterly"
+            ],
+            "title": "Period Type",
+            "type": "string"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/components/schemas/PeriodOut"
+            },
+            "title": "Periods",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "statements": {
+            "$ref": "#/components/schemas/StatementsOut"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "stale",
+              "unavailable",
+              "not_configured",
+              "not_applicable",
+              "not_available"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "cik",
+          "period_type",
+          "as_of",
+          "status",
+          "message",
+          "mapping_version",
+          "formula_version",
+          "periods",
+          "statements",
+          "metrics",
+          "sources"
+        ],
+        "title": "FundamentalsResponse",
+        "type": "object"
+      },
+      "FundamentalsSyncIn": {
+        "properties": {
+          "tickers": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 25,
+            "minItems": 1,
+            "title": "Tickers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "tickers"
+        ],
+        "title": "FundamentalsSyncIn",
+        "type": "object"
+      },
+      "FundamentalsSyncResult": {
+        "properties": {
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "status",
+          "message"
+        ],
+        "title": "FundamentalsSyncResult",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -800,6 +1104,42 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "LineItemOut": {
+        "properties": {
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/CellOut"
+            },
+            "title": "Cells",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "unit": {
+            "enum": [
+              "USD",
+              "USD/shares",
+              "shares"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "unit",
+          "cells"
+        ],
+        "title": "LineItemOut",
         "type": "object"
       },
       "ListingOut": {
@@ -932,6 +1272,208 @@
           "sources"
         ],
         "title": "MarketBarsResponse",
+        "type": "object"
+      },
+      "MetricPointOut": {
+        "properties": {
+          "period_key": {
+            "title": "Period Key",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period_key",
+          "value"
+        ],
+        "title": "MetricPointOut",
+        "type": "object"
+      },
+      "MetricSeriesOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "formula": {
+            "title": "Formula",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "unit": {
+            "enum": [
+              "percent",
+              "ratio",
+              "currency",
+              "shares",
+              "per_share"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/MetricPointOut"
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "category",
+          "unit",
+          "formula",
+          "values"
+        ],
+        "title": "MetricSeriesOut",
+        "type": "object"
+      },
+      "PeerRow": {
+        "properties": {
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "is_subject": {
+            "title": "Is Subject",
+            "type": "boolean"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Metrics",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sic_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sic Code"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "name",
+          "sic_code",
+          "industry",
+          "is_subject",
+          "metrics"
+        ],
+        "title": "PeerRow",
+        "type": "object"
+      },
+      "PeersResponse": {
+        "properties": {
+          "basis": {
+            "title": "Basis",
+            "type": "string"
+          },
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PeerRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "basis",
+          "columns",
+          "rows"
+        ],
+        "title": "PeersResponse",
+        "type": "object"
+      },
+      "PeriodOut": {
+        "properties": {
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "fiscal_quarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscal Quarter"
+          },
+          "fiscal_year": {
+            "title": "Fiscal Year",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "fiscal_year",
+          "fiscal_quarter",
+          "start",
+          "end"
+        ],
+        "title": "PeriodOut",
         "type": "object"
       },
       "PriceSummary": {
@@ -1219,6 +1761,224 @@
         "title": "RegisterIn",
         "type": "object"
       },
+      "ScreenMetricOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "price_based": {
+            "title": "Price Based",
+            "type": "boolean"
+          },
+          "unit": {
+            "enum": [
+              "percent",
+              "ratio",
+              "currency",
+              "multiple"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "category",
+          "unit",
+          "description",
+          "price_based"
+        ],
+        "title": "ScreenMetricOut",
+        "type": "object"
+      },
+      "ScreenRequest": {
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 15,
+            "title": "Columns",
+            "type": "array"
+          },
+          "filters": {
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            },
+            "maxItems": 12,
+            "title": "Filters",
+            "type": "array"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "sort_by": {
+            "default": "market_cap",
+            "title": "Sort By",
+            "type": "string"
+          },
+          "sort_dir": {
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "title": "Sort Dir",
+            "type": "string"
+          }
+        },
+        "title": "ScreenRequest",
+        "type": "object"
+      },
+      "ScreenResponse": {
+        "properties": {
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "universe": {
+            "title": "Universe",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "columns",
+          "rows",
+          "universe"
+        ],
+        "title": "ScreenResponse",
+        "type": "object"
+      },
+      "ScreenRow": {
+        "properties": {
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Metrics",
+            "type": "object"
+          },
+          "metrics_as_of": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Metrics As Of",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "name",
+          "exchange",
+          "sector",
+          "industry",
+          "metrics",
+          "metrics_as_of"
+        ],
+        "title": "ScreenRow",
+        "type": "object"
+      },
       "SessionOut": {
         "properties": {
           "auth_method": {
@@ -1245,6 +2005,86 @@
           "auth_method"
         ],
         "title": "SessionOut",
+        "type": "object"
+      },
+      "SnapshotMetricOut": {
+        "properties": {
+          "available_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available Date"
+          },
+          "basis": {
+            "title": "Basis",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "price_based": {
+            "title": "Price Based",
+            "type": "boolean"
+          },
+          "unit": {
+            "enum": [
+              "percent",
+              "ratio",
+              "currency",
+              "multiple"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "category",
+          "unit",
+          "description",
+          "value",
+          "basis",
+          "period_end",
+          "available_date",
+          "price_based"
+        ],
+        "title": "SnapshotMetricOut",
         "type": "object"
       },
       "SourceRef": {
@@ -1292,6 +2132,38 @@
           "license_note"
         ],
         "title": "SourceRef",
+        "type": "object"
+      },
+      "StatementsOut": {
+        "properties": {
+          "balance": {
+            "items": {
+              "$ref": "#/components/schemas/LineItemOut"
+            },
+            "title": "Balance",
+            "type": "array"
+          },
+          "cash_flow": {
+            "items": {
+              "$ref": "#/components/schemas/LineItemOut"
+            },
+            "title": "Cash Flow",
+            "type": "array"
+          },
+          "income": {
+            "items": {
+              "$ref": "#/components/schemas/LineItemOut"
+            },
+            "title": "Income",
+            "type": "array"
+          }
+        },
+        "required": [
+          "income",
+          "balance",
+          "cash_flow"
+        ],
+        "title": "StatementsOut",
         "type": "object"
       },
       "SystemStatus": {
@@ -1549,6 +2421,51 @@
           }
         },
         "summary": "Audit Events",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/ingestion/fundamentals": {
+      "post": {
+        "operationId": "trigger_fundamentals_sync_api_v1_admin_ingestion_fundamentals_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundamentalsSyncIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FundamentalsSyncResult"
+                  },
+                  "title": "Response Trigger Fundamentals Sync Api V1 Admin Ingestion Fundamentals Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Trigger Fundamentals Sync",
         "tags": [
           "admin"
         ]
@@ -1968,6 +2885,207 @@
         ]
       }
     },
+    "/api/v1/companies/{ticker}/fundamentals": {
+      "get": {
+        "operationId": "fundamentals_api_v1_companies__ticker__fundamentals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "required": false,
+            "schema": {
+              "default": "annual",
+              "enum": [
+                "annual",
+                "quarterly"
+              ],
+              "title": "Period",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only data public on or before",
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only data public on or before",
+              "title": "As Of"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 40,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FundamentalsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Fundamentals",
+        "tags": [
+          "fundamentals"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/metrics": {
+      "get": {
+        "operationId": "latest_metrics_api_v1_companies__ticker__metrics_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyMetricsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest Metrics",
+        "tags": [
+          "fundamentals"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/peers": {
+      "get": {
+        "operationId": "peers_api_v1_companies__ticker__peers_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated extra peers",
+            "in": "query",
+            "name": "tickers",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated extra peers",
+              "title": "Tickers"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 25,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeersResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Peers",
+        "tags": [
+          "fundamentals"
+        ]
+      }
+    },
     "/api/v1/market-data/{ticker}/bars": {
       "get": {
         "operationId": "daily_bars_api_v1_market_data__ticker__bars_get",
@@ -2038,6 +3156,97 @@
         "summary": "Daily Bars",
         "tags": [
           "market-data"
+        ]
+      }
+    },
+    "/api/v1/screener": {
+      "post": {
+        "operationId": "screen_api_v1_screener_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Screen",
+        "tags": [
+          "screener"
+        ]
+      }
+    },
+    "/api/v1/screener/metrics": {
+      "get": {
+        "operationId": "metric_catalog_api_v1_screener_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScreenMetricOut"
+                  },
+                  "title": "Response Metric Catalog Api V1 Screener Metrics Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metric Catalog",
+        "tags": [
+          "screener"
+        ]
+      }
+    },
+    "/api/v1/screener/sectors": {
+      "get": {
+        "operationId": "sectors_api_v1_screener_sectors_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Sectors Api V1 Screener Sectors Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Sectors",
+        "tags": [
+          "screener"
         ]
       }
     },

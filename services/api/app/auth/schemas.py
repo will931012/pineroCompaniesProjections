@@ -27,6 +27,8 @@ class AuthConfigOut(BaseModel):
     password_login: bool
     registration: bool
     oidc: bool
+    # Sign-in is skipped; the session endpoint signs visitors in as the local admin.
+    auth_disabled: bool
 
 
 class LoginIn(BaseModel):

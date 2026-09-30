@@ -1,4 +1,5 @@
 from app.db.models.audit import AuditEvent
+from app.db.models.fundamentals import CompanyMetric, FinancialFact
 from app.db.models.identity import ROLES, User, UserIdentity, UserSession
 from app.db.models.market import DailyPrice
 from app.db.models.provenance import ProviderFetch
@@ -9,7 +10,9 @@ __all__ = [
     "ROLES",
     "AuditEvent",
     "Company",
+    "CompanyMetric",
     "DailyPrice",
+    "FinancialFact",
     "ProviderFetch",
     "Security",
     "User",

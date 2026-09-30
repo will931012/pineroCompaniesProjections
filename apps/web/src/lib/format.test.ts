@@ -4,7 +4,9 @@ import {
   formatFiscalYearEnd,
   formatPercent,
   formatPrice,
+  formatCompact,
   formatSignedNumber,
+  formatValue,
   shiftIsoDate,
 } from "./format";
 
@@ -41,5 +43,27 @@ describe("dates", () => {
     expect(formatFiscalYearEnd("0926")).toBe("Sep 26");
     expect(formatFiscalYearEnd("1331")).toBe("—");
     expect(formatFiscalYearEnd(null)).toBe("—");
+  });
+});
+
+describe("formatValue", () => {
+  it("formats by unit", () => {
+    expect(formatValue(0.1534, "percent")).toBe("15.3%");
+    expect(formatValue(1.5, "ratio")).toBe("1.50");
+    expect(formatValue(18.25, "multiple")).toBe("18.3×");
+    expect(formatValue(4.2e9, "USD")).toBe("$4.20B");
+    expect(formatValue(-1.5e6, "currency")).toBe("−$1.50M");
+    expect(formatValue(2.5, "USD/shares")).toBe("$2.50");
+    expect(formatValue(15.2e9, "shares")).toBe("15.20B");
+  });
+
+  it("never invents a value", () => {
+    expect(formatValue(null, "percent")).toBe("—");
+    expect(formatValue(Number.NaN, "USD")).toBe("—");
+  });
+
+  it("compacts small numbers without suffixes", () => {
+    expect(formatCompact(950)).toBe("950");
+    expect(formatCompact(12.345)).toBe("12.35");
   });
 });

@@ -199,7 +199,34 @@ def test_auth_config_reports_enabled_methods(app_client: TestClient) -> None:
         "password_login": True,
         "registration": True,
         "oidc": False,
+        "auth_disabled": False,
     }
+
+
+def test_disabled_auth_signs_visitors_in_as_the_local_admin(
+    app_client: TestClient,
+    override,  # type: ignore[no-untyped-def]
+    db: Session,
+) -> None:
+    override(get_settings, lambda: Settings(auth_disabled=True))
+
+    session = app_client.get("/api/v1/auth/session")
+
+    assert session.status_code == 200
+    body = session.json()
+    assert (body["user"]["role"], body["auth_method"]) == ("admin", "auth_disabled")
+    # A real session: the cookie is set and CSRF is still enforced on writes.
+    assert app_client.get("/api/v1/auth/session").json()["csrf_token"] == body["csrf_token"]
+    assert app_client.post("/api/v1/watchlists", json={"name": "x"}).status_code == 403
+    created = app_client.post(
+        "/api/v1/watchlists", json={"name": "x"}, headers={"X-CSRF-Token": body["csrf_token"]}
+    )
+    assert created.status_code == 201
+    assert db.scalar(select(AuditEvent.action)) == "auth.auto_login"
+
+
+def test_auth_stays_required_by_default(app_client: TestClient) -> None:
+    assert app_client.get("/api/v1/auth/session").status_code == 401
 
 
 def test_timestamps_are_returned_in_utc(analyst: LoggedIn) -> None:

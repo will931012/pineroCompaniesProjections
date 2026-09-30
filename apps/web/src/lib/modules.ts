@@ -13,12 +13,20 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+/** The latest completed roadmap phase. Modules and tabs at or below it are live. */
+export const CURRENT_PHASE = 2;
+export const CURRENT_PHASE_NAME = "Fundamentals";
+
+export function isLive(phase: number): boolean {
+  return phase <= CURRENT_PHASE;
+}
+
 export type WorkspaceModule = {
   slug: string;
   href: string;
   label: string;
   icon: LucideIcon;
-  /** Roadmap phase that delivers the module. Phase 1 modules are live. */
+  /** Roadmap phase that delivers the module. */
   phase: number;
   summary: string;
   planned: string[];
@@ -54,9 +62,8 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "screener", href: "/screener", label: "Screener", icon: ListFilter, phase: 2,
-    summary: "Filter companies on fundamentals, valuation, momentum, and model outputs.",
-    planned: ["Fundamental filters (growth, margins, ROIC, leverage)",
-      "Valuation filters (Phase 5)", "Model-probability filters (Phase 6)"],
+    summary: "Filter companies on fundamentals, valuation multiples, and momentum.",
+    planned: [],
   },
   {
     slug: "models", href: "/models", label: "Models", icon: Sigma, phase: 6,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { DailyBar } from "@/lib/api/endpoints";
-import { COMPANY_TABS, MODULES } from "@/lib/modules";
+import { COMPANY_TABS, MODULES, isLive } from "@/lib/modules";
 import { toCandles } from "./PriceChart";
 
 const bar = (overrides: Partial<DailyBar> = {}): DailyBar => ({
@@ -34,7 +34,7 @@ describe("module registry", () => {
   });
 
   it("describes every planned module", () => {
-    for (const workspaceModule of MODULES.filter((m) => m.phase > 1)) {
+    for (const workspaceModule of MODULES.filter((m) => !isLive(m.phase))) {
       expect(workspaceModule.planned.length).toBeGreaterThan(0);
     }
   });

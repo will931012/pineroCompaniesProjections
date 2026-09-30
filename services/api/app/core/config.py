@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     session_idle_ttl_minutes: int = 60
     auth_password_login_enabled: bool = True
     auth_allow_registration: bool = False
+    # Temporary convenience: skip sign-in and treat every visitor as a built-in local admin.
+    # Anyone who can reach the app gets full access, so never enable it on a shared URL.
+    auth_disabled: bool = False
     auth_secret: SecretStr | None = None
     oidc_issuer_url: str | None = None
     oidc_client_id: str | None = None
@@ -49,7 +52,9 @@ class Settings(BaseSettings):
     # https://www.sec.gov/os/accessing-edgar-data
     sec_user_agent: str | None = None
     sec_profile_ttl_hours: int = 168
-    sec_timeout_seconds: float = 10.0
+    # companyfacts responses are several megabytes for large filers.
+    sec_timeout_seconds: float = 30.0
+    fundamentals_ttl_hours: int = 24
 
     # Market data
     market_data_provider: str | None = None

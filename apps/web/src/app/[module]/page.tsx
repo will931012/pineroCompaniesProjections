@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { PageHeading } from "@/components/ui";
-import { MODULES, moduleBySlug } from "@/lib/modules";
+import { MODULES, isLive, moduleBySlug } from "@/lib/modules";
 
 export function generateStaticParams() {
-  return MODULES.filter((m) => m.phase > 1).map((m) => ({ module: m.slug }));
+  return MODULES.filter((m) => !isLive(m.phase)).map((m) => ({ module: m.slug }));
 }
 
 export const dynamicParams = false;
@@ -11,7 +11,7 @@ export const dynamicParams = false;
 export default async function PlannedModulePage({ params }: PageProps<"/[module]">) {
   const { module: slug } = await params;
   const workspaceModule = moduleBySlug(slug);
-  if (!workspaceModule || workspaceModule.phase === 1) notFound();
+  if (!workspaceModule || isLive(workspaceModule.phase)) notFound();
   const Icon = workspaceModule.icon;
 
   return (

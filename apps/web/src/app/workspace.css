@@ -904,3 +904,279 @@
     height: 260px;
   }
 }
+
+/* Fundamentals: company tabs, statements, charts, key metrics, screener */
+button.company-tab {
+  background: transparent;
+  border-width: 0 0 2px;
+  cursor: pointer;
+  padding: 0;
+}
+
+button.company-tab:hover {
+  color: #374d3a;
+}
+
+button.company-tab:focus-visible {
+  outline: 2px solid #829d77;
+  outline-offset: -2px;
+}
+
+.company-tab-body,
+.financials {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  min-width: 0;
+}
+
+.financials.is-refetching > *,
+.panel.is-refetching {
+  opacity: 0.6;
+  transition: opacity 120ms;
+}
+
+.as-of-control {
+  align-items: center;
+  color: #6c786f;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.as-of-control input,
+.screener-form select,
+.screener-form input {
+  background: #fbfcfa;
+  border: 1px solid #dce3dc;
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  min-height: 30px;
+  padding: 0 8px;
+}
+
+.as-of-control input:focus,
+.screener-form select:focus,
+.screener-form input:focus {
+  border-color: #829d77;
+  box-shadow: 0 0 0 3px rgba(127, 154, 106, 0.14);
+  outline: 0;
+}
+
+.chart-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.column-chart {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  margin: 0;
+  padding: 14px 14px 8px;
+}
+
+.column-chart figcaption {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-bottom: 6px;
+}
+
+.column-chart figcaption span {
+  color: #829087;
+  flex: 1 0 100%;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.column-chart figcaption strong {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.column-chart figcaption small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.column-chart svg {
+  display: block;
+  height: auto;
+  overflow: visible;
+  width: 100%;
+}
+
+.column-chart .chart-gridline {
+  stroke: #eef2ed;
+  stroke-width: 1;
+}
+
+.column-chart .chart-baseline {
+  stroke: #c9d2ca;
+  stroke-width: 1;
+}
+
+.column-chart .chart-tick {
+  fill: #829087;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.column-chart .chart-hit {
+  cursor: default;
+  fill: transparent;
+  outline: none;
+}
+
+.column-chart .chart-hit:focus-visible {
+  stroke: #829d77;
+  stroke-width: 1.5;
+}
+
+.statement-table td:first-child {
+  color: #2d3f33;
+  min-width: 190px;
+}
+
+.statement-table td.derived {
+  color: #6c786f;
+  font-style: italic;
+}
+
+.statement-table th.num,
+.statement-table td.num {
+  padding-left: 12px;
+  white-space: nowrap;
+}
+
+.data-table .table-group th {
+  background: #f7f9f6;
+  color: #5d6b61;
+  padding-left: 6px;
+  padding-top: 12px;
+}
+
+.data-table tr.row-subject td {
+  background: #f4f8ec;
+  font-weight: 600;
+}
+
+.data-table td a {
+  color: #22382c;
+  font-weight: 600;
+}
+
+.data-table td a:hover {
+  text-decoration: underline;
+}
+
+.metric-list {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+}
+
+.metric-group .subheading {
+  margin-top: 10px;
+}
+
+.metric-row {
+  align-items: baseline;
+  border-bottom: 1px solid #f0f3ef;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.metric-row dt {
+  color: #5d6b61;
+  font-size: 12px;
+}
+
+.metric-row dd {
+  color: #22382c;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  margin: 0;
+  text-align: right;
+}
+
+.metric-row dd small {
+  color: #9aa49d;
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.screener-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.screener-filter {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+.screener-options {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.screener-options .button-link {
+  align-items: center;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 4px;
+}
+
+.screener-options .button-primary {
+  margin-left: auto;
+}
+
+.pager {
+  align-items: center;
+  color: #6c786f;
+  display: flex;
+  font-size: 12px;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+@media (max-width: 760px) {
+  .financials .panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .screener-filter {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .screener-filter select {
+    grid-column: 1 / -1;
+  }
+
+  .screener-options .button-primary {
+    margin-left: 0;
+    width: 100%;
+  }
+}

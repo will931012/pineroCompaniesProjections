@@ -8,6 +8,8 @@ https://www.sec.gov/os/accessing-edgar-data. EDGAR data is public; no API key ex
 import threading
 import time
 from dataclasses import dataclass
+from datetime import date
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 import httpx
@@ -18,6 +20,7 @@ PROVIDER = "sec_edgar"
 LICENSE_NOTE = "U.S. SEC EDGAR public data; subject to SEC fair-access policy (<=10 req/s)."
 TICKERS_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
+COMPANY_FACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
 _MIN_INTERVAL_SECONDS = 0.125
 
 
@@ -47,6 +50,23 @@ class SubmissionProfile:
     former_names: list[dict[str, Any]]
     tickers: list[str]
     exchanges: list[str | None]
+
+
+@dataclass(frozen=True)
+class FactObservation:
+    """A distinct XBRL value, dated by the earliest filing that made it public."""
+
+    taxonomy: str
+    concept: str
+    unit: str
+    period_start: date | None
+    period_end: date
+    value: Decimal
+    fiscal_year: int | None
+    fiscal_period: str | None
+    form: str
+    accession: str
+    filed_date: date
 
 
 class SecEdgarClient:
@@ -179,6 +199,90 @@ class SecEdgarClient:
                 "provider_bad_response", "Unexpected SEC submissions shape.", meta=meta
             )
         return FetchResult(parse_submission_profile(payload), meta)
+
+    def fetch_company_facts(
+        self,
+        cik: int,
+        tracked: dict[tuple[str, str], str],
+        forms: frozenset[str],
+    ) -> FetchResult[list[FactObservation]]:
+        """Fetch XBRL company facts, keeping only `tracked` (taxonomy, concept) -> unit."""
+
+        url = COMPANY_FACTS_URL.format(cik=cik)
+        meta = FetchMeta(PROVIDER, "companyfacts", url, LICENSE_NOTE, subject=f"CIK{cik:010d}")
+        payload = self._get_json(meta)
+        if not isinstance(payload, dict) or not isinstance(payload.get("facts"), dict):
+            raise ProviderError(
+                "provider_bad_response", "Unexpected SEC companyfacts shape.", meta=meta
+            )
+        observations, rejected = parse_company_facts(payload, tracked, forms)
+        return FetchResult(observations, meta, rejected)
+
+
+def _parse_date(value: Any) -> date | None:
+    try:
+        return date.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_company_facts(
+    payload: dict[str, Any],
+    tracked: dict[tuple[str, str], str],
+    forms: frozenset[str],
+) -> tuple[list[FactObservation], int]:
+    """Flatten companyfacts into distinct observations.
+
+    The same value is repeated in every later filing that shows it as a comparative;
+    only the earliest filing is kept, because that is when it became public. A changed
+    value for the same period (a restatement) is kept as a separate observation.
+    """
+
+    earliest: dict[tuple[str, str, str, date | None, date, Decimal], FactObservation] = {}
+    rejected = 0
+    for (taxonomy, concept), unit in tracked.items():
+        concept_data = (payload["facts"].get(taxonomy) or {}).get(concept) or {}
+        for entry in (concept_data.get("units") or {}).get(unit) or []:
+            form = str(entry.get("form") or "")
+            if form not in forms:
+                continue
+            end = _parse_date(entry.get("end"))
+            filed = _parse_date(entry.get("filed"))
+            start = _parse_date(entry.get("start")) if entry.get("start") else None
+            accession = str(entry.get("accn") or "")
+            try:
+                value = Decimal(str(entry.get("val")))
+            except (InvalidOperation, ValueError):
+                value = Decimal("NaN")
+            if (
+                end is None
+                or filed is None
+                or not accession
+                or not value.is_finite()
+                or (start is not None and start > end)
+                or filed < end
+            ):
+                rejected += 1
+                continue
+            fy = entry.get("fy")
+            observation = FactObservation(
+                taxonomy=taxonomy,
+                concept=concept,
+                unit=unit,
+                period_start=start,
+                period_end=end,
+                value=value,
+                fiscal_year=int(fy) if isinstance(fy, int) else None,
+                fiscal_period=str(entry["fp"])[:4] if entry.get("fp") else None,
+                form=form[:12],
+                accession=accession[:25],
+                filed_date=filed,
+            )
+            key = (taxonomy, concept, unit, start, end, value)
+            current = earliest.get(key)
+            if current is None or (filed, accession) < (current.filed_date, current.accession):
+                earliest[key] = observation
+    return list(earliest.values()), rejected
 
 
 def _clean(value: Any, max_length: int) -> str | None:

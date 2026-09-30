@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type FormEvent, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { ErrorNotice, InlineState, PageHeading, Panel, StatusPill } from "@/components/ui";
 import { api, type Role } from "@/lib/api/endpoints";
@@ -25,11 +26,58 @@ export default function AdminPage() {
         subtitle="Users and roles, data ingestion, provider health, and the audit trail." />
       <div className="admin-grid">
         <Ingestion />
+        <FundamentalsIngestion />
         <Users currentUserId={session?.user.id} />
         <ProviderLog />
         <AuditLog />
       </div>
     </>
+  );
+}
+
+function FundamentalsIngestion() {
+  const queryClient = useQueryClient();
+  const [tickers, setTickers] = useState("");
+  const sync = useMutation({
+    mutationFn: api.syncFundamentals,
+    onSettled: () => queryClient.invalidateQueries(),
+  });
+  const list = tickers.split(/[\s,]+/).map((t) => t.trim().toUpperCase()).filter(Boolean);
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (list.length) sync.mutate(list);
+  }
+
+  return (
+    <Panel kicker="INGESTION" title="SEC financial data">
+      <form className="inline-form" onSubmit={submit}>
+        <input aria-label="Tickers" placeholder="AAPL, MSFT, NVDA" value={tickers}
+          onChange={(event) => setTickers(event.target.value)} />
+        <button className="button-primary" disabled={sync.isPending || list.length === 0 || list.length > 25} type="submit">
+          <RefreshCw size={14} className={sync.isPending ? "spin" : ""} />
+          {sync.isPending ? "Loading…" : "Load"}
+        </button>
+      </form>
+      <p className="panel-copy">
+        Fetches XBRL <code>companyfacts</code> for up to 25 tickers, ignoring the refresh interval, and recomputes
+        their metrics so they appear in peers and the screener. For the whole directory use
+        <code>python -m app.cli sync-fundamentals --all-active</code>.
+      </p>
+      {sync.isError && <ErrorNotice error={sync.error} title="Load failed" />}
+      {sync.data && (
+        <ul className="availability">
+          {sync.data.map((row) => (
+            <li key={row.ticker} title={row.message ?? undefined}>
+              <span>{row.ticker}</span>
+              <StatusPill tone={row.status === "current" ? "ok" : row.status === "not_available" ? "off" : "warn"}>
+                {row.status.replaceAll("_", " ").toUpperCase()}
+              </StatusPill>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   );
 }
 

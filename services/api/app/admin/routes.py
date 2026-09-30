@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from app.audit.service import record_audit_event
@@ -12,8 +12,11 @@ from app.auth.schemas import Role
 from app.auth.service import count_admins
 from app.auth.sessions import revoke_all_sessions
 from app.companies.routes import SecClient
+from app.companies.service import resolve_security
+from app.core.config import get_settings
 from app.core.errors import ApiError
 from app.db.models import AuditEvent, ProviderFetch, User
+from app.fundamentals.service import sync_company
 from app.ingestion.sec_directory import sync_sec_directory
 from app.providers.base import ProviderError
 
@@ -142,6 +145,37 @@ def trigger_sec_directory_sync(
     )
     db.commit()
     return summary.as_dict()
+
+
+class FundamentalsSyncIn(BaseModel):
+    tickers: list[str] = Field(min_length=1, max_length=25)
+
+
+class FundamentalsSyncResult(BaseModel):
+    ticker: str
+    status: str
+    message: str | None
+
+
+@router.post("/ingestion/fundamentals", response_model=list[FundamentalsSyncResult])
+def trigger_fundamentals_sync(
+    body: FundamentalsSyncIn, admin: AdminUser, db: DbSession, sec: SecClient, request: Request
+) -> list[FundamentalsSyncResult]:
+    results = []
+    for ticker in dict.fromkeys(t.strip().upper() for t in body.tickers if t.strip()):
+        company = resolve_security(db, ticker).company
+        status, message = sync_company(db, company, sec, get_settings(), force=True)
+        results.append(FundamentalsSyncResult(ticker=ticker, status=status, message=message))
+    record_audit_event(
+        db,
+        action="admin.fundamentals_sync",
+        outcome="success",
+        actor_user_id=admin.id,
+        ip_address=client_ip(request),
+        details={r.ticker: r.status for r in results},
+    )
+    db.commit()
+    return results
 
 
 @router.get("/provider-fetches", response_model=list[ProviderFetchOut])

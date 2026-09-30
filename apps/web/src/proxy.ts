@@ -6,6 +6,8 @@ const SESSION_COOKIE = "pinero_session";
 const PUBLIC_PATHS = ["/login", "/register"];
 
 export function proxy(request: NextRequest) {
+  // Matches the API's AUTH_DISABLED: the app signs visitors in itself, so never send them to /login.
+  if (process.env.AUTH_DISABLED === "true") return NextResponse.next();
   const { pathname, search } = request.nextUrl;
   const isPublic = PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
   if (isPublic || request.cookies.has(SESSION_COOKIE)) return NextResponse.next();
