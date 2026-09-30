@@ -17,6 +17,7 @@ from app.core.config import Settings, get_settings
 from app.core.errors import error_body, register_error_handlers
 from app.core.logging import configure_logging, set_request_id
 from app.core.metrics import HTTP_REQUEST_DURATION
+from app.filings.routes import router as filings_router
 from app.fundamentals.routes import router as fundamentals_router
 from app.market_data.routes import router as market_data_router
 from app.screener.routes import router as screener_router
@@ -137,6 +138,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     for router in (
         auth_router,
         companies_router,
+        filings_router,
         fundamentals_router,
         market_data_router,
         screener_router,

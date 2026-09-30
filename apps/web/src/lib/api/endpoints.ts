@@ -26,6 +26,19 @@ export type ScreenMetric = Schemas["ScreenMetricOut"];
 export type ScreenRequest = Schemas["ScreenRequest"];
 export type ScreenResponse = Schemas["ScreenResponse"];
 export type ScreenFilter = Schemas["Filter"];
+export type Filing = Schemas["FilingOut"];
+export type FilingsResponse = Schemas["FilingsResponse"];
+export type FilingDetail = Schemas["FilingDetail"];
+export type FilingSection = Schemas["SectionOut"];
+export type SectionDiff = Schemas["SectionDiffOut"];
+export type DiffBlock = Schemas["DiffBlockOut"];
+export type IndexDocumentsOut = Schemas["IndexDocumentsOut"];
+export type SearchResponse = Schemas["SearchResponse"];
+export type SearchHit = Schemas["SearchHitOut"];
+export type InsidersResponse = Schemas["InsidersResponse"];
+export type InsiderTransaction = Schemas["InsiderTransactionOut"];
+
+const companyPath = (ticker: string) => `/companies/${encodeURIComponent(ticker)}`;
 
 export const api = {
   authConfig: () => apiRequest<AuthConfig>("/auth/config"),
@@ -61,6 +74,27 @@ export const api = {
     apiRequest<Schemas["FundamentalsSyncResult"][]>("/admin/ingestion/fundamentals", {
       method: "POST",
       body: { tickers },
+    }),
+
+  filings: (ticker: string, forms: string, offset = 0, limit = 50) =>
+    apiRequest<FilingsResponse>(`${companyPath(ticker)}/filings`, {
+      query: { forms: forms || undefined, offset, limit },
+    }),
+  filing: (ticker: string, accession: string) =>
+    apiRequest<FilingDetail>(`${companyPath(ticker)}/filings/${encodeURIComponent(accession)}`),
+  filingDiff: (ticker: string, accession: string, section: string) =>
+    apiRequest<SectionDiff>(`${companyPath(ticker)}/filings/${encodeURIComponent(accession)}/diff`, {
+      query: { section },
+    }),
+  indexFilings: (ticker: string, body: Schemas["IndexDocumentsIn"]) =>
+    apiRequest<IndexDocumentsOut>(`${companyPath(ticker)}/filings/index`, { method: "POST", body }),
+  loadFilingHistory: (ticker: string) =>
+    apiRequest<Schemas["HistoryOut"]>(`${companyPath(ticker)}/filings/history`, { method: "POST" }),
+  insiders: (ticker: string, months: number, load: number) =>
+    apiRequest<InsidersResponse>(`${companyPath(ticker)}/insiders`, { query: { months, load } }),
+  searchFilings: (q: string, tickers?: string, forms?: string) =>
+    apiRequest<SearchResponse>("/search/filings", {
+      query: { q, tickers: tickers || undefined, forms: forms || undefined, limit: 20 },
     }),
 
   watchlists: () => apiRequest<Watchlist[]>("/watchlists"),

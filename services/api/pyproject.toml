@@ -13,8 +13,12 @@ dependencies = [
   "authlib>=1.4,<2",
   "email-validator>=2.2,<3",
   "fastapi>=0.115,<1",
+  # Local ONNX embeddings for filing search (no API key; ~200 MB with onnxruntime).
+  "fastembed>=0.5,<1",
   "httpx>=0.28,<1",
   "itsdangerous>=2.2,<3",
+  "lxml>=5.3,<7",
+  "pgvector>=0.3,<1",
   "prometheus-client>=0.21,<1",
   "psycopg[binary]>=3.2,<4",
   "pydantic-settings>=2.7,<3",
@@ -54,6 +58,8 @@ ignore = ["RUF001", "RUF002", "RUF003", "RUF012"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "S105", "S106"]
+# Raw EDGAR documents (HTML, XML) are kept verbatim; wrapping them would change the input.
+"tests/fixtures_*.py" = ["E501"]
 "app/**" = ["S101"]
 
 [tool.mypy]
@@ -67,5 +73,5 @@ check_untyped_defs = true
 no_implicit_optional = true
 
 [[tool.mypy.overrides]]
-module = ["authlib.*"]
+module = ["authlib.*", "fastembed.*", "lxml.*", "pgvector.*"]
 ignore_missing_imports = true

@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 
 /** The latest completed roadmap phase. Modules and tabs at or below it are live. */
-export const CURRENT_PHASE = 2;
-export const CURRENT_PHASE_NAME = "Fundamentals";
+export const CURRENT_PHASE = 3;
+export const CURRENT_PHASE_NAME = "SEC filings";
 
 export function isLive(phase: number): boolean {
   return phase <= CURRENT_PHASE;
@@ -117,7 +117,8 @@ export const COMPANY_TABS: { label: string; phase: number }[] = [
   { label: "News", phase: 4 },
   { label: "Technicals", phase: 6 },
   { label: "Quant", phase: 6 },
-  { label: "Ownership", phase: 3 },
+  // 13F institutional holdings were deferred from Phase 3 (they need CUSIP mapping).
+  { label: "Ownership", phase: 6 },
   { label: "Insiders", phase: 3 },
   { label: "Peers", phase: 2 },
   { label: "AI Research", phase: 8 },

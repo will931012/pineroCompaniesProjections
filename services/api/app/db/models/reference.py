@@ -52,6 +52,11 @@ class Company(TimestampMixin, Base):
         BigInteger, ForeignKey("provider_fetches.id", ondelete="SET NULL")
     )
     fundamentals_refreshed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    filings_refreshed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # True once the older submissions pages (beyond SEC's most recent ~1,000) are indexed.
+    filings_history_loaded: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
 
     securities: Mapped[list["Security"]] = relationship(back_populates="company")
 

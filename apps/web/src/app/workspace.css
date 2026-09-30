@@ -1180,3 +1180,371 @@ button.company-tab:focus-visible {
     width: 100%;
   }
 }
+
+/* SEC filings: search, filing list, viewer, section diff, insiders */
+.search-mode {
+  color: #829087;
+  display: block;
+  font-size: 11px;
+  margin-top: 12px;
+}
+
+.search-hits {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.search-hits li {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 11px 13px;
+}
+
+.search-hits a {
+  display: grid;
+  gap: 5px;
+}
+
+.search-hits a:hover .hit-cite {
+  text-decoration: underline;
+}
+
+.hit-cite {
+  color: #22382c;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.hit-snippet {
+  color: #3e4c42;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.hit-snippet mark,
+.filing-text .cited mark {
+  background: #eef4c6;
+  border-radius: 2px;
+  color: inherit;
+  padding: 0 1px;
+}
+
+.hit-why {
+  color: #9aa49d;
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.index-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.index-controls .button-secondary {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.index-controls small {
+  color: #6c786f;
+  font-size: 11px;
+}
+
+.form-filter {
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.filings-table td b {
+  color: #22382c;
+}
+
+.filing-links {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.filing-links a {
+  align-items: center;
+  color: #2d5a45;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 3px;
+}
+
+.filing-links a:hover {
+  text-decoration: underline;
+}
+
+.filing-layout {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  margin: 14px 0;
+}
+
+.filing-nav {
+  position: sticky;
+  top: 14px;
+}
+
+.filing-nav ul {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  list-style: none;
+  margin: 0;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.filing-nav button {
+  align-items: baseline;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: #4a584e;
+  display: flex;
+  font-size: 12px;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 7px 8px;
+  text-align: left;
+  width: 100%;
+}
+
+.filing-nav button:hover {
+  background: #f4f7f3;
+}
+
+.filing-nav button[aria-current="true"] {
+  background: var(--forest-soft);
+  color: #1e3a2b;
+  font-weight: 600;
+}
+
+.filing-nav button small {
+  color: #9aa49d;
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-nav-select {
+  display: none;
+}
+
+.filing-text {
+  padding: 21px 26px 24px;
+}
+
+.filing-text .panel-heading {
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.filing-text .panel-heading .button-secondary {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.filing-text > p {
+  color: #2d3a31;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 12px;
+  max-width: 78ch;
+  overflow-wrap: anywhere;
+}
+
+.filing-text > p.cited {
+  background: #f5f8e2;
+  border-left: 3px solid #b7c95a;
+  margin-left: -12px;
+  padding: 4px 8px 4px 9px;
+}
+
+.section-diff p {
+  border-left: 3px solid transparent;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 10px;
+  max-width: 80ch;
+  overflow-wrap: anywhere;
+  padding: 4px 10px;
+}
+
+.diff-summary {
+  color: #4a584e;
+  font-size: 12px;
+}
+
+.diff-same {
+  color: #6c786f;
+}
+
+.diff-added {
+  background: #edf5ec;
+  border-left-color: #4f8a5b !important;
+}
+
+.diff-removed {
+  background: #fbefe9;
+  border-left-color: #c9694a !important;
+  color: #7a4a39;
+}
+
+.diff-changed {
+  background: #f7f9ee;
+  border-left-color: #b7c95a !important;
+}
+
+.section-diff ins {
+  background: #d7ebd4;
+  text-decoration: none;
+}
+
+.section-diff del {
+  background: #f6ddd2;
+  color: #8a4a33;
+}
+
+.diff-tag {
+  color: #6c786f;
+  display: block;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.diff-count-added {
+  color: #2f6b3f;
+}
+
+.diff-count-removed {
+  color: #a4492c;
+}
+
+.diff-count-changed {
+  color: #5f6b1f;
+}
+
+.diff-collapsed {
+  background: #f6f8f5;
+  border: 1px dashed #d6ddd5;
+  border-radius: 6px;
+  color: #6c786f;
+  font-size: 12px;
+  margin: 0 0 10px;
+  padding: 6px 10px;
+}
+
+.insider-totals {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 14px;
+}
+
+.insider-total {
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: 7px;
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+}
+
+.insider-buy {
+  border-left-color: #4f8a5b;
+}
+
+.insider-sell {
+  border-left-color: #c9694a;
+}
+
+.insider-total span {
+  color: #829087;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.insider-total strong {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.insider-total small {
+  color: #6c786f;
+  font-size: 11px;
+}
+
+.insider-table .status-pill {
+  margin-top: 4px;
+}
+
+.data-table tr.row-buy td:first-child {
+  box-shadow: inset 3px 0 0 #4f8a5b;
+}
+
+.data-table tr.row-sell td:first-child {
+  box-shadow: inset 3px 0 0 #c9694a;
+}
+
+.data-table tr.row-buy td:first-child,
+.data-table tr.row-sell td:first-child {
+  padding-left: 8px;
+}
+
+@media (max-width: 900px) {
+  .filing-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filing-nav {
+    position: static;
+  }
+
+  .filing-nav ul {
+    display: none;
+  }
+
+  .filing-nav-select {
+    background: #fbfcfa;
+    border: 1px solid #dce3dc;
+    border-radius: 6px;
+    display: block;
+    font-size: 13px;
+    min-height: 36px;
+    padding: 0 8px;
+    width: 100%;
+  }
+
+  .filing-text {
+    padding: 16px;
+  }
+
+  .filing-text .panel-heading {
+    flex-direction: column;
+  }
+}

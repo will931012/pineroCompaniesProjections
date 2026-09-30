@@ -3,6 +3,8 @@
 python -m app.cli create-user --email you@example.com --name "You" --role admin
 python -m app.cli sync-sec-directory
 python -m app.cli sync-fundamentals --tickers AAPL,MSFT   (or --all-active; also loads SEC profiles)
+python -m app.cli sync-filings --tickers AAPL,MSFT [--forms 10-K,10-Q,8-K] [--limit 8]
+python -m app.cli prepare-embeddings   (downloads the embedding model; run at image build)
 python -m app.cli export-openapi ../../packages/types/openapi.json
 """
 
@@ -103,6 +105,64 @@ def _sync_fundamentals(args: argparse.Namespace) -> int:
     return 1 if failures and args.tickers else 0
 
 
+def _sync_filings(args: argparse.Namespace) -> int:
+    from app.companies.service import resolve_security
+    from app.db.session import get_sessionmaker
+    from app.filings.service import (
+        INSIDER_FORMS,
+        embed_missing,
+        load_filing_history,
+        load_pending,
+        refresh_filing_index,
+    )
+    from app.providers.embeddings import get_embedding_provider
+    from app.providers.sec_edgar import build_sec_client
+
+    settings = get_settings()
+    client = build_sec_client(settings.sec_user_agent, settings.sec_timeout_seconds)
+    if not client.configured:
+        print("SEC_USER_AGENT is not set.", file=sys.stderr)
+        return 1
+    embedder = get_embedding_provider(settings)
+    forms = [f.strip().upper() for f in args.forms.split(",") if f.strip()]
+    forms += [f"{f}/A" for f in forms]
+    failures = 0
+    with get_sessionmaker()() as db:
+        tickers = [t.strip() for t in args.tickers.split(",") if t.strip()]
+        for number, ticker in enumerate(tickers, start=1):
+            company = resolve_security(db, ticker).company
+            status, message = refresh_filing_index(db, company, client, settings, force=True)
+            if status != "current":
+                failures += 1
+                print(f"[{number}/{len(tickers)}] {ticker}: index {status} ({message})")
+                continue
+            if args.history:
+                load_filing_history(db, company, client)
+            documents = load_pending(db, company, client, forms, args.limit)
+            insiders = load_pending(db, company, client, INSIDER_FORMS, args.insiders)
+            embedded, remaining = (
+                embed_missing(db, company.id, embedder, 1_000_000) if embedder else (0, 0)
+            )
+            failures += documents.get("failed", 0) + insiders.get("failed", 0) + (remaining > 0)
+            print(
+                f"[{number}/{len(tickers)}] {ticker}: documents {documents} · Form 4 {insiders}"
+                f" · embedded {embedded} passages"
+            )
+    return 1 if failures else 0
+
+
+def _prepare_embeddings(_: argparse.Namespace) -> int:
+    from app.providers.embeddings import get_embedding_provider
+
+    provider = get_embedding_provider()
+    if provider is None:
+        print("EMBEDDING_PROVIDER is none; nothing to prepare.")
+        return 0
+    vector = provider.embed_query("warm-up")
+    print(f"{provider.name} ready ({len(vector)} dimensions)")
+    return 0 if len(vector) == provider.dimensions else 1
+
+
 def _export_openapi(args: argparse.Namespace) -> int:
     from app.main import app
 
@@ -136,6 +196,22 @@ def main(argv: list[str] | None = None) -> int:
     fundamentals.add_argument("--limit", type=int, default=100_000)
     fundamentals.add_argument("--force", action="store_true", help="Ignore the refresh TTL")
     fundamentals.set_defaults(handler=_sync_fundamentals)
+
+    filings = commands.add_parser(
+        "sync-filings",
+        help="Index SEC filings, extract and embed documents, and parse Form 4s.",
+    )
+    filings.add_argument("--tickers", required=True, help="Comma-separated tickers")
+    filings.add_argument("--forms", default="10-K,10-Q,8-K", help="Forms to load documents for")
+    filings.add_argument("--limit", type=int, default=8, help="Newest documents per company")
+    filings.add_argument("--insiders", type=int, default=40, help="Newest Form 4s per company")
+    filings.add_argument("--history", action="store_true", help="Also index older filings")
+    filings.set_defaults(handler=_sync_filings)
+
+    prepare = commands.add_parser(
+        "prepare-embeddings", help="Download and verify the embedding model."
+    )
+    prepare.set_defaults(handler=_prepare_embeddings)
 
     export = commands.add_parser("export-openapi", help="Write the OpenAPI contract to a file.")
     export.add_argument("path")

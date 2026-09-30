@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 2 (Fundamentals) complete. Last updated 2026-09-30.
+Status: Phase 3 (SEC filings and retrieval) complete. Last updated 2026-09-30.
 
 ## 1. Starting point (what existed)
 
@@ -51,9 +51,9 @@ extraction. Planned locations:
 |---|---|---|
 | market-data | `app/market_data`, `app/providers/market_data` | 1 ✔ |
 | fundamentals | `app/fundamentals`, `app/analytics/fundamentals.py`, `app/screener` (+ SEC XBRL companyfacts adapter) | 2 ✔ |
-| sec | `app/sec`, `app/providers/sec_edgar.py` (started) | 3 |
+| sec | `app/filings`, `app/providers/sec_edgar.py`, `app/analytics/text_diff.py` | 3 ✔ |
 | news | `app/news` + licensed feed adapters | 4 |
-| nlp | `app/nlp` (provider-neutral LLM port, RAG, citations) | 3–8 |
+| nlp | `app/providers/embeddings.py` (embedding port, 3 ✔), `app/nlp` (LLM port, RAG) | 3–8 |
 | valuation | `app/valuation` → `packages/financial-models` | 5 |
 | quant, ml | `app/quant` + top-level `ml/` (features, training, evaluation) | 6 |
 | backtesting | `app/backtesting` | 7 |
@@ -77,7 +77,7 @@ extraction. Planned locations:
 
 ## 3. Database schema
 
-Implemented (migrations `0001`–`0003`):
+Implemented (migrations `0001`–`0004`):
 
 | Table | Purpose / key constraints |
 |---|---|
@@ -93,10 +93,15 @@ Implemented (migrations `0001`–`0003`):
 | `financial_facts` | One row per distinct XBRL value, dated by the first filing that made it public (`filed_date`); unique (company, taxonomy, concept, unit, start, end, value) NULLS NOT DISTINCT; restatements are new rows; `fetch_id` |
 | `company_metrics` | PK (company, metric); latest screenable value with basis label, period end, availability date, price-derived flag, formula version |
 
-Statements are not stored: they are rebuilt from `financial_facts` for any as-of date.
+| `filings` | A company's EDGAR filing index: accession unique per company, form, filed date, acceptance time, period, primary document, 8-K items; document load status, extractor version, `index_fetch_id` / `document_fetch_id` |
+| `filing_sections` | A filing's items as plain text (10-K Item 1A, 10-Q Part II Item 1A, 8-K Item 2.02, …); unique (filing, key); SHA-256 of the text |
+| `filing_chunks` | Passages of 1,000–2,000 characters with offsets into their section; generated English `tsvector` (GIN) and a 384-dimension pgvector embedding (HNSW, cosine) with the model that produced it |
+| `insider_transactions` | Form 4 table rows as reported: owners (JSONB), roles, code, shares, price, acquired/disposed, holdings after, direct/indirect, 10b5-1 flag, derivative details |
 
-Planned tables by phase: `filings`,
-`filing_sections` (+ pgvector embeddings), `insider_transactions`, `institutional_holdings` (3);
+Statements are not stored: they are rebuilt from `financial_facts` for any as-of date. Filing
+text is stored; raw HTML is not (each filing links to its sec.gov original).
+
+Planned tables by phase: `institutional_holdings` (6, deferred from 3);
 `news`, `events`, `earnings`, `transcripts` (4); `valuations` (5); `macro_data`, `features`,
 `predictions`, `prediction_outcomes`, `model_versions` (6); `backtests` (7); `investment_theses` (8);
 `portfolios`, `positions` (9); `orders`, `trades` (10); `alerts` (4).
@@ -140,8 +145,15 @@ rejected count), `ProviderError` (stable `code`, retryable flag), and `record_fe
   plus `ProviderInfo` (name, license note, credential env var). `registry.market_data_status()`
   explains exactly what configuration is missing. Implemented: **Tiingo** (`TIINGO_API_KEY`).
   Tokens are sent as headers and never recorded.
-- **SEC EDGAR** — `SecEdgarClient.fetch_directory()` and `fetch_submission_profile(cik)`;
-  enforces SEC fair access (≤10 req/s, identifying `SEC_USER_AGENT`), retries 429/5xx with backoff.
+- **SEC EDGAR** — `SecEdgarClient.fetch_directory()`, `fetch_submissions(cik)` (profile +
+  recent filing index in one request), `fetch_submission_page(cik, name)` (older filings),
+  `fetch_company_facts(cik, …)`, `fetch_filing_document(cik, accession, name)`; enforces SEC
+  fair access (≤10 req/s, identifying `SEC_USER_AGENT`), retries 429/5xx with backoff, and
+  validates accession numbers and document names before building archive URLs.
+- **Embeddings** — `EmbeddingProvider` (`name`, `dimensions`, `embed_documents`, `embed_query`).
+  Implemented: `FastEmbedProvider`, an open model (BAAI/bge-small-en-v1.5) run locally through
+  ONNX Runtime; `EMBEDDING_PROVIDER=none` leaves search to full-text. Vectors record their model
+  and only the active model's vectors are searched.
 - **Caching rule for adjusted prices**: a cache hit requires every bar in the range to come from
   one fresh retrieval covering the range, so provider-adjusted values share one adjustment basis.
 - Future ports follow the same shape: `FundamentalsProvider`, `NewsProvider`, `MacroProvider`

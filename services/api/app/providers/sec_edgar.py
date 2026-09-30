@@ -5,10 +5,11 @@ identifies the requester with contact details. See
 https://www.sec.gov/os/accessing-edgar-data. EDGAR data is public; no API key exists.
 """
 
+import re
 import threading
 import time
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
@@ -21,7 +22,13 @@ LICENSE_NOTE = "U.S. SEC EDGAR public data; subject to SEC fair-access policy (<
 TICKERS_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 COMPANY_FACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
+ARCHIVE_URL = "https://www.sec.gov/Archives/edgar/data/{cik}/{folder}/{document}"
 _MIN_INTERVAL_SECONDS = 0.125
+
+ACCESSION = re.compile(r"\d{10}-\d{2}-\d{6}")
+# A single file name inside a filing folder; no path separators.
+DOCUMENT_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,199}")
+SUBMISSION_PAGE = re.compile(r"CIK\d{10}-submissions-\d{3}\.json")
 
 
 @dataclass(frozen=True)
@@ -69,6 +76,32 @@ class FactObservation:
     filed_date: date
 
 
+@dataclass(frozen=True)
+class FilingRecord:
+    """One row of a company's EDGAR filing index."""
+
+    accession: str
+    form: str
+    filed_date: date
+    accepted_at: datetime | None
+    report_date: date | None
+    primary_document: str | None
+    description: str | None
+    # 8-K item numbers, e.g. "2.02,9.01".
+    items: str | None
+    size: int | None
+    is_xbrl: bool
+    is_inline_xbrl: bool
+
+
+@dataclass(frozen=True)
+class Submissions:
+    profile: SubmissionProfile
+    filings: list[FilingRecord]
+    # Names of older filing pages (CIK##########-submissions-001.json, …).
+    older_pages: list[str]
+
+
 class SecEdgarClient:
     _lock = threading.Lock()
     _last_request = 0.0
@@ -89,7 +122,8 @@ class SecEdgarClient:
                 time.sleep(wait)
             SecEdgarClient._last_request = time.monotonic()
 
-    def _get_json(self, meta: FetchMeta) -> Any:
+    def _fetch(self, meta: FetchMeta) -> httpx.Response:
+        """GET with throttling and retries; raises ProviderError for any non-2xx outcome."""
         if not self.configured:
             raise ProviderError(
                 "sec_user_agent_missing",
@@ -147,6 +181,10 @@ class SecEdgarClient:
                 retryable=True,
                 meta=meta,
             )
+        return response
+
+    def _get_json(self, meta: FetchMeta) -> Any:
+        response = self._fetch(meta)
         try:
             return response.json()
         except ValueError as exc:
@@ -190,7 +228,8 @@ class SecEdgarClient:
             )
         return FetchResult(entries, meta, rejected)
 
-    def fetch_submission_profile(self, cik: int) -> FetchResult[SubmissionProfile]:
+    def fetch_submissions(self, cik: int) -> FetchResult[Submissions]:
+        """Company profile plus its most recent filings (SEC lists up to about 1,000)."""
         url = SUBMISSIONS_URL.format(cik=cik)
         meta = FetchMeta(PROVIDER, "submissions", url, LICENSE_NOTE, subject=f"CIK{cik:010d}")
         payload = self._get_json(meta)
@@ -198,7 +237,45 @@ class SecEdgarClient:
             raise ProviderError(
                 "provider_bad_response", "Unexpected SEC submissions shape.", meta=meta
             )
-        return FetchResult(parse_submission_profile(payload), meta)
+        filings_block = payload.get("filings") or {}
+        filings, rejected = parse_filings(filings_block.get("recent") or {})
+        older = [
+            str(page["name"])
+            for page in filings_block.get("files") or []
+            if isinstance(page, dict) and page.get("name")
+        ]
+        return FetchResult(
+            Submissions(parse_submission_profile(payload), filings, older), meta, rejected
+        )
+
+    def fetch_submission_profile(self, cik: int) -> FetchResult[SubmissionProfile]:
+        result = self.fetch_submissions(cik)
+        return FetchResult(result.data.profile, result.meta)
+
+    def fetch_submission_page(self, cik: int, name: str) -> FetchResult[list[FilingRecord]]:
+        """An older-filings page listed in submissions `filings.files`."""
+        if not SUBMISSION_PAGE.fullmatch(name):
+            raise ProviderError("provider_bad_request", f"Unexpected submissions page {name!r}.")
+        url = f"https://data.sec.gov/submissions/{name}"
+        meta = FetchMeta(PROVIDER, "submissions_page", url, LICENSE_NOTE, subject=f"CIK{cik:010d}")
+        payload = self._get_json(meta)
+        if not isinstance(payload, dict):
+            raise ProviderError(
+                "provider_bad_response", "Unexpected SEC submissions page shape.", meta=meta
+            )
+        filings, rejected = parse_filings(payload)
+        return FetchResult(filings, meta, rejected)
+
+    def fetch_filing_document(self, cik: int, accession: str, document: str) -> FetchResult[bytes]:
+        """A document from a filing's archive folder (primary document, Form 4 XML, …)."""
+        if not ACCESSION.fullmatch(accession) or not DOCUMENT_NAME.fullmatch(document):
+            raise ProviderError(
+                "provider_bad_request", "Invalid accession number or document name."
+            )
+        url = ARCHIVE_URL.format(cik=cik, folder=accession.replace("-", ""), document=document)
+        meta = FetchMeta(PROVIDER, "filing_document", url, LICENSE_NOTE, subject=accession)
+        response = self._fetch(meta)
+        return FetchResult(response.content, meta)
 
     def fetch_company_facts(
         self,
@@ -283,6 +360,52 @@ def parse_company_facts(
             if current is None or (filed, accession) < (current.filed_date, current.accession):
                 earliest[key] = observation
     return list(earliest.values()), rejected
+
+
+def _parse_accepted(value: Any) -> datetime | None:
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_filings(columns: dict[str, Any]) -> tuple[list[FilingRecord], int]:
+    """Rows from SEC's columnar filing index (`filings.recent` or an older page)."""
+
+    accessions = columns.get("accessionNumber") or []
+
+    def column(name: str, index: int) -> Any:
+        values = columns.get(name) or []
+        return values[index] if index < len(values) else None
+
+    filings: list[FilingRecord] = []
+    rejected = 0
+    for index, accession in enumerate(accessions):
+        form = _clean(column("form", index), 20)
+        filed = _parse_date(column("filingDate", index))
+        if not isinstance(accession, str) or not ACCESSION.fullmatch(accession) or not form:
+            rejected += 1
+            continue
+        if filed is None:
+            rejected += 1
+            continue
+        size = column("size", index)
+        filings.append(
+            FilingRecord(
+                accession=accession,
+                form=form,
+                filed_date=filed,
+                accepted_at=_parse_accepted(column("acceptanceDateTime", index)),
+                report_date=_parse_date(column("reportDate", index)),
+                primary_document=_clean(column("primaryDocument", index), 300),
+                description=_clean(column("primaryDocDescription", index), 300),
+                items=_clean(column("items", index), 120),
+                size=int(size) if isinstance(size, int) else None,
+                is_xbrl=bool(column("isXBRL", index)),
+                is_inline_xbrl=bool(column("isInlineXBRL", index)),
+            )
+        )
+    return filings, rejected
 
 
 def _clean(value: Any, max_length: int) -> str | None:

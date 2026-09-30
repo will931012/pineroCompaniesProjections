@@ -832,6 +832,95 @@
         "title": "DataQuality",
         "type": "object"
       },
+      "DiffBlockOut": {
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before"
+          },
+          "kind": {
+            "enum": [
+              "same",
+              "added",
+              "removed",
+              "changed"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "words": {
+            "items": {
+              "$ref": "#/components/schemas/WordOpOut"
+            },
+            "title": "Words",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "before",
+          "after",
+          "words"
+        ],
+        "title": "DiffBlockOut",
+        "type": "object"
+      },
+      "DiffSummaryOut": {
+        "properties": {
+          "added": {
+            "title": "Added",
+            "type": "integer"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "integer"
+          },
+          "removed": {
+            "title": "Removed",
+            "type": "integer"
+          },
+          "same": {
+            "title": "Same",
+            "type": "integer"
+          },
+          "words_added": {
+            "title": "Words Added",
+            "type": "integer"
+          },
+          "words_removed": {
+            "title": "Words Removed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "same",
+          "added",
+          "removed",
+          "changed",
+          "words_added",
+          "words_removed"
+        ],
+        "title": "DiffSummaryOut",
+        "type": "object"
+      },
       "DirectoryStats": {
         "properties": {
           "active_securities": {
@@ -861,6 +950,288 @@
           "last_synced_at"
         ],
         "title": "DirectoryStats",
+        "type": "object"
+      },
+      "FilingDetail": {
+        "properties": {
+          "extractor_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extractor Version"
+          },
+          "filing": {
+            "$ref": "#/components/schemas/FilingOut"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FilingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/SectionOut"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "filing",
+          "sections",
+          "previous",
+          "extractor_version",
+          "sources"
+        ],
+        "title": "FilingDetail",
+        "type": "object"
+      },
+      "FilingOut": {
+        "properties": {
+          "accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted At"
+          },
+          "accession": {
+            "title": "Accession",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "document_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Error"
+          },
+          "document_status": {
+            "enum": [
+              "not_loaded",
+              "loaded",
+              "failed",
+              "unsupported",
+              "not_issuer"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "document_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Url"
+          },
+          "filed_date": {
+            "format": "date",
+            "title": "Filed Date",
+            "type": "string"
+          },
+          "form": {
+            "title": "Form",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "report_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Date"
+          },
+          "sec_url": {
+            "title": "Sec Url",
+            "type": "string"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          }
+        },
+        "required": [
+          "accession",
+          "form",
+          "filed_date",
+          "accepted_at",
+          "report_date",
+          "description",
+          "items",
+          "size",
+          "document_status",
+          "document_error",
+          "sec_url",
+          "document_url"
+        ],
+        "title": "FilingOut",
+        "type": "object"
+      },
+      "FilingsResponse": {
+        "properties": {
+          "cik": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cik"
+          },
+          "documents_loaded": {
+            "title": "Documents Loaded",
+            "type": "integer"
+          },
+          "filings": {
+            "items": {
+              "$ref": "#/components/schemas/FilingOut"
+            },
+            "title": "Filings",
+            "type": "array"
+          },
+          "forms": {
+            "items": {
+              "$ref": "#/components/schemas/FormCount"
+            },
+            "title": "Forms",
+            "type": "array"
+          },
+          "history_loaded": {
+            "title": "History Loaded",
+            "type": "boolean"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "passages": {
+            "title": "Passages",
+            "type": "integer"
+          },
+          "passages_embeddable": {
+            "title": "Passages Embeddable",
+            "type": "integer"
+          },
+          "passages_embedded": {
+            "title": "Passages Embedded",
+            "type": "integer"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "stale",
+              "unavailable",
+              "not_configured",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ticker",
+          "cik",
+          "status",
+          "message",
+          "total",
+          "forms",
+          "filings",
+          "history_loaded",
+          "documents_loaded",
+          "passages",
+          "passages_embeddable",
+          "passages_embedded",
+          "sources"
+        ],
+        "title": "FilingsResponse",
         "type": "object"
       },
       "Filter": {
@@ -896,6 +1267,24 @@
           "metric"
         ],
         "title": "Filter",
+        "type": "object"
+      },
+      "FormCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "form": {
+            "title": "Form",
+            "type": "string"
+          }
+        },
+        "required": [
+          "form",
+          "count"
+        ],
+        "title": "FormCount",
         "type": "object"
       },
       "FormerName": {
@@ -1104,6 +1493,421 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HistoryOut": {
+        "properties": {
+          "added": {
+            "title": "Added",
+            "type": "integer"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "added"
+        ],
+        "title": "HistoryOut",
+        "type": "object"
+      },
+      "IndexDocumentsIn": {
+        "properties": {
+          "embed_limit": {
+            "default": 200,
+            "maximum": 2000.0,
+            "minimum": 0.0,
+            "title": "Embed Limit",
+            "type": "integer"
+          },
+          "forms": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Forms",
+            "type": "array"
+          },
+          "limit": {
+            "default": 8,
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "IndexDocumentsIn",
+        "type": "object"
+      },
+      "IndexDocumentsOut": {
+        "properties": {
+          "embedded": {
+            "title": "Embedded",
+            "type": "integer"
+          },
+          "embedding_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Model"
+          },
+          "embedding_remaining": {
+            "title": "Embedding Remaining",
+            "type": "integer"
+          },
+          "outcome": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Outcome",
+            "type": "object"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "outcome",
+          "embedded",
+          "embedding_remaining",
+          "embedding_model"
+        ],
+        "title": "IndexDocumentsOut",
+        "type": "object"
+      },
+      "InsiderSummary": {
+        "properties": {
+          "months": {
+            "title": "Months",
+            "type": "integer"
+          },
+          "purchases": {
+            "$ref": "#/components/schemas/TradeTotals"
+          },
+          "sales": {
+            "$ref": "#/components/schemas/TradeTotals"
+          },
+          "since": {
+            "format": "date",
+            "title": "Since",
+            "type": "string"
+          }
+        },
+        "required": [
+          "months",
+          "since",
+          "purchases",
+          "sales"
+        ],
+        "title": "InsiderSummary",
+        "type": "object"
+      },
+      "InsiderTransactionOut": {
+        "properties": {
+          "accession": {
+            "title": "Accession",
+            "type": "string"
+          },
+          "acquired_disposed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired Disposed"
+          },
+          "exercise_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exercise Price"
+          },
+          "filed_date": {
+            "format": "date",
+            "title": "Filed Date",
+            "type": "string"
+          },
+          "form": {
+            "title": "Form",
+            "type": "string"
+          },
+          "is_derivative": {
+            "title": "Is Derivative",
+            "type": "boolean"
+          },
+          "is_director": {
+            "title": "Is Director",
+            "type": "boolean"
+          },
+          "is_officer": {
+            "title": "Is Officer",
+            "type": "boolean"
+          },
+          "is_ten_percent_owner": {
+            "title": "Is Ten Percent Owner",
+            "type": "boolean"
+          },
+          "joint_owners": {
+            "title": "Joint Owners",
+            "type": "integer"
+          },
+          "officer_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Officer Title"
+          },
+          "owner_cik": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Cik"
+          },
+          "owner_name": {
+            "title": "Owner Name",
+            "type": "string"
+          },
+          "ownership": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ownership"
+          },
+          "ownership_nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ownership Nature"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "rule_10b5_1": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule 10B5 1"
+          },
+          "sec_url": {
+            "title": "Sec Url",
+            "type": "string"
+          },
+          "security_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Security Title"
+          },
+          "shares": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shares"
+          },
+          "shares_owned_after": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shares Owned After"
+          },
+          "transaction_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transaction Code"
+          },
+          "transaction_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transaction Date"
+          },
+          "underlying_security": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Underlying Security"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "accession",
+          "form",
+          "filed_date",
+          "sec_url",
+          "owner_name",
+          "owner_cik",
+          "joint_owners",
+          "is_director",
+          "is_officer",
+          "is_ten_percent_owner",
+          "officer_title",
+          "is_derivative",
+          "security_title",
+          "transaction_date",
+          "transaction_code",
+          "shares",
+          "price",
+          "value",
+          "acquired_disposed",
+          "shares_owned_after",
+          "ownership",
+          "ownership_nature",
+          "rule_10b5_1",
+          "underlying_security",
+          "exercise_price"
+        ],
+        "title": "InsiderTransactionOut",
+        "type": "object"
+      },
+      "InsidersResponse": {
+        "properties": {
+          "filings_loaded": {
+            "title": "Filings Loaded",
+            "type": "integer"
+          },
+          "filings_pending": {
+            "title": "Filings Pending",
+            "type": "integer"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "stale",
+              "unavailable",
+              "not_configured",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/InsiderSummary"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/InsiderTransactionOut"
+            },
+            "title": "Transactions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ticker",
+          "status",
+          "message",
+          "filings_loaded",
+          "filings_pending",
+          "summary",
+          "transactions"
+        ],
+        "title": "InsidersResponse",
         "type": "object"
       },
       "LineItemOut": {
@@ -1979,6 +2783,250 @@
         "title": "ScreenRow",
         "type": "object"
       },
+      "SearchHitOut": {
+        "properties": {
+          "char_end": {
+            "title": "Char End",
+            "type": "integer"
+          },
+          "char_start": {
+            "title": "Char Start",
+            "type": "integer"
+          },
+          "company_name": {
+            "title": "Company Name",
+            "type": "string"
+          },
+          "filing": {
+            "$ref": "#/components/schemas/FilingOut"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "section_key": {
+            "title": "Section Key",
+            "type": "string"
+          },
+          "section_title": {
+            "title": "Section Title",
+            "type": "string"
+          },
+          "snippet": {
+            "title": "Snippet",
+            "type": "string"
+          },
+          "text_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Rank"
+          },
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticker"
+          },
+          "vector_distance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vector Distance"
+          },
+          "vector_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vector Rank"
+          }
+        },
+        "required": [
+          "ticker",
+          "company_name",
+          "filing",
+          "section_key",
+          "section_title",
+          "char_start",
+          "char_end",
+          "snippet",
+          "score",
+          "text_rank",
+          "vector_rank",
+          "vector_distance"
+        ],
+        "title": "SearchHitOut",
+        "type": "object"
+      },
+      "SearchResponse": {
+        "properties": {
+          "embedding_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Model"
+          },
+          "hits": {
+            "items": {
+              "$ref": "#/components/schemas/SearchHitOut"
+            },
+            "title": "Hits",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "hybrid",
+              "text"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query",
+          "mode",
+          "embedding_model",
+          "hits"
+        ],
+        "title": "SearchResponse",
+        "type": "object"
+      },
+      "SectionDiffOut": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/DiffBlockOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "comparable": {
+            "title": "Comparable",
+            "type": "boolean"
+          },
+          "current": {
+            "$ref": "#/components/schemas/FilingOut"
+          },
+          "previous": {
+            "$ref": "#/components/schemas/FilingOut"
+          },
+          "section_key": {
+            "title": "Section Key",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiffSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "section_key",
+          "title",
+          "current",
+          "previous",
+          "comparable",
+          "summary",
+          "blocks"
+        ],
+        "title": "SectionDiffOut",
+        "type": "object"
+      },
+      "SectionOut": {
+        "properties": {
+          "char_count": {
+            "title": "Char Count",
+            "type": "integer"
+          },
+          "item": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "part": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Part"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "part",
+          "item",
+          "char_count",
+          "text"
+        ],
+        "title": "SectionOut",
+        "type": "object"
+      },
       "SessionOut": {
         "properties": {
           "auth_method": {
@@ -2191,6 +3239,34 @@
         "title": "SystemStatus",
         "type": "object"
       },
+      "TradeTotals": {
+        "properties": {
+          "insiders": {
+            "title": "Insiders",
+            "type": "integer"
+          },
+          "shares": {
+            "title": "Shares",
+            "type": "number"
+          },
+          "transactions": {
+            "title": "Transactions",
+            "type": "integer"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "transactions",
+          "shares",
+          "value",
+          "insiders"
+        ],
+        "title": "TradeTotals",
+        "type": "object"
+      },
       "UserOut": {
         "properties": {
           "display_name": {
@@ -2367,6 +3443,29 @@
           "items"
         ],
         "title": "WatchlistOut",
+        "type": "object"
+      },
+      "WordOpOut": {
+        "properties": {
+          "op": {
+            "enum": [
+              "equal",
+              "insert",
+              "delete"
+            ],
+            "title": "Op",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "text"
+        ],
+        "title": "WordOpOut",
         "type": "object"
       }
     }
@@ -2885,6 +3984,299 @@
         ]
       }
     },
+    "/api/v1/companies/{ticker}/filings": {
+      "get": {
+        "operationId": "list_filings_api_v1_companies__ticker__filings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated, e.g. 10-K,10-Q",
+            "in": "query",
+            "name": "forms",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated, e.g. 10-K,10-Q",
+              "title": "Forms"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Filings",
+        "tags": [
+          "filings"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/filings/history": {
+      "post": {
+        "operationId": "load_history_api_v1_companies__ticker__filings_history_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Load History",
+        "tags": [
+          "filings"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/filings/index": {
+      "post": {
+        "description": "Load, split, and embed the newest documents of the given forms for search.",
+        "operationId": "index_documents_api_v1_companies__ticker__filings_index_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexDocumentsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexDocumentsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Index Documents",
+        "tags": [
+          "filings"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/filings/{accession}": {
+      "get": {
+        "operationId": "filing_detail_api_v1_companies__ticker__filings__accession__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accession",
+            "required": true,
+            "schema": {
+              "title": "Accession",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilingDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Filing Detail",
+        "tags": [
+          "filings"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/filings/{accession}/diff": {
+      "get": {
+        "operationId": "section_diff_api_v1_companies__ticker__filings__accession__diff_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accession",
+            "required": true,
+            "schema": {
+              "title": "Accession",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Section key, e.g. item_1a",
+            "in": "query",
+            "name": "section",
+            "required": true,
+            "schema": {
+              "description": "Section key, e.g. item_1a",
+              "maxLength": 40,
+              "title": "Section",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectionDiffOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Section Diff",
+        "tags": [
+          "filings"
+        ]
+      }
+    },
     "/api/v1/companies/{ticker}/fundamentals": {
       "get": {
         "operationId": "fundamentals_api_v1_companies__ticker__fundamentals_get",
@@ -2969,6 +4361,74 @@
         "summary": "Fundamentals",
         "tags": [
           "fundamentals"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/insiders": {
+      "get": {
+        "operationId": "insiders_api_v1_companies__ticker__insiders_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "months",
+            "required": false,
+            "schema": {
+              "default": 12,
+              "maximum": 120,
+              "minimum": 1,
+              "title": "Months",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Form 4s to fetch now",
+            "in": "query",
+            "name": "load",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "description": "Form 4s to fetch now",
+              "maximum": 60,
+              "minimum": 0,
+              "title": "Load",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsidersResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Insiders",
+        "tags": [
+          "filings"
         ]
       }
     },
@@ -3247,6 +4707,115 @@
         "summary": "Sectors",
         "tags": [
           "screener"
+        ]
+      }
+    },
+    "/api/v1/search/filings": {
+      "get": {
+        "operationId": "search_filings_api_v1_search_filings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 300,
+              "minLength": 2,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Comma-separated tickers",
+            "in": "query",
+            "name": "tickers",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated tickers",
+              "title": "Tickers"
+            }
+          },
+          {
+            "description": "Comma-separated forms",
+            "in": "query",
+            "name": "forms",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated forms",
+              "title": "Forms"
+            }
+          },
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Filings",
+        "tags": [
+          "filings"
         ]
       }
     },

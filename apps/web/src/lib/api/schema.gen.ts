@@ -242,6 +242,94 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/companies/{ticker}/filings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Filings */
+        get: operations["list_filings_api_v1_companies__ticker__filings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/filings/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Load History */
+        post: operations["load_history_api_v1_companies__ticker__filings_history_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/filings/index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Index Documents
+         * @description Load, split, and embed the newest documents of the given forms for search.
+         */
+        post: operations["index_documents_api_v1_companies__ticker__filings_index_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/filings/{accession}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Filing Detail */
+        get: operations["filing_detail_api_v1_companies__ticker__filings__accession__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/filings/{accession}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Section Diff */
+        get: operations["section_diff_api_v1_companies__ticker__filings__accession__diff_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies/{ticker}/fundamentals": {
         parameters: {
             query?: never;
@@ -251,6 +339,23 @@ export interface paths {
         };
         /** Fundamentals */
         get: operations["fundamentals_api_v1_companies__ticker__fundamentals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/insiders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Insiders */
+        get: operations["insiders_api_v1_companies__ticker__insiders_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -353,6 +458,23 @@ export interface paths {
         };
         /** Sectors */
         get: operations["sectors_api_v1_screener_sectors_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/search/filings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Filings */
+        get: operations["search_filings_api_v1_search_filings_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -723,6 +845,35 @@ export interface components {
             /** Warnings */
             warnings: string[];
         };
+        /** DiffBlockOut */
+        DiffBlockOut: {
+            /** After */
+            after: string | null;
+            /** Before */
+            before: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "same" | "added" | "removed" | "changed";
+            /** Words */
+            words: components["schemas"]["WordOpOut"][];
+        };
+        /** DiffSummaryOut */
+        DiffSummaryOut: {
+            /** Added */
+            added: number;
+            /** Changed */
+            changed: number;
+            /** Removed */
+            removed: number;
+            /** Same */
+            same: number;
+            /** Words Added */
+            words_added: number;
+            /** Words Removed */
+            words_removed: number;
+        };
         /** DirectoryStats */
         DirectoryStats: {
             /** Active Securities */
@@ -732,6 +883,84 @@ export interface components {
             /** Last Synced At */
             last_synced_at: string | null;
         };
+        /** FilingDetail */
+        FilingDetail: {
+            /** Extractor Version */
+            extractor_version: string | null;
+            filing: components["schemas"]["FilingOut"];
+            previous: components["schemas"]["FilingOut"] | null;
+            /** Sections */
+            sections: components["schemas"]["SectionOut"][];
+            /** Sources */
+            sources: components["schemas"]["SourceRef"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** FilingOut */
+        FilingOut: {
+            /** Accepted At */
+            accepted_at: string | null;
+            /** Accession */
+            accession: string;
+            /** Description */
+            description: string | null;
+            /** Document Error */
+            document_error: string | null;
+            /**
+             * Document Status
+             * @enum {string}
+             */
+            document_status: "not_loaded" | "loaded" | "failed" | "unsupported" | "not_issuer";
+            /** Document Url */
+            document_url: string | null;
+            /**
+             * Filed Date
+             * Format: date
+             */
+            filed_date: string;
+            /** Form */
+            form: string;
+            /** Items */
+            items: string[];
+            /** Report Date */
+            report_date: string | null;
+            /** Sec Url */
+            sec_url: string;
+            /** Size */
+            size: number | null;
+        };
+        /** FilingsResponse */
+        FilingsResponse: {
+            /** Cik */
+            cik: number | null;
+            /** Documents Loaded */
+            documents_loaded: number;
+            /** Filings */
+            filings: components["schemas"]["FilingOut"][];
+            /** Forms */
+            forms: components["schemas"]["FormCount"][];
+            /** History Loaded */
+            history_loaded: boolean;
+            /** Message */
+            message: string | null;
+            /** Passages */
+            passages: number;
+            /** Passages Embeddable */
+            passages_embeddable: number;
+            /** Passages Embedded */
+            passages_embedded: number;
+            /** Sources */
+            sources: components["schemas"]["SourceRef"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "stale" | "unavailable" | "not_configured" | "not_applicable";
+            /** Ticker */
+            ticker: string;
+            /** Total */
+            total: number;
+        };
         /** Filter */
         Filter: {
             /** Max */
@@ -740,6 +969,13 @@ export interface components {
             metric: string;
             /** Min */
             min?: number | null;
+        };
+        /** FormCount */
+        FormCount: {
+            /** Count */
+            count: number;
+            /** Form */
+            form: string;
         };
         /** FormerName */
         FormerName: {
@@ -800,6 +1036,130 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HistoryOut */
+        HistoryOut: {
+            /** Added */
+            added: number;
+            /** Ticker */
+            ticker: string;
+        };
+        /** IndexDocumentsIn */
+        IndexDocumentsIn: {
+            /**
+             * Embed Limit
+             * @default 200
+             */
+            embed_limit: number;
+            /** Forms */
+            forms?: string[];
+            /**
+             * Limit
+             * @default 8
+             */
+            limit: number;
+        };
+        /** IndexDocumentsOut */
+        IndexDocumentsOut: {
+            /** Embedded */
+            embedded: number;
+            /** Embedding Model */
+            embedding_model: string | null;
+            /** Embedding Remaining */
+            embedding_remaining: number;
+            /** Outcome */
+            outcome: {
+                [key: string]: number;
+            };
+            /** Ticker */
+            ticker: string;
+        };
+        /** InsiderSummary */
+        InsiderSummary: {
+            /** Months */
+            months: number;
+            purchases: components["schemas"]["TradeTotals"];
+            sales: components["schemas"]["TradeTotals"];
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+        };
+        /** InsiderTransactionOut */
+        InsiderTransactionOut: {
+            /** Accession */
+            accession: string;
+            /** Acquired Disposed */
+            acquired_disposed: string | null;
+            /** Exercise Price */
+            exercise_price: number | null;
+            /**
+             * Filed Date
+             * Format: date
+             */
+            filed_date: string;
+            /** Form */
+            form: string;
+            /** Is Derivative */
+            is_derivative: boolean;
+            /** Is Director */
+            is_director: boolean;
+            /** Is Officer */
+            is_officer: boolean;
+            /** Is Ten Percent Owner */
+            is_ten_percent_owner: boolean;
+            /** Joint Owners */
+            joint_owners: number;
+            /** Officer Title */
+            officer_title: string | null;
+            /** Owner Cik */
+            owner_cik: number | null;
+            /** Owner Name */
+            owner_name: string;
+            /** Ownership */
+            ownership: string | null;
+            /** Ownership Nature */
+            ownership_nature: string | null;
+            /** Price */
+            price: number | null;
+            /** Rule 10B5 1 */
+            rule_10b5_1: boolean | null;
+            /** Sec Url */
+            sec_url: string;
+            /** Security Title */
+            security_title: string | null;
+            /** Shares */
+            shares: number | null;
+            /** Shares Owned After */
+            shares_owned_after: number | null;
+            /** Transaction Code */
+            transaction_code: string | null;
+            /** Transaction Date */
+            transaction_date: string | null;
+            /** Underlying Security */
+            underlying_security: string | null;
+            /** Value */
+            value: number | null;
+        };
+        /** InsidersResponse */
+        InsidersResponse: {
+            /** Filings Loaded */
+            filings_loaded: number;
+            /** Filings Pending */
+            filings_pending: number;
+            /** Message */
+            message: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "stale" | "unavailable" | "not_configured" | "not_applicable";
+            summary: components["schemas"]["InsiderSummary"];
+            /** Ticker */
+            ticker: string;
+            /** Transactions */
+            transactions: components["schemas"]["InsiderTransactionOut"][];
         };
         /** LineItemOut */
         LineItemOut: {
@@ -1095,6 +1455,77 @@ export interface components {
             /** Ticker */
             ticker: string;
         };
+        /** SearchHitOut */
+        SearchHitOut: {
+            /** Char End */
+            char_end: number;
+            /** Char Start */
+            char_start: number;
+            /** Company Name */
+            company_name: string;
+            filing: components["schemas"]["FilingOut"];
+            /** Score */
+            score: number;
+            /** Section Key */
+            section_key: string;
+            /** Section Title */
+            section_title: string;
+            /** Snippet */
+            snippet: string;
+            /** Text Rank */
+            text_rank: number | null;
+            /** Ticker */
+            ticker: string | null;
+            /** Vector Distance */
+            vector_distance: number | null;
+            /** Vector Rank */
+            vector_rank: number | null;
+        };
+        /** SearchResponse */
+        SearchResponse: {
+            /** Embedding Model */
+            embedding_model: string | null;
+            /** Hits */
+            hits: components["schemas"]["SearchHitOut"][];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "hybrid" | "text";
+            /** Query */
+            query: string;
+        };
+        /** SectionDiffOut */
+        SectionDiffOut: {
+            /** Blocks */
+            blocks: components["schemas"]["DiffBlockOut"][];
+            /** Comparable */
+            comparable: boolean;
+            current: components["schemas"]["FilingOut"];
+            previous: components["schemas"]["FilingOut"];
+            /** Section Key */
+            section_key: string;
+            summary: components["schemas"]["DiffSummaryOut"] | null;
+            /** Ticker */
+            ticker: string;
+            /** Title */
+            title: string;
+        };
+        /** SectionOut */
+        SectionOut: {
+            /** Char Count */
+            char_count: number;
+            /** Item */
+            item: string | null;
+            /** Key */
+            key: string;
+            /** Part */
+            part: string | null;
+            /** Text */
+            text: string;
+            /** Title */
+            title: string;
+        };
         /** SessionOut */
         SessionOut: {
             /** Auth Method */
@@ -1172,6 +1603,17 @@ export interface components {
             /** Providers */
             providers: components["schemas"]["ProviderHealth"][];
         };
+        /** TradeTotals */
+        TradeTotals: {
+            /** Insiders */
+            insiders: number;
+            /** Shares */
+            shares: number;
+            /** Transactions */
+            transactions: number;
+            /** Value */
+            value: number;
+        };
         /** UserOut */
         UserOut: {
             /** Display Name */
@@ -1244,6 +1686,16 @@ export interface components {
             items: components["schemas"]["WatchlistItemOut"][];
             /** Name */
             name: string;
+        };
+        /** WordOpOut */
+        WordOpOut: {
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: "equal" | "insert" | "delete";
+            /** Text */
+            text: string;
         };
     };
     responses: never;
@@ -1633,6 +2085,175 @@ export interface operations {
             };
         };
     };
+    list_filings_api_v1_companies__ticker__filings_get: {
+        parameters: {
+            query?: {
+                /** @description Comma-separated, e.g. 10-K,10-Q */
+                forms?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilingsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    load_history_api_v1_companies__ticker__filings_history_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    index_documents_api_v1_companies__ticker__filings_index_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IndexDocumentsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndexDocumentsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    filing_detail_api_v1_companies__ticker__filings__accession__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+                accession: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilingDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    section_diff_api_v1_companies__ticker__filings__accession__diff_get: {
+        parameters: {
+            query: {
+                /** @description Section key, e.g. item_1a */
+                section: string;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+                accession: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SectionDiffOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     fundamentals_api_v1_companies__ticker__fundamentals_get: {
         parameters: {
             query?: {
@@ -1656,6 +2277,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FundamentalsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    insiders_api_v1_companies__ticker__insiders_get: {
+        parameters: {
+            query?: {
+                months?: number;
+                /** @description Form 4s to fetch now */
+                load?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsidersResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1839,6 +2495,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": string[];
+                };
+            };
+        };
+    };
+    search_filings_api_v1_search_filings_get: {
+        parameters: {
+            query: {
+                q: string;
+                /** @description Comma-separated tickers */
+                tickers?: string | null;
+                /** @description Comma-separated forms */
+                forms?: string | null;
+                since?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

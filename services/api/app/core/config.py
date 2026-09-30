@@ -55,6 +55,14 @@ class Settings(BaseSettings):
     # companyfacts responses are several megabytes for large filers.
     sec_timeout_seconds: float = 30.0
     fundamentals_ttl_hours: int = 24
+    # New filings (8-Ks, Form 4s) appear daily, so the index refreshes more often than profiles.
+    filings_ttl_hours: int = 6
+
+    # Filing search embeddings: "fastembed" runs the open model locally (no key); "none"
+    # leaves search to PostgreSQL full-text. The model must produce 384-dimension vectors.
+    embedding_provider: Literal["fastembed", "none"] = "fastembed"
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    embedding_cache_dir: str | None = None
 
     # Market data
     market_data_provider: str | None = None

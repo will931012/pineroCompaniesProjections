@@ -1,4 +1,5 @@
 from app.db.models.audit import AuditEvent
+from app.db.models.filings import Filing, FilingChunk, FilingSection, InsiderTransaction
 from app.db.models.fundamentals import CompanyMetric, FinancialFact
 from app.db.models.identity import ROLES, User, UserIdentity, UserSession
 from app.db.models.market import DailyPrice
@@ -12,7 +13,11 @@ __all__ = [
     "Company",
     "CompanyMetric",
     "DailyPrice",
+    "Filing",
+    "FilingChunk",
+    "FilingSection",
     "FinancialFact",
+    "InsiderTransaction",
     "ProviderFetch",
     "Security",
     "User",

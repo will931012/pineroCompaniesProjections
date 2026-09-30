@@ -19,6 +19,8 @@ os.environ.update(
         "AUTH_ALLOW_REGISTRATION": "true",
         "FRONTEND_URL": "http://testserver",
         "METRICS_ENABLED": "true",
+        # Tests inject a deterministic fake instead of downloading a model.
+        "EMBEDDING_PROVIDER": "none",
     }
 )
 for key in (

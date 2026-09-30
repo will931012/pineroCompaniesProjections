@@ -95,7 +95,7 @@ export function formatCompact(value: number, digits = 2): string {
   for (const [size, suffix] of units) {
     if (abs >= size) return `${sign}${(abs / size).toFixed(digits)}${suffix}`;
   }
-  return `${sign}${abs.toFixed(abs >= 100 ? 0 : digits)}`;
+  return `${sign}${abs.toFixed(abs >= 100 || Number.isInteger(abs) ? 0 : digits)}`;
 }
 
 /** Format a metric or line-item value by its unit. Fractions are shown as percentages. */

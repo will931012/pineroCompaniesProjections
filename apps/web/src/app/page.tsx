@@ -82,8 +82,8 @@ export default function DashboardPage() {
         <WatchlistPanel />
         <aside className="phase-card">
           <div className="phase-card-top"><span>BUILD STATUS</span><span className="phase-number">{String(CURRENT_PHASE).padStart(2, "0")} / 10</span></div>
-          <h2>Fundamentals live.</h2>
-          <p>Point-in-time SEC financial statements, deterministic ratios, peers, and the screener. SEC filings arrive next.</p>
+          <h2>SEC filings live.</h2>
+          <p>Filings split into items, period-over-period changes, insider trades, and cited search over filing text. News and events arrive next.</p>
           <div className="phase-track"><span style={{ width: `${CURRENT_PHASE * 10}%` }} /></div>
           <ul className="planned-widgets">
             {PLANNED_WIDGETS.map((widget) => (

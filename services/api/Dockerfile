@@ -30,6 +30,10 @@ FROM base AS prod
 COPY pyproject.toml ./
 COPY app ./app
 RUN pip install .
+# Bake the open embedding model (BGE-small, ~130 MB) into the image, so filing search never
+# downloads it at request time and works without outbound access to Hugging Face.
+ENV EMBEDDING_CACHE_DIR=/app/models
+RUN python -m app.cli prepare-embeddings && chown -R pinero:pinero /app/models
 COPY alembic.ini ./
 COPY alembic ./alembic
 USER pinero

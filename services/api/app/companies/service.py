@@ -20,6 +20,7 @@ from app.core.config import Settings
 from app.core.errors import ApiError
 from app.db.base import utcnow
 from app.db.models import Company, ProviderFetch, Security
+from app.filings.index import store_filing_index
 from app.providers.base import ProviderError, record_fetch
 from app.providers.market_data.registry import market_data_status
 from app.providers.sec_edgar import SecEdgarClient, SubmissionProfile
@@ -130,15 +131,24 @@ def refresh_company_profile(
         status: ProfileStatus = "stale" if company.profile_refreshed_at else "not_configured"
         return status, "SEC_USER_AGENT is not set, so SEC profile data cannot be refreshed."
     try:
-        result = client.fetch_submission_profile(company.cik)
+        result = client.fetch_submissions(company.cik)
     except ProviderError as error:
         if error.meta is not None:
             record_fetch(db, error.meta, status="error", error=error)
             db.commit()
         status = "stale" if company.profile_refreshed_at else "unavailable"
         return status, f"SEC profile refresh failed: {error.message}"
-    fetch = record_fetch(db, result.meta, status="success", record_count=1)
-    apply_submission_profile(company, result.data, fetch.id)
+    fetch = record_fetch(
+        db,
+        result.meta,
+        status="success",
+        record_count=len(result.data.filings),
+        rejected_count=result.rejected_count,
+    )
+    apply_submission_profile(company, result.data.profile, fetch.id)
+    # The same response lists the company's recent filings; index them too.
+    store_filing_index(db, company, result.data.filings, fetch.id)
+    company.filings_refreshed_at = utcnow()
     db.commit()
     return "current", None
 

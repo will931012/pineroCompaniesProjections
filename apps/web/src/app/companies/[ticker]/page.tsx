@@ -8,8 +8,10 @@ import { Suspense } from "react";
 import { AddToWatchlist } from "@/components/AddToWatchlist";
 import { KeyMetricsPanel, metricTitle, useCompanyMetrics } from "@/components/CompanySnapshot";
 import { FinancialsTab } from "@/components/FinancialsTab";
+import { InsidersTab } from "@/components/InsidersTab";
 import { MarketHistory, useDailyBars } from "@/components/MarketHistory";
 import { PeersTab } from "@/components/PeersTab";
+import { SecTab } from "@/components/SecTab";
 import { Panel, SourceList, StatusPill } from "@/components/ui";
 import { isApiError } from "@/lib/api/client";
 import { api, type CompanyProfile } from "@/lib/api/endpoints";
@@ -103,6 +105,10 @@ function CompanyView() {
         <section className="company-tab-body"><FinancialsTab ticker={ticker} /></section>
       ) : tab === "peers" ? (
         <section className="company-tab-body"><PeersTab ticker={ticker} /></section>
+      ) : tab === "sec" ? (
+        <SecTab ticker={ticker} />
+      ) : tab === "insiders" ? (
+        <InsidersTab ticker={ticker} />
       ) : (
         <section className="company-detail-grid">
           <div className="company-main">

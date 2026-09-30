@@ -4,8 +4,8 @@ A web-first, source-first platform for public-company research. Every value it s
 where it came from; nothing is estimated, sampled, or filled in. Deterministic calculations,
 model outputs, and AI interpretation are kept as separate systems.
 
-**Status:** Phase 2 (Fundamentals) complete. See [docs/phase-2-report.md](docs/phase-2-report.md),
-[docs/phase-1-report.md](docs/phase-1-report.md),
+**Status:** Phase 3 (SEC filings and retrieval) complete. See [docs/phase-3-report.md](docs/phase-3-report.md),
+[docs/phase-2-report.md](docs/phase-2-report.md), [docs/phase-1-report.md](docs/phase-1-report.md),
 [docs/architecture.md](docs/architecture.md), and [docs/roadmap.md](docs/roadmap.md).
 
 **Deployed on Railway.** See [docs/deployment.md](docs/deployment.md) for the running
@@ -21,6 +21,7 @@ docker compose up --build
 docker compose exec api python -m app.cli create-user --email you@example.com --name "You" --role admin
 docker compose exec api python -m app.cli sync-sec-directory
 docker compose exec api python -m app.cli sync-fundamentals --tickers AAPL,MSFT,NVDA   # or --all-active
+docker compose exec api python -m app.cli sync-filings --tickers AAPL,MSFT,NVDA        # filings, Form 4s, search index
 ```
 
 Open <http://localhost:3000> and sign in. API docs: <http://localhost:8000/docs>.

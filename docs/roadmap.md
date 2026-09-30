@@ -19,11 +19,16 @@ formula test vectors; market cap and EV on the company header; Financials and Pe
 historical charts; screener v1. Only tracked concepts are stored; mapping more (for example
 bank line items) is a follow-up. See [phase-2-report.md](phase-2-report.md).
 
-## Phase 3 — SEC filings and retrieval
+## Phase 3 — SEC filings and retrieval ✔ (2026-09-30)
 
-Filing index from submissions, filing viewer, section extraction (10-K/10-Q items, 8-K items),
-section-level diffs between periods, Form 4 insider transactions, 13F holdings; pgvector
-embeddings behind a provider-neutral LLM/embedding port; retrieval constrained to cited sections.
+Filing index from SEC submissions (with older history on request); in-app filing viewer;
+10-K/10-Q/8-K item extraction; paragraph and word-level diffs against the prior filing of the
+same form; Form 4 insider transactions; hybrid search over filing passages (PostgreSQL
+full-text + a local open embedding model in pgvector, behind a provider port), where every hit
+cites its filing, section, and character span. See [phase-3-report.md](phase-3-report.md).
+
+13F institutional holdings were deferred to Phase 6: 13F lists positions by CUSIP, and SEC's
+ticker file has no CUSIP mapping, so linking holdings to companies needs a mapping source.
 
 ## Phase 4 — News, events, alerts
 
@@ -39,7 +44,8 @@ vs history/sector/peers, DDM/RIM/SOTP where appropriate; assumptions stored with
 ## Phase 6 — Quantitative research
 
 Macro data (FRED), point-in-time feature store, factor scores, baseline and gradient-boosted
-models, calibration, SHAP, prediction journal, regime detection, leakage tests.
+models, calibration, SHAP, prediction journal, regime detection, leakage tests. 13F
+institutional ownership (deferred from Phase 3), with a CUSIP→ticker mapping source.
 
 ## Phase 7 — Backtesting
 

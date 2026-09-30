@@ -61,14 +61,28 @@ def sec_client_with(
     status: int = 200,
     user_agent: str | None = TEST_USER_AGENT,
     calls: list[httpx.Request] | None = None,
+    documents: dict[str, bytes] | None = None,
+    pages: dict[str, dict[str, Any]] | None = None,
 ) -> SecEdgarClient:
+    """`documents` maps archive paths (/Archives/edgar/data/…) to bytes; `pages` maps older
+    submissions page names to their payloads."""
+
     def handler(request: httpx.Request) -> httpx.Response:
         if calls is not None:
             calls.append(request)
         assert request.headers["User-Agent"] == user_agent
         if status != 200:
             return httpx.Response(status)
-        if request.url.path.endswith("company_tickers_exchange.json"):
+        path = request.url.path
+        if path.startswith("/Archives/"):
+            content = (documents or {}).get(path)
+            return (
+                httpx.Response(200, content=content) if content is not None else httpx.Response(404)
+            )
+        if "-submissions-" in path:
+            page = (pages or {}).get(path.rsplit("/", 1)[1])
+            return json_response(page) if page is not None else httpx.Response(404)
+        if path.endswith("company_tickers_exchange.json"):
             return json_response(directory_payload(directory_rows or []))
         cik = int(request.url.path.rsplit("CIK", 1)[1].removesuffix(".json"))
         if "/api/xbrl/companyfacts/" in request.url.path:
