@@ -7,6 +7,9 @@ model outputs, and AI interpretation are kept as separate systems.
 **Status:** Phase 1 (Foundation) complete. See [docs/phase-1-report.md](docs/phase-1-report.md),
 [docs/architecture.md](docs/architecture.md), and [docs/roadmap.md](docs/roadmap.md).
 
+**Deployed on Railway.** See [docs/deployment.md](docs/deployment.md) for the running
+setup, the remaining manual steps, and the platform traps worth knowing.
+
 ## Run with Docker
 
 Requires Docker Desktop.
