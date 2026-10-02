@@ -25,6 +25,7 @@ from app.market_data.routes import router as market_data_router
 from app.screener.routes import router as screener_router
 from app.system.routes import health_router
 from app.system.routes import router as system_router
+from app.valuation.routes import router as valuation_router
 from app.workspace.routes import router as workspace_router
 
 logger = logging.getLogger("app.request")
@@ -146,6 +147,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         fundamentals_router,
         market_data_router,
         screener_router,
+        valuation_router,
         workspace_router,
         system_router,
         admin_router,

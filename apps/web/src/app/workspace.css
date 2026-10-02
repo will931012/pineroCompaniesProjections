@@ -1784,3 +1784,327 @@ a.event-title:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Valuation */
+.valuation-warnings {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.valuation-warnings li {
+  align-items: baseline;
+  color: #7a5a2c;
+  display: flex;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.valuation-warnings svg {
+  flex: none;
+  position: relative;
+  top: 2px;
+}
+
+.scenario-cards {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.scenario-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.scenario-card strong {
+  color: var(--forest);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.scenario-card small {
+  color: #6c786f;
+  font-size: 11px;
+}
+
+.scenario-card.scenario-base {
+  border-color: #b7c95a;
+  box-shadow: inset 0 3px 0 var(--lime);
+}
+
+.scenario-card.scenario-price {
+  background: #f8faf6;
+}
+
+.valuation-summary {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  margin-top: 14px;
+}
+
+.value-bridge {
+  display: grid;
+  margin: 0;
+}
+
+.value-bridge div {
+  border-bottom: 1px solid #f0f3ef;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.value-bridge dt {
+  color: #5d6b61;
+}
+
+.value-bridge dd {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.value-bridge .total dt,
+.value-bridge .total dd {
+  color: var(--forest);
+  font-weight: 650;
+}
+
+.valuation-layout {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(300px, 2fr) minmax(0, 3fr);
+  min-width: 0;
+}
+
+.valuation-layout-even {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.valuation-results {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.valuation-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.valuation-form fieldset {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  display: grid;
+  gap: 10px 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 10px 12px 12px;
+}
+
+.valuation-form legend {
+  color: #829087;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  padding: 0 4px;
+  text-transform: uppercase;
+}
+
+.valuation-form .check {
+  align-items: center;
+  color: #5d6b61;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 6px;
+}
+
+.valuation-field {
+  color: #5d6b61;
+  display: grid;
+  font-size: 11px;
+  font-weight: 600;
+  gap: 3px;
+  min-width: 0;
+}
+
+.field-input {
+  align-items: center;
+  background: #fbfcfa;
+  border: 1px solid #dce3dc;
+  border-radius: 6px;
+  display: flex;
+  min-width: 0;
+  width: 100%;
+}
+
+.field-input:focus-within {
+  border-color: #829d77;
+  box-shadow: 0 0 0 3px rgba(127, 154, 106, 0.14);
+}
+
+.field-input input {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  flex: 1 1 auto;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-height: 32px;
+  min-width: 0;
+  outline: 0;
+  padding: 0 8px;
+  width: 0;
+}
+
+.field-input i {
+  color: #8a948d;
+  font-size: 11px;
+  font-style: normal;
+  padding-right: 8px;
+}
+
+.valuation-field small {
+  color: #8a948d;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.valuation-field.edited .field-input {
+  border-color: #b7c95a;
+}
+
+.valuation-field.edited small {
+  color: #6d7a2c;
+}
+
+.valuation-field.invalid .field-input {
+  border-color: var(--coral);
+}
+
+.valuation-field.invalid small {
+  color: #a5502f;
+}
+
+.data-table tr.stage-two td {
+  border-top: 1px dashed #c3cfc1;
+}
+
+.heatmap {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 12px;
+  margin-top: 12px;
+  min-width: 460px;
+  width: 100%;
+}
+
+.heatmap th {
+  color: #829087;
+  font-size: 10px;
+  font-weight: 650;
+  padding: 4px 6px;
+  text-align: right;
+}
+
+.heatmap thead th:first-child {
+  text-align: left;
+}
+
+.heatmap td {
+  border-radius: 4px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  padding: 7px 8px;
+  text-align: right;
+}
+
+.heatmap td small {
+  color: #33433a;
+  display: block;
+  font-size: 10px;
+}
+
+.heatmap td.is-base {
+  box-shadow: inset 0 0 0 2px var(--forest);
+  font-weight: 650;
+}
+
+/* Diverging around the price: coral below, green above, gray midpoint (validated ramps). */
+.heat-below-2 { background: #d6764f; }
+.heat-below-1 { background: #e8a282; }
+.heat-near { background: #d5dbd6; }
+.heat-above-1 { background: #8fc07c; }
+.heat-above-2 { background: #64a052; }
+/* Without a price: one hue, light to dark. */
+.heat-low { background: #95c482; }
+.heat-mid { background: #7db26a; }
+.heat-high { background: #64a052; }
+.heat-none { background: #f3f5f2; color: #8a948d; }
+
+.heat-legend {
+  color: #6c786f;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 11px;
+  gap: 6px 14px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.heat-legend li {
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+}
+
+.heat-legend i {
+  border-radius: 3px;
+  display: inline-block;
+  height: 12px;
+  width: 16px;
+}
+
+.heat-legend .heat-base-key {
+  box-shadow: inset 0 0 0 2px var(--forest);
+}
+
+@media (max-width: 1100px) {
+  .valuation-layout,
+  .valuation-layout-even {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .scenario-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .valuation-summary,
+  .valuation-form fieldset {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.valuation-layout-even .data-table {
+  min-width: 0;
+}
+
+.panel-heading .segmented button {
+  white-space: nowrap;
+}

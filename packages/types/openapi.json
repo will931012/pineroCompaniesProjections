@@ -355,6 +355,54 @@
         "title": "AuthConfigOut",
         "type": "object"
       },
+      "CapmIn": {
+        "properties": {
+          "beta": {
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Beta",
+            "type": "number"
+          },
+          "debt_value": {
+            "minimum": 0.0,
+            "title": "Debt Value",
+            "type": "number"
+          },
+          "equity_risk_premium": {
+            "maximum": 0.2,
+            "minimum": 0.0,
+            "title": "Equity Risk Premium",
+            "type": "number"
+          },
+          "equity_value": {
+            "minimum": 0.0,
+            "title": "Equity Value",
+            "type": "number"
+          },
+          "pre_tax_cost_of_debt": {
+            "maximum": 0.4,
+            "minimum": 0.0,
+            "title": "Pre Tax Cost Of Debt",
+            "type": "number"
+          },
+          "risk_free": {
+            "maximum": 0.25,
+            "minimum": -0.02,
+            "title": "Risk Free",
+            "type": "number"
+          }
+        },
+        "required": [
+          "risk_free",
+          "beta",
+          "equity_risk_premium",
+          "pre_tax_cost_of_debt",
+          "equity_value",
+          "debt_value"
+        ],
+        "title": "CapmIn",
+        "type": "object"
+      },
       "CellOut": {
         "properties": {
           "accession": {
@@ -981,6 +1029,276 @@
           "warnings"
         ],
         "title": "DataQuality",
+        "type": "object"
+      },
+      "DcfIn": {
+        "properties": {
+          "base_revenue": {
+            "exclusiveMinimum": 0.0,
+            "title": "Base Revenue",
+            "type": "number"
+          },
+          "cash": {
+            "minimum": 0.0,
+            "title": "Cash",
+            "type": "number"
+          },
+          "debt": {
+            "minimum": 0.0,
+            "title": "Debt",
+            "type": "number"
+          },
+          "growth": {
+            "maximum": 1.0,
+            "minimum": -0.5,
+            "title": "Growth",
+            "type": "number"
+          },
+          "long_run_margin": {
+            "maximum": 0.9,
+            "minimum": -0.5,
+            "title": "Long Run Margin",
+            "type": "number"
+          },
+          "margin": {
+            "maximum": 0.9,
+            "minimum": -1.0,
+            "title": "Margin",
+            "type": "number"
+          },
+          "mid_year": {
+            "default": false,
+            "title": "Mid Year",
+            "type": "boolean"
+          },
+          "sales_to_capital": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 20.0,
+            "title": "Sales To Capital",
+            "type": "number"
+          },
+          "shares": {
+            "exclusiveMinimum": 0.0,
+            "title": "Shares",
+            "type": "number"
+          },
+          "tax_rate": {
+            "maximum": 0.6,
+            "minimum": 0.0,
+            "title": "Tax Rate",
+            "type": "number"
+          },
+          "terminal_growth": {
+            "maximum": 0.06,
+            "minimum": -0.05,
+            "title": "Terminal Growth",
+            "type": "number"
+          },
+          "terminal_roic": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terminal Roic"
+          }
+        },
+        "required": [
+          "base_revenue",
+          "growth",
+          "margin",
+          "long_run_margin",
+          "terminal_growth",
+          "tax_rate",
+          "sales_to_capital",
+          "debt",
+          "cash",
+          "shares"
+        ],
+        "title": "DcfIn",
+        "type": "object"
+      },
+      "DdmIn": {
+        "properties": {
+          "dividend_per_share": {
+            "exclusiveMinimum": 0.0,
+            "title": "Dividend Per Share",
+            "type": "number"
+          },
+          "growth": {
+            "maximum": 0.5,
+            "minimum": -0.3,
+            "title": "Growth",
+            "type": "number"
+          },
+          "terminal_growth": {
+            "maximum": 0.06,
+            "minimum": -0.05,
+            "title": "Terminal Growth",
+            "type": "number"
+          }
+        },
+        "required": [
+          "dividend_per_share",
+          "growth",
+          "terminal_growth"
+        ],
+        "title": "DdmIn",
+        "type": "object"
+      },
+      "DefaultsOut": {
+        "properties": {
+          "available": {
+            "items": {
+              "enum": [
+                "dcf",
+                "rim",
+                "ddm"
+              ],
+              "type": "string"
+            },
+            "title": "Available",
+            "type": "array"
+          },
+          "basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis"
+          },
+          "capm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CapmIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dcf": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DcfIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ddm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DdmIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "price_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Date"
+          },
+          "recommended": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Recommended",
+            "type": "string"
+          },
+          "rim": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RimIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/ScenariosIn"
+          },
+          "sources": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "object"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "unavailable": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Unavailable",
+            "type": "object"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ticker",
+          "recommended",
+          "available",
+          "unavailable",
+          "dcf",
+          "rim",
+          "ddm",
+          "capm",
+          "scenarios",
+          "sources",
+          "warnings",
+          "price",
+          "price_date",
+          "basis",
+          "formula_version"
+        ],
+        "title": "DefaultsOut",
         "type": "object"
       },
       "DiffBlockOut": {
@@ -1937,6 +2255,58 @@
         "title": "FundamentalsSyncResult",
         "type": "object"
       },
+      "GridOut": {
+        "properties": {
+          "column_label": {
+            "title": "Column Label",
+            "type": "string"
+          },
+          "columns": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "row_label": {
+            "title": "Row Label",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "values": {
+            "items": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "row_label",
+          "column_label",
+          "rows",
+          "columns",
+          "values"
+        ],
+        "title": "GridOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2789,6 +3159,104 @@
         "title": "MetricSeriesOut",
         "type": "object"
       },
+      "MultipleOut": {
+        "properties": {
+          "company": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "denominator": {
+            "title": "Denominator",
+            "type": "string"
+          },
+          "history_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "History Median"
+          },
+          "history_years": {
+            "title": "History Years",
+            "type": "integer"
+          },
+          "implied_per_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implied Per Share"
+          },
+          "industry_count": {
+            "title": "Industry Count",
+            "type": "integer"
+          },
+          "industry_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Median"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "peer_count": {
+            "title": "Peer Count",
+            "type": "integer"
+          },
+          "peer_median": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peer Median"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "company",
+          "peer_median",
+          "peer_count",
+          "industry_median",
+          "industry_count",
+          "history_median",
+          "history_years",
+          "implied_per_share",
+          "denominator"
+        ],
+        "title": "MultipleOut",
+        "type": "object"
+      },
       "NewsItemOut": {
         "properties": {
           "confidence": {
@@ -3391,6 +3859,57 @@
         "title": "ProviderHealth",
         "type": "object"
       },
+      "RatesOut": {
+        "properties": {
+          "after_tax_cost_of_debt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After Tax Cost Of Debt"
+          },
+          "cost_of_equity": {
+            "title": "Cost Of Equity",
+            "type": "number"
+          },
+          "discount_rate": {
+            "title": "Discount Rate",
+            "type": "number"
+          },
+          "discount_rate_source": {
+            "enum": [
+              "computed",
+              "override"
+            ],
+            "title": "Discount Rate Source",
+            "type": "string"
+          },
+          "equity_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equity Weight"
+          }
+        },
+        "required": [
+          "cost_of_equity",
+          "after_tax_cost_of_debt",
+          "equity_weight",
+          "discount_rate",
+          "discount_rate_source"
+        ],
+        "title": "RatesOut",
+        "type": "object"
+      },
       "ReadIn": {
         "properties": {
           "ids": {
@@ -3438,6 +3957,218 @@
           "display_name"
         ],
         "title": "RegisterIn",
+        "type": "object"
+      },
+      "RelativeOut": {
+        "properties": {
+          "industry_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Basis"
+          },
+          "multiples": {
+            "items": {
+              "$ref": "#/components/schemas/MultipleOut"
+            },
+            "title": "Multiples",
+            "type": "array"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "peer_basis": {
+            "title": "Peer Basis",
+            "type": "string"
+          },
+          "peers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Peers",
+            "type": "array"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "price_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Date"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "peer_basis",
+          "industry_basis",
+          "peers",
+          "multiples",
+          "price",
+          "price_date",
+          "note"
+        ],
+        "title": "RelativeOut",
+        "type": "object"
+      },
+      "ResultOut": {
+        "properties": {
+          "discount_rate": {
+            "title": "Discount Rate",
+            "type": "number"
+          },
+          "enterprise_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enterprise Value"
+          },
+          "equity_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equity Value"
+          },
+          "per_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Per Share"
+          },
+          "pv_explicit": {
+            "title": "Pv Explicit",
+            "type": "number"
+          },
+          "pv_terminal": {
+            "title": "Pv Terminal",
+            "type": "number"
+          },
+          "terminal_growth": {
+            "title": "Terminal Growth",
+            "type": "number"
+          },
+          "terminal_share": {
+            "title": "Terminal Share",
+            "type": "number"
+          },
+          "terminal_value": {
+            "title": "Terminal Value",
+            "type": "number"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/YearOut"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "per_share",
+          "enterprise_value",
+          "equity_value",
+          "pv_explicit",
+          "pv_terminal",
+          "terminal_value",
+          "terminal_share",
+          "discount_rate",
+          "terminal_growth",
+          "years"
+        ],
+        "title": "ResultOut",
+        "type": "object"
+      },
+      "RimIn": {
+        "properties": {
+          "book_value": {
+            "exclusiveMinimum": 0.0,
+            "title": "Book Value",
+            "type": "number"
+          },
+          "long_run_roe": {
+            "anyOf": [
+              {
+                "maximum": 0.5,
+                "minimum": -0.2,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Long Run Roe"
+          },
+          "payout_ratio": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Payout Ratio",
+            "type": "number"
+          },
+          "roe": {
+            "maximum": 0.8,
+            "minimum": -0.5,
+            "title": "Roe",
+            "type": "number"
+          },
+          "shares": {
+            "exclusiveMinimum": 0.0,
+            "title": "Shares",
+            "type": "number"
+          },
+          "terminal_growth": {
+            "maximum": 0.06,
+            "minimum": -0.05,
+            "title": "Terminal Growth",
+            "type": "number"
+          }
+        },
+        "required": [
+          "book_value",
+          "roe",
+          "payout_ratio",
+          "terminal_growth",
+          "shares"
+        ],
+        "title": "RimIn",
         "type": "object"
       },
       "RuleIn": {
@@ -3762,6 +4493,332 @@
           }
         },
         "title": "RuleUpdate",
+        "type": "object"
+      },
+      "RunOut": {
+        "properties": {
+          "base_per_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Per Share"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "model": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Model",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "request": {
+            "additionalProperties": true,
+            "title": "Request",
+            "type": "object"
+          },
+          "results": {
+            "$ref": "#/components/schemas/ValuationOut"
+          },
+          "sources": {
+            "additionalProperties": true,
+            "title": "Sources",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "model",
+          "created_at",
+          "base_per_share",
+          "price",
+          "formula_version",
+          "request",
+          "sources",
+          "results"
+        ],
+        "title": "RunOut",
+        "type": "object"
+      },
+      "RunSummary": {
+        "properties": {
+          "base_per_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Per Share"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "model": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Model",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "model",
+          "created_at",
+          "base_per_share",
+          "price",
+          "formula_version"
+        ],
+        "title": "RunSummary",
+        "type": "object"
+      },
+      "SaveRunIn": {
+        "properties": {
+          "capm": {
+            "$ref": "#/components/schemas/CapmIn"
+          },
+          "dcf": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DcfIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ddm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DdmIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "discount_rate_override": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Rate Override"
+          },
+          "model": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Model",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "rim": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RimIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/ScenariosIn"
+          },
+          "sources": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 60,
+            "title": "Sources",
+            "type": "object"
+          }
+        },
+        "required": [
+          "model",
+          "capm",
+          "name"
+        ],
+        "title": "SaveRunIn",
+        "type": "object"
+      },
+      "ScenarioIn": {
+        "properties": {
+          "discount_rate": {
+            "default": 0.0,
+            "maximum": 0.1,
+            "minimum": -0.1,
+            "title": "Discount Rate",
+            "type": "number"
+          },
+          "growth": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": -1.0,
+            "title": "Growth",
+            "type": "number"
+          },
+          "margin": {
+            "default": 0.0,
+            "maximum": 1.0,
+            "minimum": -1.0,
+            "title": "Margin",
+            "type": "number"
+          },
+          "terminal_growth": {
+            "default": 0.0,
+            "maximum": 0.03,
+            "minimum": -0.03,
+            "title": "Terminal Growth",
+            "type": "number"
+          }
+        },
+        "title": "ScenarioIn",
+        "type": "object"
+      },
+      "ScenarioOut": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "name": {
+            "enum": [
+              "bear",
+              "base",
+              "bull"
+            ],
+            "title": "Name",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResultOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "upside": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upside"
+          }
+        },
+        "required": [
+          "name",
+          "result",
+          "error",
+          "upside"
+        ],
+        "title": "ScenarioOut",
+        "type": "object"
+      },
+      "ScenariosIn": {
+        "properties": {
+          "bear": {
+            "$ref": "#/components/schemas/ScenarioIn"
+          },
+          "bull": {
+            "$ref": "#/components/schemas/ScenarioIn"
+          }
+        },
+        "title": "ScenariosIn",
         "type": "object"
       },
       "ScreenMetricOut": {
@@ -4645,6 +5702,155 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "ValuationIn": {
+        "properties": {
+          "capm": {
+            "$ref": "#/components/schemas/CapmIn"
+          },
+          "dcf": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DcfIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ddm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DdmIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "discount_rate_override": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Rate Override"
+          },
+          "model": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Model",
+            "type": "string"
+          },
+          "rim": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RimIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/ScenariosIn"
+          },
+          "sources": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 60,
+            "title": "Sources",
+            "type": "object"
+          }
+        },
+        "required": [
+          "model",
+          "capm"
+        ],
+        "title": "ValuationIn",
+        "type": "object"
+      },
+      "ValuationOut": {
+        "properties": {
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "model": {
+            "enum": [
+              "dcf",
+              "rim",
+              "ddm"
+            ],
+            "title": "Model",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "price_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Date"
+          },
+          "rates": {
+            "$ref": "#/components/schemas/RatesOut"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioOut"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "sensitivity": {
+            "items": {
+              "$ref": "#/components/schemas/GridOut"
+            },
+            "title": "Sensitivity",
+            "type": "array"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "model",
+          "rates",
+          "scenarios",
+          "sensitivity",
+          "price",
+          "price_date",
+          "formula_version"
+        ],
+        "title": "ValuationOut",
+        "type": "object"
+      },
       "WatchlistCreate": {
         "properties": {
           "name": {
@@ -4770,6 +5976,106 @@
           "text"
         ],
         "title": "WordOpOut",
+        "type": "object"
+      },
+      "YearOut": {
+        "properties": {
+          "cash_flow": {
+            "title": "Cash Flow",
+            "type": "number"
+          },
+          "discount_factor": {
+            "title": "Discount Factor",
+            "type": "number"
+          },
+          "growth": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth"
+          },
+          "margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin"
+          },
+          "nopat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nopat"
+          },
+          "operating_income": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Income"
+          },
+          "present_value": {
+            "title": "Present Value",
+            "type": "number"
+          },
+          "reinvestment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reinvestment"
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "revenue",
+          "growth",
+          "margin",
+          "operating_income",
+          "nopat",
+          "reinvestment",
+          "cash_flow",
+          "discount_factor",
+          "present_value"
+        ],
+        "title": "YearOut",
         "type": "object"
       }
     }
@@ -6449,6 +7755,240 @@
         ]
       }
     },
+    "/api/v1/companies/{ticker}/valuation/compute": {
+      "post": {
+        "description": "Value the company with these assumptions without saving anything.",
+        "operationId": "compute_valuation_api_v1_companies__ticker__valuation_compute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValuationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValuationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compute Valuation",
+        "tags": [
+          "valuation"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/valuation/defaults": {
+      "get": {
+        "operationId": "valuation_defaults_api_v1_companies__ticker__valuation_defaults_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefaultsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Valuation Defaults",
+        "tags": [
+          "valuation"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/valuation/relative": {
+      "get": {
+        "operationId": "relative_api_v1_companies__ticker__valuation_relative_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelativeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Relative",
+        "tags": [
+          "valuation"
+        ]
+      }
+    },
+    "/api/v1/companies/{ticker}/valuation/runs": {
+      "get": {
+        "operationId": "list_runs_api_v1_companies__ticker__valuation_runs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunSummary"
+                  },
+                  "title": "Response List Runs Api V1 Companies  Ticker  Valuation Runs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "valuation"
+        ]
+      },
+      "post": {
+        "description": "Value and store the run with the exact assumptions and their sources.",
+        "operationId": "save_run_api_v1_companies__ticker__valuation_runs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticker",
+            "required": true,
+            "schema": {
+              "title": "Ticker",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveRunIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save Run",
+        "tags": [
+          "valuation"
+        ]
+      }
+    },
     "/api/v1/events/types": {
       "get": {
         "operationId": "event_types_api_v1_events_types_get",
@@ -6823,6 +8363,83 @@
         "summary": "Status",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/valuation/runs/{run_id}": {
+      "delete": {
+        "operationId": "delete_run_api_v1_valuation_runs__run_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Run",
+        "tags": [
+          "valuation"
+        ]
+      },
+      "get": {
+        "operationId": "get_run_api_v1_valuation_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run",
+        "tags": [
+          "valuation"
         ]
       }
     },

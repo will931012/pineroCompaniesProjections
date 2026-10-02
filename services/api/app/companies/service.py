@@ -232,9 +232,21 @@ def build_company_profile(
                 if company.cik
                 else "No SEC CIK; SEC financial data unavailable",
             ),
-            "sec_filings": DataAvailability(status="planned", detail="Phase 3"),
-            "news": DataAvailability(status="planned", detail="Phase 4"),
-            "valuation": DataAvailability(status="planned", detail="Phase 5"),
+            "sec_filings": DataAvailability(
+                status="available" if company.cik and settings.sec_user_agent else "not_configured",
+                detail="SEC EDGAR filings and Form 4 insider trades"
+                if company.cik
+                else "No SEC CIK; SEC filings unavailable",
+            ),
+            "news": DataAvailability(
+                status="available", detail="GDELT headlines and SEC 8-K events"
+            ),
+            "valuation": DataAvailability(
+                status="available" if company.cik else "not_configured",
+                detail="DCF, residual income, dividend discount, and peer multiples"
+                if company.cik
+                else "No SEC CIK; valuation needs SEC financial data",
+            ),
             "quant_models": DataAvailability(status="planned", detail="Phase 6"),
         },
     )

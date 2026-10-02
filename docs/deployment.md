@@ -20,10 +20,6 @@ Request path: browser → `web` → Next.js rewrite of `/api/v1/*` → private n
 `api` → `postgres.railway.internal`. The browser never talks to the API directly,
 so the session cookie stays first-party and no CORS is needed.
 
-A fourth service, `pineroCompaniesProjections`, is left over from the initial
-dashboard setup. It has no root directory, so it builds the monorepo root and
-fails on every push. It should be deleted.
-
 ## Configuration
 
 Set on `api`:
@@ -56,29 +52,30 @@ Unset, and therefore unavailable: `TIINGO_API_KEY` with
 `MARKET_DATA_PROVIDER=tiingo` (price history and last close), and the `OIDC_*`
 variables (single sign-on). `AUTH_SECRET` is only read when OIDC is configured.
 
-## Unfinished: GitHub auto-deploy does not work
+## Service settings and GitHub deploys
 
-Pushes trigger builds on every repo-linked service, and because no service has a
-root directory set, each one builds the monorepo root and fails. Railway keeps the
-last good deployment serving, so the site stays up while the dashboard shows `api`
-and `web` as `FAILED`. Both services were deployed with `railway up` instead.
-
-This cannot currently be fixed from the CLI (see below). In the dashboard, per
-service → Settings:
+Fixed in the dashboard on 2026-10-02. Each service builds its own directory and reads its
+own config file:
 
 - `api` — Root Directory `/services/api`, config path `/services/api/railway.json`
 - `web` — Root Directory `/apps/web`, config path `/apps/web/railway.json`
-- delete the `pineroCompaniesProjections` service
 
-The config path must be set separately: Railway's config file does **not** follow
-the root directory, so it needs an absolute repository path. Until it is set, the
-`railway.json` files in this repository are inert, which is why migrations have to
-be run by hand.
+The config path must be set separately: Railway's config file does **not** follow the root
+directory, so it needs an absolute repository path. With it set, `api` runs
+`alembic upgrade head` as its pre-deploy command, so migrations apply on every deploy. The
+leftover `pineroCompaniesProjections` service, which built the monorepo root and failed on
+every push, was deleted.
 
-## Not yet deployed: the Phase 4 worker
+A push to `main` therefore builds and deploys `api` and `web`. This had not yet been
+exercised by a push when this was written. Check the first one in the dashboard.
 
-Phases 2–4 add migrations `0003`–`0005` and a background **worker** (filings every 30 min,
-news every hour, alert rules every 5 min). When deploying them:
+Do not give `web` the `api` settings. On 2026-10-02 that briefly made `web` build the API
+image, and the public site returned 502 until it was corrected.
+
+## Not yet deployed: Phases 2–5 and the worker
+
+Phases 2–5 add migrations `0003`–`0006` (applied by the pre-deploy command) and a background
+**worker** (filings every 30 min, news every hour, alert rules every 5 min). When deploying them:
 
 - Create a service `worker` from this repository: Root Directory `/services/api`, config path
   `/services/api/railway.worker.json` (start command `python -m app.worker`, no public domain,
@@ -98,7 +95,7 @@ railway link -p proud-blessing
 railway up services/api --path-as-root --service api --ci
 railway up apps/web    --path-as-root --service web --ci
 
-# Migrations (run by hand until the config path above is set)
+# Migrations (run automatically before each api deploy; by hand if needed)
 railway ssh --service api alembic upgrade head
 railway ssh --service api alembic current
 

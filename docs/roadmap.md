@@ -40,10 +40,14 @@ Postgres-backed background worker. Yahoo Finance was dropped because its robots.
 automated access. Upcoming earnings dates need a calendar source and are not included. See
 [phase-4-report.md](phase-4-report.md).
 
-## Phase 5 — Valuation
+## Phase 5 — Valuation ✔ (2026-10-02)
 
-DCF (explicit, user-editable assumptions; bear/base/bull; sensitivity grids), relative valuation
-vs history/sector/peers, DDM/RIM/SOTP where appropriate; assumptions stored with every result.
+Ten-year, two-stage FCFF DCF with CAPM/WACC built from sourced inputs (Treasury 10-year,
+beta vs SPY, interest ÷ debt); residual income (recommended for financials) and dividend
+discount models; bear/base/bull driver shifts; sensitivity grids; relative valuation against
+peer, industry and 5-year medians; saved runs keep their inputs, sources, results and formula
+version. Sum-of-the-parts is deferred: segment data is not in SEC companyfacts. See
+[phase-5-report.md](phase-5-report.md).
 
 ## Phase 6 — Quantitative research
 

@@ -2,17 +2,17 @@ from datetime import date
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Query
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.analytics.fundamentals import FORMULA_VERSION
 from app.auth.dependencies import AppSettings, CurrentUser, DbSession
 from app.companies.routes import SecClient
 from app.companies.service import resolve_security
-from app.core.errors import ApiError
 from app.db.models import Company, CompanyMetric, ProviderFetch, Security
 from app.fundamentals.concepts import LINE_ITEMS, MAPPING_VERSION
 from app.fundamentals.metrics import METRICS_BY_KEY, metric_series
+from app.fundamentals.peers import select_peers
 from app.fundamentals.schemas import (
     CellOut,
     CompanyMetricsResponse,
@@ -46,7 +46,6 @@ PEER_COLUMNS = [
     "ev_to_ebitda",
     "fcf_yield",
 ]
-MAX_EXTRA_PEERS = 10
 
 
 @router.get("/{ticker}/fundamentals", response_model=FundamentalsResponse)
@@ -198,41 +197,8 @@ def peers(
 ) -> PeersResponse:
     security = resolve_security(db, ticker)
     subject = security.company
-    basis = "Selected peers"
-    peer_ids: list[int] = []
-    if subject.sic_code:
-        revenue = (
-            select(CompanyMetric.value)
-            .where(CompanyMetric.company_id == Company.id, CompanyMetric.metric == "revenue")
-            .scalar_subquery()
-        )
-        for label, condition in (
-            (f"SIC {subject.sic_code}", Company.sic_code == subject.sic_code),
-            (
-                f"SIC major group {subject.sic_code[:2]}",
-                func.left(Company.sic_code, 2) == subject.sic_code[:2],
-            ),
-        ):
-            peer_ids = list(
-                db.scalars(
-                    select(Company.id)
-                    .join(Security, Security.company_id == Company.id)
-                    .where(condition, Company.id != subject.id, Security.is_active)
-                    .group_by(Company.id)
-                    .order_by(revenue.desc().nulls_last(), Company.legal_name)
-                    .limit(limit)
-                )
-            )
-            basis = label
-            if len(peer_ids) >= 3:
-                break
     extra = [t.strip().upper() for t in (tickers or "").split(",") if t.strip()]
-    if len(extra) > MAX_EXTRA_PEERS:
-        raise ApiError(422, "too_many_peers", f"At most {MAX_EXTRA_PEERS} extra peers.")
-    for extra_ticker in extra:
-        company_id = resolve_security(db, extra_ticker).company_id
-        if company_id not in peer_ids and company_id != subject.id:
-            peer_ids.append(company_id)
+    basis, peer_ids = select_peers(db, subject, extra, limit)
 
     ordered = [subject.id, *peer_ids]
     listings = _primary_listing(db, ordered)

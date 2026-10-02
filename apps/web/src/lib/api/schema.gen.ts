@@ -614,6 +614,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/companies/{ticker}/valuation/compute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compute Valuation
+         * @description Value the company with these assumptions without saving anything.
+         */
+        post: operations["compute_valuation_api_v1_companies__ticker__valuation_compute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/valuation/defaults": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Valuation Defaults */
+        get: operations["valuation_defaults_api_v1_companies__ticker__valuation_defaults_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/valuation/relative": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Relative */
+        get: operations["relative_api_v1_companies__ticker__valuation_relative_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/valuation/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Runs */
+        get: operations["list_runs_api_v1_companies__ticker__valuation_runs_get"];
+        put?: never;
+        /**
+         * Save Run
+         * @description Value and store the run with the exact assumptions and their sources.
+         */
+        post: operations["save_run_api_v1_companies__ticker__valuation_runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/events/types": {
         parameters: {
             query?: never;
@@ -748,6 +823,24 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/valuation/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Run */
+        get: operations["get_run_api_v1_valuation_runs__run_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Run */
+        delete: operations["delete_run_api_v1_valuation_runs__run_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -987,6 +1080,21 @@ export interface components {
             /** Registration */
             registration: boolean;
         };
+        /** CapmIn */
+        CapmIn: {
+            /** Beta */
+            beta: number;
+            /** Debt Value */
+            debt_value: number;
+            /** Equity Risk Premium */
+            equity_risk_premium: number;
+            /** Equity Value */
+            equity_value: number;
+            /** Pre Tax Cost Of Debt */
+            pre_tax_cost_of_debt: number;
+            /** Risk Free */
+            risk_free: number;
+        };
         /** CellOut */
         CellOut: {
             /** Accession */
@@ -1152,6 +1260,80 @@ export interface components {
              * @enum {string}
              */
             status: "fresh" | "cached" | "stale";
+            /** Warnings */
+            warnings: string[];
+        };
+        /** DcfIn */
+        DcfIn: {
+            /** Base Revenue */
+            base_revenue: number;
+            /** Cash */
+            cash: number;
+            /** Debt */
+            debt: number;
+            /** Growth */
+            growth: number;
+            /** Long Run Margin */
+            long_run_margin: number;
+            /** Margin */
+            margin: number;
+            /**
+             * Mid Year
+             * @default false
+             */
+            mid_year: boolean;
+            /** Sales To Capital */
+            sales_to_capital: number;
+            /** Shares */
+            shares: number;
+            /** Tax Rate */
+            tax_rate: number;
+            /** Terminal Growth */
+            terminal_growth: number;
+            /** Terminal Roic */
+            terminal_roic?: number | null;
+        };
+        /** DdmIn */
+        DdmIn: {
+            /** Dividend Per Share */
+            dividend_per_share: number;
+            /** Growth */
+            growth: number;
+            /** Terminal Growth */
+            terminal_growth: number;
+        };
+        /** DefaultsOut */
+        DefaultsOut: {
+            /** Available */
+            available: ("dcf" | "rim" | "ddm")[];
+            /** Basis */
+            basis: string | null;
+            capm: components["schemas"]["CapmIn"] | null;
+            dcf: components["schemas"]["DcfIn"] | null;
+            ddm: components["schemas"]["DdmIn"] | null;
+            /** Formula Version */
+            formula_version: string;
+            /** Price */
+            price: number | null;
+            /** Price Date */
+            price_date: string | null;
+            /**
+             * Recommended
+             * @enum {string}
+             */
+            recommended: "dcf" | "rim" | "ddm";
+            rim: components["schemas"]["RimIn"] | null;
+            scenarios: components["schemas"]["ScenariosIn"];
+            /** Sources */
+            sources: {
+                [key: string]: string;
+            };
+            /** Ticker */
+            ticker: string;
+            /** Unavailable */
+            unavailable: {
+                [key: string]: string;
+            };
             /** Warnings */
             warnings: string[];
         };
@@ -1452,6 +1634,19 @@ export interface components {
             /** Ticker */
             ticker: string;
         };
+        /** GridOut */
+        GridOut: {
+            /** Column Label */
+            column_label: string;
+            /** Columns */
+            columns: number[];
+            /** Row Label */
+            row_label: string;
+            /** Rows */
+            rows: number[];
+            /** Values */
+            values: (number | null)[][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1720,6 +1915,31 @@ export interface components {
             /** Values */
             values: components["schemas"]["MetricPointOut"][];
         };
+        /** MultipleOut */
+        MultipleOut: {
+            /** Company */
+            company: number | null;
+            /** Denominator */
+            denominator: string;
+            /** History Median */
+            history_median: number | null;
+            /** History Years */
+            history_years: number;
+            /** Implied Per Share */
+            implied_per_share: number | null;
+            /** Industry Count */
+            industry_count: number;
+            /** Industry Median */
+            industry_median: number | null;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Peer Count */
+            peer_count: number;
+            /** Peer Median */
+            peer_median: number | null;
+        };
         /** NewsItemOut */
         NewsItemOut: {
             /**
@@ -1919,6 +2139,22 @@ export interface components {
             /** Name */
             name: string | null;
         };
+        /** RatesOut */
+        RatesOut: {
+            /** After Tax Cost Of Debt */
+            after_tax_cost_of_debt: number | null;
+            /** Cost Of Equity */
+            cost_of_equity: number;
+            /** Discount Rate */
+            discount_rate: number;
+            /**
+             * Discount Rate Source
+             * @enum {string}
+             */
+            discount_rate_source: "computed" | "override";
+            /** Equity Weight */
+            equity_weight: number | null;
+        };
         /** ReadIn */
         ReadIn: {
             /** Ids */
@@ -1935,6 +2171,63 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** RelativeOut */
+        RelativeOut: {
+            /** Industry Basis */
+            industry_basis: string | null;
+            /** Multiples */
+            multiples: components["schemas"]["MultipleOut"][];
+            /** Note */
+            note: string;
+            /** Peer Basis */
+            peer_basis: string;
+            /** Peers */
+            peers: string[];
+            /** Price */
+            price: number | null;
+            /** Price Date */
+            price_date: string | null;
+            /** Ticker */
+            ticker: string;
+        };
+        /** ResultOut */
+        ResultOut: {
+            /** Discount Rate */
+            discount_rate: number;
+            /** Enterprise Value */
+            enterprise_value: number | null;
+            /** Equity Value */
+            equity_value: number | null;
+            /** Per Share */
+            per_share: number | null;
+            /** Pv Explicit */
+            pv_explicit: number;
+            /** Pv Terminal */
+            pv_terminal: number;
+            /** Terminal Growth */
+            terminal_growth: number;
+            /** Terminal Share */
+            terminal_share: number;
+            /** Terminal Value */
+            terminal_value: number;
+            /** Years */
+            years: components["schemas"]["YearOut"][];
+        };
+        /** RimIn */
+        RimIn: {
+            /** Book Value */
+            book_value: number;
+            /** Long Run Roe */
+            long_run_roe?: number | null;
+            /** Payout Ratio */
+            payout_ratio: number;
+            /** Roe */
+            roe: number;
+            /** Shares */
+            shares: number;
+            /** Terminal Growth */
+            terminal_growth: number;
         };
         /** RuleIn */
         RuleIn: {
@@ -2030,6 +2323,129 @@ export interface components {
             tickers?: string[] | null;
             /** Watchlist Id */
             watchlist_id?: string | null;
+        };
+        /** RunOut */
+        RunOut: {
+            /** Base Per Share */
+            base_per_share: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Formula Version */
+            formula_version: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Model
+             * @enum {string}
+             */
+            model: "dcf" | "rim" | "ddm";
+            /** Name */
+            name: string;
+            /** Price */
+            price: number | null;
+            /** Request */
+            request: {
+                [key: string]: unknown;
+            };
+            results: components["schemas"]["ValuationOut"];
+            /** Sources */
+            sources: {
+                [key: string]: unknown;
+            };
+        };
+        /** RunSummary */
+        RunSummary: {
+            /** Base Per Share */
+            base_per_share: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Formula Version */
+            formula_version: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Model
+             * @enum {string}
+             */
+            model: "dcf" | "rim" | "ddm";
+            /** Name */
+            name: string;
+            /** Price */
+            price: number | null;
+        };
+        /** SaveRunIn */
+        SaveRunIn: {
+            capm: components["schemas"]["CapmIn"];
+            dcf?: components["schemas"]["DcfIn"] | null;
+            ddm?: components["schemas"]["DdmIn"] | null;
+            /** Discount Rate Override */
+            discount_rate_override?: number | null;
+            /**
+             * Model
+             * @enum {string}
+             */
+            model: "dcf" | "rim" | "ddm";
+            /** Name */
+            name: string;
+            rim?: components["schemas"]["RimIn"] | null;
+            scenarios?: components["schemas"]["ScenariosIn"];
+            /** Sources */
+            sources?: {
+                [key: string]: string;
+            };
+        };
+        /** ScenarioIn */
+        ScenarioIn: {
+            /**
+             * Discount Rate
+             * @default 0
+             */
+            discount_rate: number;
+            /**
+             * Growth
+             * @default 0
+             */
+            growth: number;
+            /**
+             * Margin
+             * @default 0
+             */
+            margin: number;
+            /**
+             * Terminal Growth
+             * @default 0
+             */
+            terminal_growth: number;
+        };
+        /** ScenarioOut */
+        ScenarioOut: {
+            /** Error */
+            error: string | null;
+            /**
+             * Name
+             * @enum {string}
+             */
+            name: "bear" | "base" | "bull";
+            result: components["schemas"]["ResultOut"] | null;
+            /** Upside */
+            upside: number | null;
+        };
+        /** ScenariosIn */
+        ScenariosIn: {
+            bear?: components["schemas"]["ScenarioIn"];
+            bull?: components["schemas"]["ScenarioIn"];
         };
         /** ScreenMetricOut */
         ScreenMetricOut: {
@@ -2338,6 +2754,46 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /** ValuationIn */
+        ValuationIn: {
+            capm: components["schemas"]["CapmIn"];
+            dcf?: components["schemas"]["DcfIn"] | null;
+            ddm?: components["schemas"]["DdmIn"] | null;
+            /** Discount Rate Override */
+            discount_rate_override?: number | null;
+            /**
+             * Model
+             * @enum {string}
+             */
+            model: "dcf" | "rim" | "ddm";
+            rim?: components["schemas"]["RimIn"] | null;
+            scenarios?: components["schemas"]["ScenariosIn"];
+            /** Sources */
+            sources?: {
+                [key: string]: string;
+            };
+        };
+        /** ValuationOut */
+        ValuationOut: {
+            /** Formula Version */
+            formula_version: string;
+            /**
+             * Model
+             * @enum {string}
+             */
+            model: "dcf" | "rim" | "ddm";
+            /** Price */
+            price: number | null;
+            /** Price Date */
+            price_date: string | null;
+            rates: components["schemas"]["RatesOut"];
+            /** Scenarios */
+            scenarios: components["schemas"]["ScenarioOut"][];
+            /** Sensitivity */
+            sensitivity: components["schemas"]["GridOut"][];
+            /** Ticker */
+            ticker: string;
+        };
         /** WatchlistCreate */
         WatchlistCreate: {
             /** Name */
@@ -2390,6 +2846,29 @@ export interface components {
             op: "equal" | "insert" | "delete";
             /** Text */
             text: string;
+        };
+        /** YearOut */
+        YearOut: {
+            /** Cash Flow */
+            cash_flow: number;
+            /** Discount Factor */
+            discount_factor: number;
+            /** Growth */
+            growth: number | null;
+            /** Margin */
+            margin: number | null;
+            /** Nopat */
+            nopat: number | null;
+            /** Operating Income */
+            operating_income: number | null;
+            /** Present Value */
+            present_value: number;
+            /** Reinvestment */
+            reinvestment: number | null;
+            /** Revenue */
+            revenue: number | null;
+            /** Year */
+            year: number;
         };
     };
     responses: never;
@@ -3517,6 +3996,169 @@ export interface operations {
             };
         };
     };
+    compute_valuation_api_v1_companies__ticker__valuation_compute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValuationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValuationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    valuation_defaults_api_v1_companies__ticker__valuation_defaults_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    relative_api_v1_companies__ticker__valuation_relative_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelativeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_runs_api_v1_companies__ticker__valuation_runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_run_api_v1_companies__ticker__valuation_runs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveRunIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     event_types_api_v1_events_types_get: {
         parameters: {
             query?: never;
@@ -3730,6 +4372,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SystemStatus"];
+                };
+            };
+        };
+    };
+    get_run_api_v1_valuation_runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_run_api_v1_valuation_runs__run_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

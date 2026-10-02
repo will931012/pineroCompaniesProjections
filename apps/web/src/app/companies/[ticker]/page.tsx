@@ -14,6 +14,7 @@ import { MarketHistory, useDailyBars } from "@/components/MarketHistory";
 import { NewsTab } from "@/components/NewsTab";
 import { PeersTab } from "@/components/PeersTab";
 import { SecTab } from "@/components/SecTab";
+import { ValuationTab } from "@/components/ValuationTab";
 import { Panel, SourceList, StatusPill } from "@/components/ui";
 import { isApiError } from "@/lib/api/client";
 import { api, type CompanyProfile } from "@/lib/api/endpoints";
@@ -115,6 +116,8 @@ function CompanyView() {
         <NewsTab ticker={ticker} />
       ) : tab === "earnings" ? (
         <EarningsTab ticker={ticker} />
+      ) : tab === "valuation" ? (
+        <ValuationTab ticker={ticker} />
       ) : (
         <section className="company-detail-grid">
           <div className="company-main">

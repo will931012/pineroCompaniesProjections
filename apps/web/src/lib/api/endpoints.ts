@@ -49,6 +49,12 @@ export type AlertRuleIn = Schemas["RuleIn"];
 export type AlertsResponse = Schemas["AlertsResponse"];
 export type AlertStatus = Schemas["AlertStatus"];
 export type JobsOverview = Schemas["JobsOverview"];
+export type ValuationOut = Schemas["ValuationOut"];
+export type ValuationScenario = Schemas["ScenarioOut"];
+export type ValuationGrid = Schemas["GridOut"];
+export type ValuationRunSummary = Schemas["RunSummary"];
+export type ValuationRun = Schemas["RunOut"];
+export type RelativeValuation = Schemas["RelativeOut"];
 
 const companyPath = (ticker: string) => `/companies/${encodeURIComponent(ticker)}`;
 
@@ -134,6 +140,19 @@ export const api = {
     apiRequest<void>("/alerts/read", { method: "POST", body: { ids: ids ?? null } }),
   alertStatus: () => apiRequest<AlertStatus>("/alerts/status"),
   testAlertEmail: () => apiRequest<void>("/alerts/test-email", { method: "POST" }),
+
+  valuationDefaults: (ticker: string) =>
+    apiRequest<Schemas["DefaultsOut"]>(`${companyPath(ticker)}/valuation/defaults`),
+  computeValuation: (ticker: string, body: Schemas["ValuationIn"], signal?: AbortSignal) =>
+    apiRequest<ValuationOut>(`${companyPath(ticker)}/valuation/compute`, { method: "POST", body, signal }),
+  valuationRuns: (ticker: string) =>
+    apiRequest<ValuationRunSummary[]>(`${companyPath(ticker)}/valuation/runs`),
+  saveValuationRun: (ticker: string, body: Schemas["SaveRunIn"]) =>
+    apiRequest<ValuationRun>(`${companyPath(ticker)}/valuation/runs`, { method: "POST", body }),
+  valuationRun: (id: string) => apiRequest<ValuationRun>(`/valuation/runs/${id}`),
+  deleteValuationRun: (id: string) => apiRequest<void>(`/valuation/runs/${id}`, { method: "DELETE" }),
+  relativeValuation: (ticker: string) =>
+    apiRequest<RelativeValuation>(`${companyPath(ticker)}/valuation/relative`),
 
   adminJobs: () => apiRequest<JobsOverview>("/admin/jobs"),
   enqueueJob: (kind: string, tickers: string[] = []) =>

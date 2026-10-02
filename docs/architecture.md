@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 4 (News, events, alerts) complete. Last updated 2026-09-30.
+Status: Phase 5 (Valuation) complete. Last updated 2026-10-02.
 
 ## 1. Starting point (what existed)
 
@@ -54,7 +54,7 @@ extraction. Planned locations:
 | sec | `app/filings`, `app/providers/sec_edgar.py`, `app/analytics/text_diff.py` | 3 ✔ |
 | news | `app/events`, `app/providers/gdelt.py` | 4 ✔ |
 | nlp | `app/providers/embeddings.py` (embedding port, 3 ✔), `app/nlp` (LLM port, RAG) | 3–8 |
-| valuation | `app/valuation` → `packages/financial-models` | 5 |
+| valuation | `app/valuation`, `app/analytics/valuation.py`, `app/providers/treasury.py` | 5 ✔ |
 | quant, ml | `app/quant` + top-level `ml/` (features, training, evaluation) | 6 |
 | backtesting | `app/backtesting` | 7 |
 | portfolio, risk | `app/portfolio`, `app/risk` | 9 |
@@ -77,7 +77,7 @@ extraction. Planned locations:
 
 ## 3. Database schema
 
-Implemented (migrations `0001`–`0004`):
+Implemented (migrations `0001`–`0006`):
 
 | Table | Purpose / key constraints |
 |---|---|
@@ -107,8 +107,12 @@ jobs), `news_items` (headline, outlet, link, seen time, embedding; unique per pr
 novelty, story cluster, evidence JSON, classifier version), `alert_rules` (owner, kind,
 params, tickers/watchlist scope), `alerts` (unique per rule and subject; email outcome).
 
+Phase 5 tables (migration `0006`): `market_rates` (Treasury par yields by tenor and date;
+unique (series, tenor, date); `fetch_id`), `valuation_runs` (owner-private saved valuations:
+model, request, sources, results as JSONB, price at the time, formula version).
+
 Planned tables by phase: `institutional_holdings` (6, deferred from 3); `transcripts`;
-`valuations` (5); `macro_data`, `features`,
+`macro_data`, `features`,
 `predictions`, `prediction_outcomes`, `model_versions` (6); `backtests` (7); `investment_theses` (8);
 `portfolios`, `positions` (9); `orders`, `trades` (10).
 Every externally sourced table carries `fetch_id` plus an **availability timestamp** (when the

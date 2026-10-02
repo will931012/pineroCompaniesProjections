@@ -6,6 +6,7 @@ from app.db.models.identity import ROLES, User, UserIdentity, UserSession
 from app.db.models.market import DailyPrice
 from app.db.models.provenance import ProviderFetch
 from app.db.models.reference import Company, Security
+from app.db.models.valuation import MarketRate, ValuationRun
 from app.db.models.workspace import Watchlist, WatchlistItem
 
 __all__ = [
@@ -23,6 +24,7 @@ __all__ = [
     "FinancialFact",
     "InsiderTransaction",
     "Job",
+    "MarketRate",
     "NewsItem",
     "NewsMention",
     "ProviderFetch",
@@ -30,6 +32,7 @@ __all__ = [
     "User",
     "UserIdentity",
     "UserSession",
+    "ValuationRun",
     "Watchlist",
     "WatchlistItem",
 ]
