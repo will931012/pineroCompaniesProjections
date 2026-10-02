@@ -171,23 +171,35 @@ Treasury file. They check that:
 - saved runs are isolated by owner;
 - with mock prices, the upside and the peer-median P/E (10.4 → implied $26.00) are correct.
 
-**Observed on real SEC data**
+**Observed on real SEC data and Tiingo prices**
 
-10-year Treasury par yield on 2026-10-01: 5.24%.
+The 10-year Treasury par yield on 2026-10-01 was 5.24%. On 2026-10-02, six years of daily
+bars (to the 2026-10-01 close) were loaded from Tiingo for AAPL, MSFT, NVDA, JPM and SPY.
 
-| Company | Model | Bear | Base | Bull | Notes |
-|---|---|---|---|---|---|
-| AAPL | DCF | $81.60 | $115.38 | $167.41 | WACC 8.2% with book weights; 3-year revenue CAGR 1.8%; terminal value 48% of EV |
-| MSFT | DCF | $249.95 | $342.25 | $480.78 | WACC 9.9% |
-| NVDA | DCF | $185.40 | $256.37 | $360.73 | growth capped at 30%; long-run margin 46% vs current 65% |
-| JPM | RIM (recommended) | $181.57 | $213.84 | $251.29 | DCF unavailable: no revenue/operating income line for a bank |
-| BRK-B | none | — | — | — | Berkshire reports shares and EPS only under its own tags (standard tags end in 2015), and its borrowings aren't in the standard debt tags. All models are unavailable with that reason, and the missing debt is flagged. |
+| Company | Close | Beta (raw → adjusted) | Model | Rate | Bear | Base | Bull |
+|---|---|---|---|---|---|---|---|
+| AAPL | $330.32 | 0.93 → 0.95 | DCF | WACC 9.9% | $68.67 | $94.31 | $132.25 |
+| MSFT | $512.80 | → 1.20 | DCF | WACC 11.2% | $216.93 | $291.38 | $400.89 |
+| NVDA | $230.86 | → 1.67 | DCF | WACC 13.6% | $120.18 | $158.77 | $212.35 |
+| JPM | $333.18 | → 1.07 | RIM (recommended) | ke 10.6% | $178.11 | $209.72 | $246.40 |
+| BRK-B | — | — | none | — | — | — | — |
 
-Not verified here:
-- No price-based input could be checked on live data, because Tiingo isn't configured
-  locally. That covers beta, market-value weights, upside and relative multiples. Every
-  company above therefore shows the "beta 1.0" and "book weights" warnings, and the relative
-  panel shows no values. The price paths are covered by integration tests with mock prices.
+- **Beta** uses weekly returns against SPY over 100 weeks (2024-09-26 to 2026-09-25).
+  Equity weights now come from market capitalisation (Apple: $4.82T), so the "beta 1.0" and
+  "book weights" warnings are gone for these four companies.
+- **Before prices were loaded,** the same companies used beta 1.0 and book weights. Apple's
+  base DCF was then $115.38 at a WACC of 8.2%, which shows how much book weights understate
+  the cost of capital for buyback-heavy companies.
+- **The default DCFs sit well below market prices.** Apple's 3-year revenue CAGR is 1.8%, and
+  the risk-free rate is 5.24%. The defaults apply mechanical rules to reported history, not
+  forecasts; every driver is editable, and the sensitivity grids show how far values move.
+- **5-year history medians** now work. Apple's P/E is 37.4 against a 5-year median of 27.9;
+  JPM's P/B is 2.4 against 1.6.
+- **Peer and industry medians are still empty** for these companies, because their peers have
+  no stored prices yet. They fill in as peers' prices are loaded (limitation 7).
+- **Berkshire:** it reports shares and EPS only under its own tags (the standard tags end in
+  2015), and its borrowings aren't in the standard debt tags. All models are unavailable with
+  that reason, and the missing debt is flagged.
 
 ## Deploying this phase (Railway)
 
@@ -208,10 +220,9 @@ Valuation needs:
    instance documents.
 2. **Without prices, the cost of capital is weaker.** Beta is 1.0 and weights are book values
    (both flagged). This mostly affects buyback-heavy companies, whose book equity is small:
-   Apple's equity weight is 57% on book, far below its market-value weight, which lowers
-   its WACC.
+   Apple's WACC was 8.2% on book weights against 9.9% with market weights and its own beta.
 3. **Residual income understates companies with tiny book equity.** ROE is bounded at 40% and
-   fades to ke, so Apple's RIM ($35.77) is not meaningful. DCF is recommended for it; the
+   fades to ke, so Apple's RIM ($36.31) is not meaningful. DCF is recommended for it; the
    bound is visible and editable.
 4. **FCFF uses operating income as reported.** No adjustments are made for leases,
    stock-based compensation or R&D capitalisation; these are listed for a later formula

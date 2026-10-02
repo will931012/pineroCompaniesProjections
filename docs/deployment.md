@@ -48,9 +48,9 @@ scheme and this app requires the `psycopg` driver prefix.
 session cookies are marked `secure`. Rate limiting is per-process, which is
 correct only while `api` runs a single replica.
 
-Unset, and therefore unavailable: `TIINGO_API_KEY` with
-`MARKET_DATA_PROVIDER=tiingo` (price history and last close), and the `OIDC_*`
-variables (single sign-on). `AUTH_SECRET` is only read when OIDC is configured.
+`MARKET_DATA_PROVIDER=tiingo` and `TIINGO_API_KEY` were set on `api` on 2026-10-02 (price
+history and last close); a check from the running service fetched AAPL bars. Unset, and
+therefore unavailable: the `OIDC_*` variables (single sign-on). `AUTH_SECRET` is only read when OIDC is configured.
 
 ## Service settings and GitHub deploys
 
