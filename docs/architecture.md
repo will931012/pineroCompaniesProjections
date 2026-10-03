@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 5 (Valuation) complete. Last updated 2026-10-02.
+Status: Phase 6 (Quantitative research) complete. Last updated 2026-10-03.
 
 ## 1. Starting point (what existed)
 
@@ -55,7 +55,7 @@ extraction. Planned locations:
 | news | `app/events`, `app/providers/gdelt.py` | 4 ✔ |
 | nlp | `app/providers/embeddings.py` (embedding port, 3 ✔), `app/nlp` (LLM port, RAG) | 3–8 |
 | valuation | `app/valuation`, `app/analytics/valuation.py`, `app/providers/treasury.py` | 5 ✔ |
-| quant, ml | `app/quant` + top-level `ml/` (features, training, evaluation) | 6 |
+| quant, ml | `app/quant` (universe, prices, features, factors, regime, modeling, journal, ownership, Bitcoin), `app/analytics/technicals.py`, `app/providers/{fred,openfigi}.py` | 6 ✔ |
 | backtesting | `app/backtesting` | 7 |
 | portfolio, risk | `app/portfolio`, `app/risk` | 9 |
 | paper trading | `app/execution` (PaperBrokerAdapter only) | 10 |
@@ -77,7 +77,7 @@ extraction. Planned locations:
 
 ## 3. Database schema
 
-Implemented (migrations `0001`–`0006`):
+Implemented (migrations `0001`–`0007`):
 
 | Table | Purpose / key constraints |
 |---|---|
@@ -111,9 +111,16 @@ Phase 5 tables (migration `0006`): `market_rates` (Treasury par yields by tenor 
 unique (series, tenor, date); `fetch_id`), `valuation_runs` (owner-private saved valuations:
 model, request, sources, results as JSONB, price at the time, formula version).
 
-Planned tables by phase: `institutional_holdings` (6, deferred from 3); `transcripts`;
-`macro_data`, `features`,
-`predictions`, `prediction_outcomes`, `model_versions` (6); `backtests` (7); `investment_theses` (8);
+Phase 6 tables (migration `0007`): `macro_series` and `macro_observations` (FRED values with
+ALFRED real-time periods and an `available_on` date), `universe_candidates` and
+`universe_members` (top companies by revenue known on each month end, with `has_prices` for
+survivorship measurement), `price_coverage` (bulk loader progress), `feature_snapshots`
+(immutable features per company and month end, `data_available_on <= as_of`), `factor_scores`,
+`market_regimes`, `model_versions` (evaluation, calibration, SHAP importance, LightGBM text),
+`predictions` and `prediction_outcomes` (the journal), `cusip_mappings` (OpenFIGI),
+`ownership_summaries` and `institutional_holdings` (13F), `crypto_prices` (Bitcoin).
+
+Planned tables by phase: `transcripts`; `backtests` (7); `investment_theses` (8);
 `portfolios`, `positions` (9); `orders`, `trades` (10).
 Every externally sourced table carries `fetch_id` plus an **availability timestamp** (when the
 information became public) distinct from its **effective/period date**, which is what makes

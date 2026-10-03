@@ -72,10 +72,12 @@ exercised by a push when this was written. Check the first one in the dashboard.
 Do not give `web` the `api` settings. On 2026-10-02 that briefly made `web` build the API
 image, and the public site returned 502 until it was corrected.
 
-## Not yet deployed: Phases 2–5 and the worker
+## Not yet deployed: Phases 2–6 and the worker
 
-Phases 2–5 add migrations `0003`–`0006` (applied by the pre-deploy command) and a background
-**worker** (filings every 30 min, news every hour, alert rules every 5 min). When deploying them:
+Phases 2–6 add migrations `0003`–`0007` (applied by the pre-deploy command) and a background
+**worker**: filings every 30 min, news every hour, alert rules every 5 min, and from Phase 6
+macro data and Bitcoin daily, research prices hourly within Tiingo's budget, features and
+predictions daily, the universe and models monthly, and 13F data sets weekly. When deploying:
 
 - Create a service `worker` from this repository: Root Directory `/services/api`, config path
   `/services/api/railway.worker.json` (start command `python -m app.worker`, no public domain,
@@ -85,6 +87,17 @@ Phases 2–5 add migrations `0003`–`0006` (applied by the pre-deploy command) 
   reaches the Resend account owner.
 - The API image now includes the embedding model (about 250 MB larger); the model loads into
   memory (150–250 MB) only when passages or headlines are embedded.
+- Phase 6 needs `MARKET_DATA_PROVIDER=tiingo`, `TIINGO_API_KEY` and `FRED_API_KEY` on both
+  `api` and `worker` (set on `api` on 2026-10-02); `OPENFIGI_API_KEY` is optional. The first
+  research build is long: about 300 price histories at Tiingo's 50 requests an hour (about 7
+  hours), then features and training. To speed it up, run the steps once by hand:
+  `railway ssh --service worker python -m app.cli quant universe`, then `... quant prices`
+  (repeat hourly, or let the worker do it), `... quant macro`, `... quant ownership`,
+  `... quant research --workers 2`, `... quant train`.
+- Tiingo's free plan is licensed for internal use only: do not share the deployed site's
+  price-derived pages with other people without a commercial Tiingo plan.
+- The image now installs `libgomp1` (needed by LightGBM) and includes scikit-learn and
+  LightGBM (about 150 MB more).
 
 ## Operations
 

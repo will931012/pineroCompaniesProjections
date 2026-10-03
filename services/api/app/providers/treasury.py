@@ -90,4 +90,5 @@ class TreasuryClient:
 
 def build_treasury_client(contact: str | None) -> TreasuryClient:
     agent = f"Pinero research ({contact})" if contact else "Pinero research"
-    return TreasuryClient(httpx.Client(timeout=20.0, follow_redirects=True), agent)
+    # Yearly CSVs take 15–20 s to generate; allow well beyond that.
+    return TreasuryClient(httpx.Client(timeout=60.0, follow_redirects=True), agent)

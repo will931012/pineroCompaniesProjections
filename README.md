@@ -4,7 +4,8 @@ A web-first, source-first platform for public-company research. Every value it s
 where it came from; nothing is estimated, sampled, or filled in. Deterministic calculations,
 model outputs, and AI interpretation are kept as separate systems.
 
-**Status:** Phase 5 (Valuation) complete. See [docs/phase-5-report.md](docs/phase-5-report.md),
+**Status:** Phase 6 (Quantitative research) complete. See [docs/phase-6-report.md](docs/phase-6-report.md),
+[docs/phase-5-report.md](docs/phase-5-report.md),
 [docs/phase-4-report.md](docs/phase-4-report.md),
 [docs/phase-3-report.md](docs/phase-3-report.md),
 [docs/phase-2-report.md](docs/phase-2-report.md), [docs/phase-1-report.md](docs/phase-1-report.md),
@@ -24,6 +25,12 @@ docker compose exec api python -m app.cli create-user --email you@example.com --
 docker compose exec api python -m app.cli sync-sec-directory
 docker compose exec api python -m app.cli sync-fundamentals --tickers AAPL,MSFT,NVDA   # or --all-active
 docker compose exec api python -m app.cli sync-filings --tickers AAPL,MSFT,NVDA        # filings, Form 4s, search index
+# Phase 6 research data (needs TIINGO_API_KEY and FRED_API_KEY; prices load at Tiingo's 50/hour)
+docker compose exec api python -m app.cli quant universe     # point-in-time model universe from SEC
+docker compose exec api python -m app.cli quant macro        # FRED series and the Treasury curve
+docker compose exec api python -m app.cli quant prices       # one hourly batch; the worker repeats it
+docker compose exec api python -m app.cli quant research --workers 2   # features, factors, regimes
+docker compose exec api python -m app.cli quant train        # walk-forward evaluation and models
 ```
 
 The `worker` service runs background jobs (filings, news, alerts) for companies on watchlists

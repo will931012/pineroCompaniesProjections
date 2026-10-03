@@ -353,6 +353,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/bitcoin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Bitcoin */
+        get: operations["bitcoin_api_v1_bitcoin_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies": {
         parameters: {
             query?: never;
@@ -413,6 +430,23 @@ export interface paths {
         };
         /** Company Events */
         get: operations["company_events_api_v1_companies__ticker__events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/factors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Factors */
+        get: operations["company_factors_api_v1_companies__ticker__factors_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -597,6 +631,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/companies/{ticker}/ownership": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Ownership */
+        get: operations["company_ownership_api_v1_companies__ticker__ownership_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies/{ticker}/peers": {
         parameters: {
             query?: never;
@@ -606,6 +657,40 @@ export interface paths {
         };
         /** Peers */
         get: operations["peers_api_v1_companies__ticker__peers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/predictions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Predictions */
+        get: operations["company_predictions_api_v1_companies__ticker__predictions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/companies/{ticker}/technicals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Technicals */
+        get: operations["company_technicals_api_v1_companies__ticker__technicals_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -735,6 +820,74 @@ export interface paths {
         };
         /** Daily Bars */
         get: operations["daily_bars_api_v1_market_data__ticker__bars_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/markets/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Markets Overview */
+        get: operations["markets_overview_api_v1_markets_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Models */
+        get: operations["models_api_v1_models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Model */
+        get: operations["model_api_v1_models__model_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/research/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Research Status */
+        get: operations["research_status_api_v1_research_status_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1080,6 +1233,64 @@ export interface components {
             /** Registration */
             registration: boolean;
         };
+        /** BitcoinOut */
+        BitcoinOut: {
+            /** Available */
+            available: boolean;
+            /** Halvings */
+            halvings: components["schemas"]["HalvingOut"][];
+            /** Next Halving Note */
+            next_halving_note: string;
+            /** Notes */
+            notes: string[];
+            /** Relationships */
+            relationships: components["schemas"]["RelationshipOut"][];
+            /** Rsi 14 */
+            rsi_14: [
+                string,
+                number | null
+            ][];
+            /** Series */
+            series: components["schemas"]["BitcoinPoint"][];
+            /** Source */
+            source: string;
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            };
+        };
+        /** BitcoinPoint */
+        BitcoinPoint: {
+            /** Close */
+            close: number;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Drawdown */
+            drawdown: number;
+            /** Sma 200 */
+            sma_200: number | null;
+            /** Sma 50 */
+            sma_50: number | null;
+        };
+        /** BitcoinTile */
+        BitcoinTile: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Change 1D */
+            change_1d: number | null;
+            /** Change 30D */
+            change_30d: number | null;
+            /** Close */
+            close: number;
+            /** Drawdown */
+            drawdown: number;
+        };
         /** CapmIn */
         CapmIn: {
             /** Beta */
@@ -1208,6 +1419,25 @@ export interface components {
             sector: string | null;
             /** Ticker */
             ticker: string;
+        };
+        /** CurveOut */
+        CurveOut: {
+            /**
+             * Observed On
+             * Format: date
+             */
+            observed_on: string;
+            /** Points */
+            points: components["schemas"]["CurvePoint"][];
+        };
+        /** CurvePoint */
+        CurvePoint: {
+            /** Months */
+            months: number;
+            /** Tenor */
+            tenor: string;
+            /** Value */
+            value: number;
         };
         /** DailyBarOut */
         DailyBarOut: {
@@ -1375,6 +1605,17 @@ export interface components {
             /** Last Synced At */
             last_synced_at: string | null;
         };
+        /** DriverOut */
+        DriverOut: {
+            /** Contribution */
+            contribution: number;
+            /** Feature */
+            feature: string;
+            /** Percentile */
+            percentile: number | null;
+            /** Value */
+            value: number | null;
+        };
         /** EarningsRelease */
         EarningsRelease: {
             /** Document Status */
@@ -1398,6 +1639,25 @@ export interface components {
             note: string;
             /** Releases */
             releases: components["schemas"]["EarningsRelease"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** EtfOut */
+        EtfOut: {
+            /** Close */
+            close: number | null;
+            /** Group */
+            group: string;
+            /** Name */
+            name: string;
+            /** Price Date */
+            price_date: string | null;
+            /** Returns */
+            returns: {
+                [key: string]: number | null;
+            };
+            /** Spark */
+            spark: components["schemas"]["SeriesPoint"][];
             /** Ticker */
             ticker: string;
         };
@@ -1451,6 +1711,47 @@ export interface components {
             events: components["schemas"]["TimelineEvent"][];
             /** Ticker */
             ticker: string;
+        };
+        /** FactorInput */
+        FactorInput: {
+            /** Feature */
+            feature: string;
+            /** Value */
+            value: number | null;
+            /** Z */
+            z: number;
+        };
+        /** FactorOut */
+        FactorOut: {
+            /** History */
+            history: components["schemas"]["SeriesPoint"][];
+            /** Inputs */
+            inputs: components["schemas"]["FactorInput"][];
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Percentile */
+            percentile: number;
+            /** Score */
+            score: number;
+        };
+        /** FactorsOut */
+        FactorsOut: {
+            /** As Of */
+            as_of: string | null;
+            /** Factors */
+            factors: components["schemas"]["FactorOut"][];
+            /** In Universe */
+            in_universe: boolean;
+            /** Note */
+            note: string;
+            /** Ticker */
+            ticker: string;
+            /** Universe Rank */
+            universe_rank: number | null;
+            /** Universe Size */
+            universe_size: number | null;
         };
         /** FeedItem */
         FeedItem: {
@@ -1652,12 +1953,59 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** HalvingOut */
+        HalvingOut: {
+            /** Days Observed */
+            days_observed: number;
+            /** Days To Peak */
+            days_to_peak: number | null;
+            /** Drawdown After Peak */
+            drawdown_after_peak: number | null;
+            /**
+             * Halving
+             * Format: date
+             */
+            halving: string;
+            /** Path */
+            path: [
+                number,
+                number
+            ][];
+            /** Peak Multiple */
+            peak_multiple: number | null;
+            /** Price At Halving */
+            price_at_halving: number;
+            /** Return 1Y */
+            return_1y: number | null;
+        };
         /** HistoryOut */
         HistoryOut: {
             /** Added */
             added: number;
             /** Ticker */
             ticker: string;
+        };
+        /** HolderOut */
+        HolderOut: {
+            /** Accession */
+            accession: string;
+            /** Change */
+            change: string;
+            /** Filer Cik */
+            filer_cik: number;
+            /** Filer Name */
+            filer_name: string;
+            /**
+             * Filing Date
+             * Format: date
+             */
+            filing_date: string;
+            /** Previous Shares */
+            previous_shares: number | null;
+            /** Shares */
+            shares: number;
+            /** Value Usd */
+            value_usd: number;
         };
         /** IndexDocumentsIn */
         IndexDocumentsIn: {
@@ -1872,6 +2220,32 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** MacroSeriesOut */
+        MacroSeriesOut: {
+            /** Available */
+            available: boolean;
+            /** Available On */
+            available_on?: string | null;
+            /**
+             * History
+             * @default []
+             */
+            history: components["schemas"]["SeriesPoint"][];
+            /** Label */
+            label: string;
+            /** Observation Date */
+            observation_date?: string | null;
+            /** Series Id */
+            series_id: string;
+            /** Source */
+            source?: string | null;
+            /** Unit */
+            unit?: string | null;
+            /** Value */
+            value?: number | null;
+            /** Yoy Change */
+            yoy_change?: number | null;
+        };
         /** MarketBarsResponse */
         MarketBarsResponse: {
             /** Bars */
@@ -1889,6 +2263,21 @@ export interface components {
             summary: components["schemas"]["PriceSummary"] | null;
             /** Ticker */
             ticker: string;
+        };
+        /** MarketsOut */
+        MarketsOut: {
+            bitcoin: components["schemas"]["BitcoinTile"] | null;
+            curve: components["schemas"]["CurveOut"] | null;
+            curve_year_ago: components["schemas"]["CurveOut"] | null;
+            /** Etfs */
+            etfs: components["schemas"]["EtfOut"][];
+            /** Macro */
+            macro: components["schemas"]["MacroSeriesOut"][];
+            /** Macro Configured */
+            macro_configured: boolean;
+            /** Notes */
+            notes: string[];
+            regime: components["schemas"]["RegimeOut"] | null;
         };
         /** MetricPointOut */
         MetricPointOut: {
@@ -1914,6 +2303,110 @@ export interface components {
             unit: "percent" | "ratio" | "currency" | "shares" | "per_share";
             /** Values */
             values: components["schemas"]["MetricPointOut"][];
+        };
+        /** ModelDetail */
+        ModelDetail: {
+            /** Calibration */
+            calibration: {
+                [key: string]: unknown;
+            };
+            /** Code Version */
+            code_version: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Evaluation */
+            evaluation: {
+                [key: string]: unknown;
+            };
+            /** Feature Names */
+            feature_names: string[];
+            /** Feature Set Version */
+            feature_set_version: string;
+            /** Horizon Days */
+            horizon_days: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Importance */
+            importance: {
+                [key: string]: unknown;
+            };
+            /** Live */
+            live: {
+                [key: string]: unknown;
+            };
+            /** Name */
+            name: string;
+            /** Oos */
+            oos: {
+                [key: string]: unknown;
+            };
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Target */
+            target: string;
+            /**
+             * Trained From
+             * Format: date
+             */
+            trained_from: string;
+            /**
+             * Trained Through
+             * Format: date
+             */
+            trained_through: string;
+        };
+        /** ModelSummary */
+        ModelSummary: {
+            /** Code Version */
+            code_version: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Feature Set Version */
+            feature_set_version: string;
+            /** Horizon Days */
+            horizon_days: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Live */
+            live: {
+                [key: string]: unknown;
+            };
+            /** Name */
+            name: string;
+            /** Oos */
+            oos: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Target */
+            target: string;
+            /**
+             * Trained From
+             * Format: date
+             */
+            trained_from: string;
+            /**
+             * Trained Through
+             * Format: date
+             */
+            trained_through: string;
         };
         /** MultipleOut */
         MultipleOut: {
@@ -2017,6 +2510,39 @@ export interface components {
             /** Ticker */
             ticker: string;
         };
+        /** OwnershipOut */
+        OwnershipOut: {
+            /** Available */
+            available: boolean;
+            /** Cusips */
+            cusips: string[];
+            /** Holders */
+            holders: components["schemas"]["HolderOut"][];
+            /** Note */
+            note: string;
+            /** Periods */
+            periods: components["schemas"]["OwnershipPeriodOut"][];
+            /** Sold Out */
+            sold_out: components["schemas"]["HolderOut"][];
+            /** Ticker */
+            ticker: string;
+        };
+        /** OwnershipPeriodOut */
+        OwnershipPeriodOut: {
+            /** Holders */
+            holders: number;
+            /**
+             * Period
+             * Format: date
+             */
+            period: string;
+            /** Share Of Market Cap */
+            share_of_market_cap: number | null;
+            /** Shares */
+            shares: number;
+            /** Value Usd */
+            value_usd: number;
+        };
         /** PeerRow */
         PeerRow: {
             /** Industry */
@@ -2065,6 +2591,86 @@ export interface components {
              * Format: date
              */
             start: string;
+        };
+        /** PredictionHistoryOut */
+        PredictionHistoryOut: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Expected Excess */
+            expected_excess: number | null;
+            /** Model Name */
+            model_name: string;
+            /** Probability */
+            probability: number;
+            /** Realised Excess */
+            realised_excess: number | null;
+            /** Went Up */
+            went_up: boolean | null;
+        };
+        /** PredictionOut */
+        PredictionOut: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Calibration */
+            calibration: string;
+            /**
+             * Data Available On
+             * Format: date
+             */
+            data_available_on: string;
+            /** Drivers */
+            drivers: components["schemas"]["DriverOut"][];
+            /** Excess High */
+            excess_high: number | null;
+            /** Excess Low */
+            excess_low: number | null;
+            /** Expected Excess */
+            expected_excess: number | null;
+            /** Horizon Days */
+            horizon_days: number;
+            /**
+             * Model Id
+             * Format: uuid
+             */
+            model_id: string;
+            /** Model Name */
+            model_name: string;
+            /** Model Oos Auc */
+            model_oos_auc: number | null;
+            /** Model Oos Rank Ic */
+            model_oos_rank_ic: number | null;
+            /** Probability */
+            probability: number;
+            /** Probability Raw */
+            probability_raw: number;
+            /** Target */
+            target: string;
+            /**
+             * Trained Through
+             * Format: date
+             */
+            trained_through: string;
+            /** Validated */
+            validated: boolean;
+        };
+        /** PredictionsOut */
+        PredictionsOut: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** History */
+            history: components["schemas"]["PredictionHistoryOut"][];
+            /** In Universe */
+            in_universe: boolean;
+            /** Predictions */
+            predictions: components["schemas"]["PredictionOut"][];
+            /** Ticker */
+            ticker: string;
         };
         /** PriceSummary */
         PriceSummary: {
@@ -2160,6 +2766,25 @@ export interface components {
             /** Ids */
             ids?: number[] | null;
         };
+        /** RegimeOut */
+        RegimeOut: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Components */
+            components: {
+                [key: string]: unknown;
+            };
+            /** History */
+            history: [
+                string,
+                string
+            ][];
+            /** Label */
+            label: string;
+        };
         /** RegisterIn */
         RegisterIn: {
             /** Display Name */
@@ -2171,6 +2796,26 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** RelationshipOut */
+        RelationshipOut: {
+            /** Beta */
+            beta: number | null;
+            /** Correlation */
+            correlation: number | null;
+            /** Measure */
+            measure: string;
+            /** Name */
+            name: string;
+            /** Observations */
+            observations: number;
+            /** Rolling */
+            rolling: [
+                string,
+                number | null
+            ][];
+            /** Window Days */
+            window_days: number;
         };
         /** RelativeOut */
         RelativeOut: {
@@ -2190,6 +2835,41 @@ export interface components {
             price_date: string | null;
             /** Ticker */
             ticker: string;
+        };
+        /** ResearchStatus */
+        ResearchStatus: {
+            /** Bitcoin Days */
+            bitcoin_days: number;
+            /** Feature Dates */
+            feature_dates: number;
+            /** Fred Configured */
+            fred_configured: boolean;
+            /** Latest Feature Date */
+            latest_feature_date: string | null;
+            /** Latest Universe Date */
+            latest_universe_date: string | null;
+            /** Macro Series Loaded */
+            macro_series_loaded: number;
+            /** Members Latest */
+            members_latest: number;
+            /** Members With Prices Latest */
+            members_with_prices_latest: number;
+            /** Models */
+            models: number;
+            /** Ownership Periods */
+            ownership_periods: string[];
+            /** Price Targets */
+            price_targets: number;
+            /** Prices Loaded */
+            prices_loaded: number;
+            /** Prices Not Found */
+            prices_not_found: number;
+            /** Survivorship */
+            survivorship: {
+                [key: string]: unknown;
+            }[];
+            /** Universe Dates */
+            universe_dates: number;
         };
         /** ResultOut */
         ResultOut: {
@@ -2598,6 +3278,16 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** SeriesPoint */
+        SeriesPoint: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Value */
+            value: number;
+        };
         /** SessionOut */
         SessionOut: {
             /** Auth Method */
@@ -2674,6 +3364,49 @@ export interface components {
             environment: string;
             /** Providers */
             providers: components["schemas"]["ProviderHealth"][];
+        };
+        /** TechnicalPoint */
+        TechnicalPoint: {
+            /** Close */
+            close: number;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Drawdown */
+            drawdown: number;
+            /** Macd */
+            macd: number | null;
+            /** Macd Signal */
+            macd_signal: number | null;
+            /** Relative */
+            relative: number | null;
+            /** Rsi 14 */
+            rsi_14: number | null;
+            /** Sma 200 */
+            sma_200: number | null;
+            /** Sma 50 */
+            sma_50: number | null;
+        };
+        /** TechnicalsOut */
+        TechnicalsOut: {
+            /** Available */
+            available: boolean;
+            /** Message */
+            message: string | null;
+            /** Price Date */
+            price_date: string | null;
+            /** Series */
+            series: components["schemas"]["TechnicalPoint"][];
+            /** Source */
+            source: string;
+            /** Stats */
+            stats: {
+                [key: string]: number | null;
+            };
+            /** Ticker */
+            ticker: string;
         };
         /** TimelineEvent */
         TimelineEvent: {
@@ -3496,6 +4229,26 @@ export interface operations {
             };
         };
     };
+    bitcoin_api_v1_bitcoin_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BitcoinOut"];
+                };
+            };
+        };
+    };
     search_api_v1_companies_get: {
         parameters: {
             query: {
@@ -3611,6 +4364,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_factors_api_v1_companies__ticker__factors_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FactorsOut"];
                 };
             };
             /** @description Validation Error */
@@ -3961,6 +4745,37 @@ export interface operations {
             };
         };
     };
+    company_ownership_api_v1_companies__ticker__ownership_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnershipOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     peers_api_v1_companies__ticker__peers_get: {
         parameters: {
             query?: {
@@ -3983,6 +4798,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PeersResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_predictions_api_v1_companies__ticker__predictions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PredictionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_technicals_api_v1_companies__ticker__technicals_get: {
+        parameters: {
+            query?: {
+                years?: number;
+            };
+            header?: never;
+            path: {
+                ticker: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalsOut"];
                 };
             };
             /** @description Validation Error */
@@ -4242,6 +5121,97 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    markets_overview_api_v1_markets_overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketsOut"];
+                };
+            };
+        };
+    };
+    models_api_v1_models_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelSummary"][];
+                };
+            };
+        };
+    };
+    model_api_v1_models__model_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    research_status_api_v1_research_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResearchStatus"];
                 };
             };
         };

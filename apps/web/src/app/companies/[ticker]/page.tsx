@@ -12,8 +12,11 @@ import { FinancialsTab } from "@/components/FinancialsTab";
 import { InsidersTab } from "@/components/InsidersTab";
 import { MarketHistory, useDailyBars } from "@/components/MarketHistory";
 import { NewsTab } from "@/components/NewsTab";
+import { OwnershipTab } from "@/components/OwnershipTab";
 import { PeersTab } from "@/components/PeersTab";
+import { QuantTab } from "@/components/QuantTab";
 import { SecTab } from "@/components/SecTab";
+import { TechnicalsTab } from "@/components/TechnicalsTab";
 import { ValuationTab } from "@/components/ValuationTab";
 import { Panel, SourceList, StatusPill } from "@/components/ui";
 import { isApiError } from "@/lib/api/client";
@@ -118,6 +121,12 @@ function CompanyView() {
         <EarningsTab ticker={ticker} />
       ) : tab === "valuation" ? (
         <ValuationTab ticker={ticker} />
+      ) : tab === "technicals" ? (
+        <TechnicalsTab ticker={ticker} />
+      ) : tab === "quant" ? (
+        <QuantTab ticker={ticker} />
+      ) : tab === "ownership" ? (
+        <OwnershipTab ticker={ticker} />
       ) : (
         <section className="company-detail-grid">
           <div className="company-main">

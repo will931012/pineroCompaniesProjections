@@ -55,6 +55,15 @@ export type ValuationGrid = Schemas["GridOut"];
 export type ValuationRunSummary = Schemas["RunSummary"];
 export type ValuationRun = Schemas["RunOut"];
 export type RelativeValuation = Schemas["RelativeOut"];
+export type MarketsOverview = Schemas["MarketsOut"];
+export type BitcoinAnalysis = Schemas["BitcoinOut"];
+export type Technicals = Schemas["TechnicalsOut"];
+export type Factors = Schemas["FactorsOut"];
+export type Ownership = Schemas["OwnershipOut"];
+export type Predictions = Schemas["PredictionsOut"];
+export type ModelSummary = Schemas["ModelSummary"];
+export type ModelDetail = Schemas["ModelDetail"];
+export type ResearchStatus = Schemas["ResearchStatus"];
 
 const companyPath = (ticker: string) => `/companies/${encodeURIComponent(ticker)}`;
 
@@ -153,6 +162,17 @@ export const api = {
   deleteValuationRun: (id: string) => apiRequest<void>(`/valuation/runs/${id}`, { method: "DELETE" }),
   relativeValuation: (ticker: string) =>
     apiRequest<RelativeValuation>(`${companyPath(ticker)}/valuation/relative`),
+
+  marketsOverview: () => apiRequest<MarketsOverview>("/markets/overview"),
+  bitcoin: () => apiRequest<BitcoinAnalysis>("/bitcoin"),
+  technicals: (ticker: string, years: number) =>
+    apiRequest<Technicals>(`${companyPath(ticker)}/technicals`, { query: { years } }),
+  factors: (ticker: string) => apiRequest<Factors>(`${companyPath(ticker)}/factors`),
+  ownership: (ticker: string) => apiRequest<Ownership>(`${companyPath(ticker)}/ownership`),
+  predictions: (ticker: string) => apiRequest<Predictions>(`${companyPath(ticker)}/predictions`),
+  models: () => apiRequest<ModelSummary[]>("/models"),
+  model: (id: string) => apiRequest<ModelDetail>(`/models/${id}`),
+  researchStatus: () => apiRequest<ResearchStatus>("/research/status"),
 
   adminJobs: () => apiRequest<JobsOverview>("/admin/jobs"),
   enqueueJob: (kind: string, tickers: string[] = []) =>

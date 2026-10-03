@@ -339,6 +339,14 @@ def test_scheduler_enqueues_each_period_once(db: Session) -> None:
         "poll_news",
         "evaluate_alerts",
         "refresh_prices",
+        # Phase 6
+        "refresh_macro",
+        "load_prices",
+        "load_bitcoin",
+        "update_research",
+        "build_universe",
+        "train_models",
+        "refresh_ownership",
     }
     assert tick(db, get_settings(), now) == []
     for job in db.scalars(select(Job)):

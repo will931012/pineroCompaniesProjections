@@ -22,9 +22,12 @@ from app.jobs.queue import claim, complete, fail
 from app.jobs.scheduler import tick
 from app.providers.email import get_email_sender
 from app.providers.embeddings import get_embedding_provider
+from app.providers.fred import build_fred_client
 from app.providers.gdelt import build_gdelt_client
 from app.providers.market_data.registry import get_market_data_provider
+from app.providers.openfigi import build_openfigi_client
 from app.providers.sec_edgar import build_sec_client
+from app.providers.treasury import build_treasury_client
 
 logger = logging.getLogger("app.worker")
 
@@ -41,6 +44,13 @@ def build_context() -> WorkerContext:
         embedder=get_embedding_provider(settings),
         email=get_email_sender(settings),
         market=get_market_data_provider(),
+        fred=build_fred_client(
+            settings.fred_api_key.get_secret_value() if settings.fred_api_key else None
+        ),
+        figi=build_openfigi_client(
+            settings.openfigi_api_key.get_secret_value() if settings.openfigi_api_key else None
+        ),
+        treasury=build_treasury_client(settings.sec_user_agent),
     )
 
 

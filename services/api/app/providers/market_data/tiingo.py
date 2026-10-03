@@ -1,5 +1,6 @@
 """Tiingo end-of-day adapter. Requires TIINGO_API_KEY (https://www.tiingo.com/account/api/token)."""
 
+from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
@@ -19,6 +20,7 @@ INFO = ProviderInfo(
     credential_env="TIINGO_API_KEY",
 )
 BASE_URL = "https://api.tiingo.com/tiingo/daily/{ticker}/prices"
+CRYPTO_URL = "https://api.tiingo.com/tiingo/crypto/prices"
 
 
 def _decimal(value: Any) -> Decimal | None:
@@ -58,6 +60,34 @@ def parse_bar(row: dict[str, Any]) -> DailyBar:
     )
 
 
+@dataclass(frozen=True)
+class CryptoBar:
+    """One UTC day of a crypto pair, aggregated by Tiingo across exchanges."""
+
+    trade_date: date
+    open: Decimal
+    high: Decimal
+    low: Decimal
+    close: Decimal
+    volume: Decimal  # base currency
+    volume_usd: Decimal | None
+    trades: int | None
+
+
+def parse_crypto_bar(row: dict[str, Any]) -> CryptoBar:
+    trades = row.get("tradesDone")
+    return CryptoBar(
+        trade_date=datetime.fromisoformat(str(row["date"]).replace("Z", "+00:00")).date(),
+        open=_required_decimal(row, "open"),
+        high=_required_decimal(row, "high"),
+        low=_required_decimal(row, "low"),
+        close=_required_decimal(row, "close"),
+        volume=_required_decimal(row, "volume"),
+        volume_usd=_decimal(row.get("volumeNotional")),
+        trades=int(trades) if trades is not None else None,
+    )
+
+
 class TiingoMarketDataProvider:
     info = INFO
 
@@ -65,17 +95,8 @@ class TiingoMarketDataProvider:
         self._api_key = api_key
         self._http = http
 
-    def get_daily_bars(self, ticker: str, start: date, end: date) -> FetchResult[list[DailyBar]]:
-        url = BASE_URL.format(ticker=ticker.lower())
-        params = {"startDate": start.isoformat(), "endDate": end.isoformat(), "format": "json"}
-        meta = FetchMeta(
-            INFO.name,
-            "daily_prices",
-            f"{url}?startDate={params['startDate']}&endDate={params['endDate']}",
-            INFO.license_note,
-            subject=ticker,
-            request_params={"start": start.isoformat(), "end": end.isoformat()},
-        )
+    def _rows(self, meta: FetchMeta, url: str, params: dict[str, str], subject: str) -> list[Any]:
+        """GET a Tiingo endpoint; raises ProviderError for every failure, else returns the list."""
         try:
             response = self._http.get(
                 url, params=params, headers={"Authorization": f"Token {self._api_key}"}
@@ -100,7 +121,7 @@ class TiingoMarketDataProvider:
         if response.status_code == 404:
             raise ProviderError(
                 "provider_symbol_not_found",
-                f"Tiingo has no end-of-day data for {ticker}.",
+                f"Tiingo has no end-of-day data for {subject}.",
                 http_status=404,
                 meta=meta,
             )
@@ -130,7 +151,20 @@ class TiingoMarketDataProvider:
             raise ProviderError(
                 "provider_bad_response", "Unexpected Tiingo response shape.", meta=meta
             )
+        return rows
 
+    def get_daily_bars(self, ticker: str, start: date, end: date) -> FetchResult[list[DailyBar]]:
+        url = BASE_URL.format(ticker=ticker.lower())
+        params = {"startDate": start.isoformat(), "endDate": end.isoformat(), "format": "json"}
+        meta = FetchMeta(
+            INFO.name,
+            "daily_prices",
+            f"{url}?startDate={params['startDate']}&endDate={params['endDate']}",
+            INFO.license_note,
+            subject=ticker,
+            request_params={"start": start.isoformat(), "end": end.isoformat()},
+        )
+        rows = self._rows(meta, url, params, ticker)
         bars: list[DailyBar] = []
         rejected = 0
         for row in rows:
@@ -140,6 +174,41 @@ class TiingoMarketDataProvider:
                 rejected += 1
                 continue
             if bar_problems(bar) or not start <= bar.trade_date <= end:
+                rejected += 1
+                continue
+            bars.append(bar)
+        return FetchResult(bars, meta, rejected)
+
+    def get_crypto_bars(self, pair: str, start: date, end: date) -> FetchResult[list[CryptoBar]]:
+        """Daily bars for a crypto pair such as "btcusd". Tiingo caps one response at roughly
+        4,400 rows, so callers page by date (see `app.quant.bitcoin`)."""
+        params = {
+            "tickers": pair.lower(),
+            "startDate": start.isoformat(),
+            "endDate": end.isoformat(),
+            "resampleFreq": "1day",
+        }
+        meta = FetchMeta(
+            INFO.name,
+            "crypto_prices",
+            f"{CRYPTO_URL}?tickers={params['tickers']}&startDate={params['startDate']}"
+            f"&endDate={params['endDate']}&resampleFreq=1day",
+            INFO.license_note,
+            subject=pair.lower(),
+            request_params={"start": start.isoformat(), "end": end.isoformat()},
+        )
+        rows = self._rows(meta, CRYPTO_URL, params, pair)
+        price_data = rows[0].get("priceData") if rows and isinstance(rows[0], dict) else []
+        bars: list[CryptoBar] = []
+        rejected = 0
+        for row in price_data or []:
+            try:
+                bar = parse_crypto_bar(row)
+            except (KeyError, TypeError, ValueError):
+                rejected += 1
+                continue
+            valid = 0 < bar.low <= min(bar.open, bar.close) and max(bar.open, bar.close) <= bar.high
+            if not valid or bar.volume < 0 or not start <= bar.trade_date <= end:
                 rejected += 1
                 continue
             bars.append(bar)

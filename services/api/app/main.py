@@ -22,6 +22,7 @@ from app.events.routes import router as events_router
 from app.filings.routes import router as filings_router
 from app.fundamentals.routes import router as fundamentals_router
 from app.market_data.routes import router as market_data_router
+from app.quant.routes import router as quant_router
 from app.screener.routes import router as screener_router
 from app.system.routes import health_router
 from app.system.routes import router as system_router
@@ -148,6 +149,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         market_data_router,
         screener_router,
         valuation_router,
+        quant_router,
         workspace_router,
         system_router,
         admin_router,

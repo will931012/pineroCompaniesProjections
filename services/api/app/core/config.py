@@ -81,6 +81,15 @@ class Settings(BaseSettings):
     market_data_cache_ttl_minutes: int = 360
     market_data_timeout_seconds: float = 10.0
 
+    # Quantitative research (Phase 6). FRED needs a free key (fredaccount.stlouisfed.org);
+    # OpenFIGI works without one at lower rate limits (25 requests/minute, 10 CUSIPs each).
+    fred_api_key: SecretStr | None = None
+    openfigi_api_key: SecretStr | None = None
+    # Model universe: the N largest companies by SEC-reported revenue as known on each date.
+    universe_size: int = 200
+    # Tiingo's free tier allows 50 requests/hour and 1,000/day; stay safely below both.
+    price_loader_requests_per_hour: int = 45
+
     model_config = SettingsConfigDict(case_sensitive=False, extra="ignore")
 
     @property

@@ -17,9 +17,12 @@ from app.events.service import build_filing_events, refresh_company_news, ticker
 from app.filings.service import INSIDER_FORMS, embed_missing, load_pending, refresh_filing_index
 from app.providers.email import EmailSender
 from app.providers.embeddings import EmbeddingProvider
+from app.providers.fred import FredClient
 from app.providers.gdelt import GdeltClient
 from app.providers.market_data.base import MarketDataProvider
+from app.providers.openfigi import OpenFigiClient
 from app.providers.sec_edgar import SecEdgarClient
+from app.providers.treasury import TreasuryClient
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +35,9 @@ class WorkerContext:
     embedder: EmbeddingProvider | None
     email: EmailSender | None
     market: MarketDataProvider | None
+    fred: FredClient | None = None
+    figi: OpenFigiClient | None = None
+    treasury: TreasuryClient | None = None
 
 
 Handler = Callable[[Session, WorkerContext, dict[str, Any]], dict[str, Any]]
@@ -96,9 +102,78 @@ def evaluate_alerts(db: Session, ctx: WorkerContext, payload: dict[str, Any]) ->
     return {"created": created, **delivered}
 
 
+def refresh_macro(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    """FRED series (when a key is set) and the Treasury par yield history."""
+    from app.quant import pipeline
+
+    out: dict[str, Any] = {}
+    if ctx.fred is not None:
+        out["fred"] = pipeline.refresh_macro(db, ctx.fred)
+    if ctx.treasury is not None:
+        out["treasury"] = pipeline.refresh_treasury_history(db, ctx.treasury)
+    return out
+
+
+def load_prices(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    """Universe and market prices within Tiingo's hourly and daily budget."""
+    from app.jobs.queue import enqueue
+    from app.quant import pipeline
+
+    if ctx.market is None:
+        return {"skipped": "no market-data provider configured"}
+    report = pipeline.load_prices_step(db, ctx.market, ctx.settings)
+    if report.get("remaining") and report.get("out_of_budget"):
+        # Continue at the top of the next hour, when the hourly budget has room again.
+        next_hour = utcnow().replace(minute=1, second=0, microsecond=0) + timedelta(hours=1)
+        enqueue(db, "load_prices", run_at=next_hour, dedupe_key=f"load_prices:{next_hour:%Y%m%d%H}")
+    return report
+
+
+def load_bitcoin(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    from app.providers.market_data.tiingo import TiingoMarketDataProvider
+    from app.quant.bitcoin import load_bitcoin as load
+
+    if not isinstance(ctx.market, TiingoMarketDataProvider):
+        return {"skipped": "Bitcoin prices need the Tiingo provider"}
+    return load(db, ctx.market, ctx.settings)
+
+
+def build_universe(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    from app.quant import pipeline
+
+    return pipeline.build_universe(db, ctx.sec, ctx.settings, sync_limit=payload.get("sync_limit"))
+
+
+def update_research(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    from app.quant import pipeline
+
+    return pipeline.update_research(db, ctx.settings, int(payload.get("workers", 1)))
+
+
+def train_models(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    from app.quant import pipeline
+
+    return pipeline.train_models(db)
+
+
+def refresh_ownership(db: Session, ctx: WorkerContext, payload: dict[str, Any]) -> dict[str, Any]:
+    from app.quant.ownership import refresh_ownership as refresh
+
+    if ctx.figi is None:
+        return {"skipped": "OpenFIGI client unavailable"}
+    return {"datasets": refresh(db, ctx.sec, ctx.figi, datasets=int(payload.get("datasets", 2)))}
+
+
 HANDLERS: dict[str, Handler] = {
     "refresh_filings": refresh_filings,
     "poll_news": poll_news,
     "refresh_prices": refresh_prices,
     "evaluate_alerts": evaluate_alerts,
+    "refresh_macro": refresh_macro,
+    "load_prices": load_prices,
+    "load_bitcoin": load_bitcoin,
+    "build_universe": build_universe,
+    "update_research": update_research,
+    "train_models": train_models,
+    "refresh_ownership": refresh_ownership,
 }

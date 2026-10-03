@@ -173,6 +173,34 @@ def _export_openapi(args: argparse.Namespace) -> int:
     return 0
 
 
+QUANT_STEPS = (
+    "macro", "universe", "prices", "bitcoin", "research", "train", "ownership",
+)  # fmt: skip
+
+
+def _quant(args: argparse.Namespace) -> int:
+    """Run one Phase 6 step through the same job handler the worker uses."""
+    from app.db.session import get_sessionmaker
+    from app.jobs.handlers import HANDLERS
+    from app.worker import build_context
+
+    kinds = {
+        "macro": "refresh_macro", "universe": "build_universe", "prices": "load_prices",
+        "bitcoin": "load_bitcoin", "research": "update_research", "train": "train_models",
+        "ownership": "refresh_ownership",
+    }  # fmt: skip
+    payload: dict[str, object] = {}
+    if args.sync_limit is not None:
+        payload["sync_limit"] = args.sync_limit
+    if args.workers > 1:
+        payload["workers"] = args.workers
+    context = build_context()
+    with get_sessionmaker()() as db:
+        result = HANDLERS[kinds[args.step]](db, context, payload)
+    print(json.dumps(result, indent=2, default=str))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m app.cli")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -212,6 +240,14 @@ def main(argv: list[str] | None = None) -> int:
         "prepare-embeddings", help="Download and verify the embedding model."
     )
     prepare.set_defaults(handler=_prepare_embeddings)
+
+    quant = commands.add_parser(
+        "quant", help="Run one quantitative-research step (Phase 6) now, outside the worker."
+    )
+    quant.add_argument("step", choices=QUANT_STEPS)
+    quant.add_argument("--sync-limit", type=int, help="universe: load at most N companies' filings")
+    quant.add_argument("--workers", type=int, default=1, help="research: processes for features")
+    quant.set_defaults(handler=_quant)
 
     export = commands.add_parser("export-openapi", help="Write the OpenAPI contract to a file.")
     export.add_argument("path")

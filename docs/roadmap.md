@@ -49,11 +49,14 @@ peer, industry and 5-year medians; saved runs keep their inputs, sources, result
 version. Sum-of-the-parts is deferred: segment data is not in SEC companyfacts. See
 [phase-5-report.md](phase-5-report.md).
 
-## Phase 6 — Quantitative research
+## Phase 6 — Quantitative research ✔ (2026-10-03)
 
-Macro data (FRED), point-in-time feature store, factor scores, baseline and gradient-boosted
-models, calibration, SHAP, prediction journal, regime detection, leakage tests. 13F
-institutional ownership (deferred from Phase 3), with a CUSIP→ticker mapping source.
+Point-in-time universe (200 largest by SEC revenue, with survivorship measured); FRED macro
+with vintages; feature store with leakage tests; factor scores; rule-based regimes; LightGBM
+direction and quantile models with walk-forward evaluation, time-separated calibration,
+SHAP, a prediction journal, and a validation rule (no model passes yet, and the app says so);
+13F ownership with OpenFIGI; Markets, Bitcoin, and Models pages; Technicals, Quant, and
+Ownership tabs. See [phase-6-report.md](phase-6-report.md).
 
 ## Phase 7 — Backtesting
 

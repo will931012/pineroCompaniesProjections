@@ -23,6 +23,13 @@ TICKERS_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 COMPANY_FACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
 ARCHIVE_URL = "https://www.sec.gov/Archives/edgar/data/{cik}/{folder}/{document}"
+FRAMES_URL = "https://data.sec.gov/api/xbrl/frames/{taxonomy}/{concept}/{unit}/{period}.json"
+F13_INDEX_URL = "https://www.sec.gov/data-research/sec-markets-data/form-13f-data-sets"
+# Dataset files live under /files/…/form-13f-data-sets/; only that path is fetched.
+F13_FILE = re.compile(
+    r"/files/[a-z]+/data/form-13f-data-sets/"
+    r"\d{2}[a-z]{3}\d{4}-\d{2}[a-z]{3}\d{4}_form13f\.zip"
+)
 _MIN_INTERVAL_SECONDS = 0.125
 
 ACCESSION = re.compile(r"\d{10}-\d{2}-\d{6}")
@@ -100,6 +107,35 @@ class Submissions:
     filings: list[FilingRecord]
     # Names of older filing pages (CIK##########-submissions-001.json, …).
     older_pages: list[str]
+
+
+@dataclass(frozen=True)
+class FrameFact:
+    """One company's value for a calendar period from the XBRL frames API (latest filed)."""
+
+    cik: int
+    entity_name: str
+    accession: str
+    period_end: date
+    value: float
+
+
+def parse_frame(payload: dict[str, Any]) -> tuple[list[FrameFact], int]:
+    facts, rejected = [], 0
+    for row in payload.get("data") or []:
+        try:
+            facts.append(
+                FrameFact(
+                    int(row["cik"]),
+                    str(row.get("entityName", ""))[:240],
+                    str(row["accn"]),
+                    date.fromisoformat(row["end"]),
+                    float(row["val"]),
+                )
+            )
+        except (KeyError, TypeError, ValueError):
+            rejected += 1
+    return facts, rejected
 
 
 class SecEdgarClient:
@@ -274,6 +310,41 @@ class SecEdgarClient:
             )
         url = ARCHIVE_URL.format(cik=cik, folder=accession.replace("-", ""), document=document)
         meta = FetchMeta(PROVIDER, "filing_document", url, LICENSE_NOTE, subject=accession)
+        response = self._fetch(meta)
+        return FetchResult(response.content, meta)
+
+    def fetch_frame(
+        self, concept: str, unit: str, period: str, taxonomy: str = "us-gaap"
+    ) -> FetchResult[list[FrameFact]]:
+        """Every filer's value of `concept` for a calendar period such as "CY2024"."""
+        url = FRAMES_URL.format(taxonomy=taxonomy, concept=concept, unit=unit, period=period)
+        meta = FetchMeta(PROVIDER, "frames", url, LICENSE_NOTE, subject=f"{concept} {period}")
+        try:
+            payload = self._get_json(meta)
+        except ProviderError as error:
+            if error.code == "provider_record_not_found":
+                return FetchResult([], meta)
+            raise
+        if not isinstance(payload, dict):
+            raise ProviderError("provider_bad_response", "Unexpected SEC frames shape.", meta=meta)
+        facts, rejected = parse_frame(payload)
+        return FetchResult(facts, meta, rejected)
+
+    def fetch_13f_dataset_links(self) -> FetchResult[list[str]]:
+        """Paths of the quarterly Form 13F data set ZIPs listed on SEC's data page, newest first."""
+        meta = FetchMeta(PROVIDER, "form13f_index", F13_INDEX_URL, LICENSE_NOTE)
+        response = self._fetch(meta)
+        links = list(dict.fromkeys(F13_FILE.findall(response.text)))
+        return FetchResult(links, meta)
+
+    def fetch_13f_dataset(self, path: str) -> FetchResult[bytes]:
+        """One quarterly Form 13F data set (a ZIP of tab-separated tables, ~100 MB)."""
+        if not F13_FILE.fullmatch(path):
+            raise ProviderError("provider_bad_request", "Not a Form 13F data set path.")
+        meta = FetchMeta(
+            PROVIDER, "form13f_dataset", f"https://www.sec.gov{path}", LICENSE_NOTE,
+            subject=path.rsplit("/", 1)[1],
+        )  # fmt: skip
         response = self._fetch(meta)
         return FetchResult(response.content, meta)
 

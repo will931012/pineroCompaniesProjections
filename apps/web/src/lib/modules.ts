@@ -1,6 +1,7 @@
 import {
   Activity,
   Bell,
+  Bitcoin,
   BookOpenText,
   Briefcase,
   Building2,
@@ -14,8 +15,8 @@ import {
 } from "lucide-react";
 
 /** The latest completed roadmap phase. Modules and tabs at or below it are live. */
-export const CURRENT_PHASE = 5;
-export const CURRENT_PHASE_NAME = "Valuation";
+export const CURRENT_PHASE = 6;
+export const CURRENT_PHASE_NAME = "Quantitative research";
 
 export function isLive(phase: number): boolean {
   return phase <= CURRENT_PHASE;
@@ -39,9 +40,13 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "markets", href: "/markets", label: "Markets", icon: Activity, phase: 6,
-    summary: "Index, rates, commodity, and volatility overview with regime context.",
-    planned: ["Major indexes and sector performance", "Macro indicators from FRED",
-      "Market regime classification (Phase 6 models)"],
+    summary: "Indexes, sectors, the Treasury curve, macro data, and the market regime.",
+    planned: [],
+  },
+  {
+    slug: "bitcoin", href: "/bitcoin", label: "Bitcoin", icon: Bitcoin, phase: 6,
+    summary: "Bitcoin price, risk, halving cycles, and links to stocks, gold, and yields.",
+    planned: [],
   },
   {
     slug: "companies", href: "/companies", label: "Companies", icon: Building2, phase: 1,
@@ -66,9 +71,8 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "models", href: "/models", label: "Models", icon: Sigma, phase: 6,
-    summary: "Calibrated probabilistic models with explainability and a prediction journal.",
-    planned: ["Point-in-time feature store", "Return-distribution and direction models",
-      "Calibration curves and walk-forward evaluation", "SHAP explanations per prediction"],
+    summary: "Calibrated return models with walk-forward evaluation, SHAP, and a prediction journal.",
+    planned: [],
   },
   {
     slug: "backtests", href: "/backtests", label: "Backtests", icon: FlaskConical, phase: 7,

@@ -23,6 +23,16 @@ def schedule(settings: Settings) -> list[Periodic]:
         Periodic("poll_news", settings.news_poll_minutes),
         Periodic("evaluate_alerts", settings.alerts_poll_minutes),
         Periodic("refresh_prices", 360),
+        # Phase 6: macro and yields daily; prices hourly within Tiingo's budget; research
+        # (features, factor scores, regimes, predictions) daily, which is a no-op until a new
+        # month end has prices; models retrained monthly; 13F data sets checked weekly.
+        Periodic("refresh_macro", 1440),
+        Periodic("load_prices", 60),
+        Periodic("load_bitcoin", 1440),
+        Periodic("update_research", 1440),
+        Periodic("build_universe", 43200),
+        Periodic("train_models", 43200),
+        Periodic("refresh_ownership", 10080),
     ]
 
 
