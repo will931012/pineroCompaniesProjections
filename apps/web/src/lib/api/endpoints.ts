@@ -64,6 +64,10 @@ export type Predictions = Schemas["PredictionsOut"];
 export type ModelSummary = Schemas["ModelSummary"];
 export type ModelDetail = Schemas["ModelDetail"];
 export type ResearchStatus = Schemas["ResearchStatus"];
+export type BacktestIn = Schemas["BacktestIn"];
+export type BacktestOptions = Schemas["OptionsOut"];
+export type BacktestSummary = Schemas["BacktestSummary"];
+export type BacktestResult = Schemas["BacktestOut"];
 
 const companyPath = (ticker: string) => `/companies/${encodeURIComponent(ticker)}`;
 
@@ -173,6 +177,12 @@ export const api = {
   models: () => apiRequest<ModelSummary[]>("/models"),
   model: (id: string) => apiRequest<ModelDetail>(`/models/${id}`),
   researchStatus: () => apiRequest<ResearchStatus>("/research/status"),
+
+  backtestOptions: () => apiRequest<BacktestOptions>("/backtests/options"),
+  backtests: () => apiRequest<BacktestSummary[]>("/backtests"),
+  backtest: (id: string) => apiRequest<BacktestResult>(`/backtests/${id}`),
+  runBacktest: (body: BacktestIn) => apiRequest<BacktestResult>("/backtests", { method: "POST", body }),
+  deleteBacktest: (id: string) => apiRequest<void>(`/backtests/${id}`, { method: "DELETE" }),
 
   adminJobs: () => apiRequest<JobsOverview>("/admin/jobs"),
   enqueueJob: (kind: string, tickers: string[] = []) =>

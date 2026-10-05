@@ -313,3 +313,24 @@ class InstitutionalHolding(Base):
     fetch_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("provider_fetches.id", ondelete="RESTRICT")
     )
+
+
+class Backtest(Base):
+    """A saved backtest: the strategy as specified, its results, and the data it used."""
+
+    __tablename__ = "backtests"
+    __table_args__ = (Index("ix_backtests_owner_created", "owner_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    name: Mapped[str] = mapped_column(String(120))
+    spec: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    status: Mapped[str] = mapped_column(String(12))  # done | failed
+    # Headline numbers for lists (CAGR, Sharpe, drawdown, versus SPY); full results below.
+    summary: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    results: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    error: Mapped[str | None] = mapped_column(Text)
+    code_version: Mapped[str] = mapped_column(String(20))
+    data_through: Mapped[date | None] = mapped_column(Date)
+    duration_ms: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

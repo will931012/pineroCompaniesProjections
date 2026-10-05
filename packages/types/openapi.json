@@ -355,6 +355,239 @@
         "title": "AuthConfigOut",
         "type": "object"
       },
+      "BacktestIn": {
+        "properties": {
+          "capital": {
+            "default": 1000000,
+            "maximum": 10000000000.0,
+            "minimum": 10000.0,
+            "title": "Capital",
+            "type": "number"
+          },
+          "costs": {
+            "$ref": "#/components/schemas/CostsIn"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/FactorWeight"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Factors",
+            "type": "array"
+          },
+          "max_weight": {
+            "default": 0.1,
+            "maximum": 1.0,
+            "minimum": 0.01,
+            "title": "Max Weight",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "rebalance": {
+            "default": "monthly",
+            "enum": [
+              "monthly",
+              "quarterly"
+            ],
+            "title": "Rebalance",
+            "type": "string"
+          },
+          "selection": {
+            "default": "top_n",
+            "enum": [
+              "top_n",
+              "top_quantile"
+            ],
+            "title": "Selection",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "top_n": {
+            "default": 20,
+            "maximum": 100.0,
+            "minimum": 5.0,
+            "title": "Top N",
+            "type": "integer"
+          },
+          "top_quantile": {
+            "default": 0.2,
+            "maximum": 0.5,
+            "minimum": 0.05,
+            "title": "Top Quantile",
+            "type": "number"
+          },
+          "weighting": {
+            "default": "equal",
+            "enum": [
+              "equal",
+              "score",
+              "inverse_volatility"
+            ],
+            "title": "Weighting",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "factors"
+        ],
+        "title": "BacktestIn",
+        "type": "object"
+      },
+      "BacktestOut": {
+        "properties": {
+          "code_version": {
+            "title": "Code Version",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "data_through": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Through"
+          },
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "results": {
+            "additionalProperties": true,
+            "title": "Results",
+            "type": "object"
+          },
+          "spec": {
+            "additionalProperties": true,
+            "title": "Spec",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "additionalProperties": true,
+            "title": "Summary",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "created_at",
+          "summary",
+          "spec",
+          "results",
+          "error",
+          "code_version",
+          "data_through",
+          "duration_ms"
+        ],
+        "title": "BacktestOut",
+        "type": "object"
+      },
+      "BacktestSummary": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "spec": {
+            "additionalProperties": true,
+            "title": "Spec",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "additionalProperties": true,
+            "title": "Summary",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "created_at",
+          "summary",
+          "spec"
+        ],
+        "title": "BacktestSummary",
+        "type": "object"
+      },
       "BitcoinOut": {
         "properties": {
           "available": {
@@ -1042,6 +1275,82 @@
           "is_active"
         ],
         "title": "CompanySummary",
+        "type": "object"
+      },
+      "CostDefault": {
+        "properties": {
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "value",
+          "explanation"
+        ],
+        "title": "CostDefault",
+        "type": "object"
+      },
+      "CostsIn": {
+        "properties": {
+          "commission_per_share": {
+            "default": 0.005,
+            "maximum": 0.05,
+            "minimum": 0.0,
+            "title": "Commission Per Share",
+            "type": "number"
+          },
+          "impact_coefficient": {
+            "default": 0.5,
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Impact Coefficient",
+            "type": "number"
+          },
+          "max_participation": {
+            "default": 0.1,
+            "exclusiveMinimum": 0.0,
+            "maximum": 1.0,
+            "title": "Max Participation",
+            "type": "number"
+          },
+          "min_commission": {
+            "default": 1.0,
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Min Commission",
+            "type": "number"
+          },
+          "spread_cap": {
+            "default": 0.02,
+            "maximum": 0.2,
+            "minimum": 0.0,
+            "title": "Spread Cap",
+            "type": "number"
+          },
+          "spread_fallback": {
+            "default": 0.001,
+            "maximum": 0.05,
+            "minimum": 0.0,
+            "title": "Spread Fallback",
+            "type": "number"
+          }
+        },
+        "title": "CostsIn",
         "type": "object"
       },
       "CurveOut": {
@@ -2011,6 +2320,32 @@
         "title": "FactorInput",
         "type": "object"
       },
+      "FactorOption": {
+        "properties": {
+          "inputs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Inputs",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "inputs"
+        ],
+        "title": "FactorOption",
+        "type": "object"
+      },
       "FactorOut": {
         "properties": {
           "history": {
@@ -2053,6 +2388,34 @@
           "history"
         ],
         "title": "FactorOut",
+        "type": "object"
+      },
+      "FactorWeight": {
+        "properties": {
+          "factor": {
+            "enum": [
+              "value",
+              "quality",
+              "momentum",
+              "low_volatility",
+              "growth",
+              "size"
+            ],
+            "title": "Factor",
+            "type": "string"
+          },
+          "weight": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "factor",
+          "weight"
+        ],
+        "title": "FactorWeight",
         "type": "object"
       },
       "FactorsOut": {
@@ -4453,6 +4816,69 @@
           "sources"
         ],
         "title": "NewsResponse",
+        "type": "object"
+      },
+      "OptionsOut": {
+        "properties": {
+          "costs": {
+            "items": {
+              "$ref": "#/components/schemas/CostDefault"
+            },
+            "title": "Costs",
+            "type": "array"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/FactorOption"
+            },
+            "title": "Factors",
+            "type": "array"
+          },
+          "first_signal": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Signal"
+          },
+          "last_signal": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Signal"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          },
+          "universe_size": {
+            "title": "Universe Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "factors",
+          "first_signal",
+          "last_signal",
+          "universe_size",
+          "costs",
+          "notes"
+        ],
+        "title": "OptionsOut",
         "type": "object"
       },
       "OwnershipOut": {
@@ -8597,6 +9023,169 @@
         "summary": "Current Session",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/backtests": {
+      "get": {
+        "operationId": "list_backtests_api_v1_backtests_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BacktestSummary"
+                  },
+                  "title": "Response List Backtests Api V1 Backtests Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Backtests",
+        "tags": [
+          "backtests"
+        ]
+      },
+      "post": {
+        "description": "Run a factor-rule backtest now (about 10 seconds) and save it with its inputs.",
+        "operationId": "create_backtest_api_v1_backtests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Backtest",
+        "tags": [
+          "backtests"
+        ]
+      }
+    },
+    "/api/v1/backtests/options": {
+      "get": {
+        "operationId": "backtest_options_api_v1_backtests_options_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Backtest Options",
+        "tags": [
+          "backtests"
+        ]
+      }
+    },
+    "/api/v1/backtests/{backtest_id}": {
+      "delete": {
+        "operationId": "delete_backtest_api_v1_backtests__backtest_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "backtest_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Backtest Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Backtest",
+        "tags": [
+          "backtests"
+        ]
+      },
+      "get": {
+        "operationId": "get_backtest_api_v1_backtests__backtest_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "backtest_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Backtest Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacktestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Backtest",
+        "tags": [
+          "backtests"
         ]
       }
     },

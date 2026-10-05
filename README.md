@@ -4,7 +4,8 @@ A web-first, source-first platform for public-company research. Every value it s
 where it came from; nothing is estimated, sampled, or filled in. Deterministic calculations,
 model outputs, and AI interpretation are kept as separate systems.
 
-**Status:** Phase 6 (Quantitative research) complete. See [docs/phase-6-report.md](docs/phase-6-report.md),
+**Status:** Phase 7 (Backtesting) complete. See [docs/phase-7-report.md](docs/phase-7-report.md),
+[docs/phase-6-report.md](docs/phase-6-report.md),
 [docs/phase-5-report.md](docs/phase-5-report.md),
 [docs/phase-4-report.md](docs/phase-4-report.md),
 [docs/phase-3-report.md](docs/phase-3-report.md),

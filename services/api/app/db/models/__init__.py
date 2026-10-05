@@ -6,6 +6,7 @@ from app.db.models.identity import ROLES, User, UserIdentity, UserSession
 from app.db.models.market import DailyPrice
 from app.db.models.provenance import ProviderFetch
 from app.db.models.quant import (
+    Backtest,
     CryptoPrice,
     CusipMapping,
     FactorScore,
@@ -31,6 +32,7 @@ __all__ = [
     "Alert",
     "AlertRule",
     "AuditEvent",
+    "Backtest",
     "Company",
     "CompanyMetric",
     "CryptoPrice",

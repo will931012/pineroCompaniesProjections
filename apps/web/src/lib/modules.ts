@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 
 /** The latest completed roadmap phase. Modules and tabs at or below it are live. */
-export const CURRENT_PHASE = 6;
-export const CURRENT_PHASE_NAME = "Quantitative research";
+export const CURRENT_PHASE = 7;
+export const CURRENT_PHASE_NAME = "Backtesting";
 
 export function isLive(phase: number): boolean {
   return phase <= CURRENT_PHASE;
@@ -76,9 +76,8 @@ export const MODULES: WorkspaceModule[] = [
   },
   {
     slug: "backtests", href: "/backtests", label: "Backtests", icon: FlaskConical, phase: 7,
-    summary: "Walk-forward strategy simulation with realistic costs and bias controls.",
-    planned: ["Costs, spread, slippage, liquidity", "Delisted securities and survivorship controls",
-      "Benchmark-relative performance analytics"],
+    summary: "Factor-rule backtests on the point-in-time universe with estimated costs and bias checks.",
+    planned: [],
   },
   {
     slug: "portfolio", href: "/portfolio", label: "Portfolio", icon: Briefcase, phase: 9,

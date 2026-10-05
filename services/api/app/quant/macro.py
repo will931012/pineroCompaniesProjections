@@ -165,6 +165,21 @@ class MacroHistory:
             latest[observed] = Point(observed, value, available_on)
         return latest
 
+    def latest_on_each(self, days: list[date], series_id: str) -> list[Point | None]:
+        """`latest` for many ascending days in one pass (for daily series over long spans)."""
+        rows = self._rows.get(series_id, [])
+        out: list[Point | None] = []
+        best: Point | None = None
+        i = 0
+        for day in days:
+            while i < len(rows) and rows[i][0] <= day:
+                available_on, observed, value = rows[i]
+                if best is None or observed >= best.observation_date:
+                    best = Point(observed, value, available_on)
+                i += 1
+            out.append(best)
+        return out
+
     def latest(self, series_id: str, day: date) -> Point | None:
         known = self.known(series_id, day)
         return known[max(known)] if known else None

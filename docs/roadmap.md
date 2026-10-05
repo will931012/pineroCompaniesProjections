@@ -58,10 +58,13 @@ SHAP, a prediction journal, and a validation rule (no model passes yet, and the 
 13F ownership with OpenFIGI; Markets, Bitcoin, and Models pages; Technicals, Quant, and
 Ownership tabs. See [phase-6-report.md](phase-6-report.md).
 
-## Phase 7 — Backtesting
+## Phase 7 — Backtesting ✔ (2026-10-05)
 
-Walk-forward simulation with costs, spread, slippage, liquidity, corporate actions, delisted
-securities; benchmark-relative analytics.
+Long-only factor-rule backtests on the point-in-time universe: daily simulation with splits
+and dividends from raw prices, next-open execution, estimated commission, high/low spread,
+square-root impact and a volume cap; comparisons with SPY, an equal-weight universe, and the
+same strategy before costs; probabilistic and deflated Sharpe ratios on the return above SPY,
+counting the user's own tries. See [phase-7-report.md](phase-7-report.md).
 
 ## Phase 8 — AI research and thesis memory
 

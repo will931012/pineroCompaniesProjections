@@ -1,6 +1,6 @@
 # Pinero Research Platform — Architecture
 
-Status: Phase 6 (Quantitative research) complete. Last updated 2026-10-03.
+Status: Phase 7 (Backtesting) complete. Last updated 2026-10-05.
 
 ## 1. Starting point (what existed)
 
@@ -56,7 +56,7 @@ extraction. Planned locations:
 | nlp | `app/providers/embeddings.py` (embedding port, 3 ✔), `app/nlp` (LLM port, RAG) | 3–8 |
 | valuation | `app/valuation`, `app/analytics/valuation.py`, `app/providers/treasury.py` | 5 ✔ |
 | quant, ml | `app/quant` (universe, prices, features, factors, regime, modeling, journal, ownership, Bitcoin), `app/analytics/technicals.py`, `app/providers/{fred,openfigi}.py` | 6 ✔ |
-| backtesting | `app/backtesting` | 7 |
+| backtesting | `app/backtesting`, `app/analytics/{backtest,performance}.py` | 7 ✔ |
 | portfolio, risk | `app/portfolio`, `app/risk` | 9 |
 | paper trading | `app/execution` (PaperBrokerAdapter only) | 10 |
 | alerts | `app/alerts`, `app/jobs`, `app/worker.py`, `app/providers/email.py` | 4 ✔ |
@@ -77,7 +77,7 @@ extraction. Planned locations:
 
 ## 3. Database schema
 
-Implemented (migrations `0001`–`0007`):
+Implemented (migrations `0001`–`0008`):
 
 | Table | Purpose / key constraints |
 |---|---|
@@ -120,7 +120,10 @@ survivorship measurement), `price_coverage` (bulk loader progress), `feature_sna
 `predictions` and `prediction_outcomes` (the journal), `cusip_mappings` (OpenFIGI),
 `ownership_summaries` and `institutional_holdings` (13F), `crypto_prices` (Bitcoin).
 
-Planned tables by phase: `transcripts`; `backtests` (7); `investment_theses` (8);
+Phase 7 table (migration `0008`): `backtests` (owner-private: strategy spec, status, headline
+summary, full results JSON, engine version, data date, duration).
+
+Planned tables by phase: `transcripts`; `investment_theses` (8);
 `portfolios`, `positions` (9); `orders`, `trades` (10).
 Every externally sourced table carries `fetch_id` plus an **availability timestamp** (when the
 information became public) distinct from its **effective/period date**, which is what makes

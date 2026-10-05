@@ -13,6 +13,7 @@ from app.admin.routes import router as admin_router
 from app.alerts.routes import router as alerts_router
 from app.auth.dependencies import UNSAFE_METHODS
 from app.auth.routes import router as auth_router
+from app.backtesting.routes import router as backtests_router
 from app.companies.routes import router as companies_router
 from app.core.config import Settings, get_settings
 from app.core.errors import error_body, register_error_handlers
@@ -150,6 +151,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         screener_router,
         valuation_router,
         quant_router,
+        backtests_router,
         workspace_router,
         system_router,
         admin_router,

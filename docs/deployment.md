@@ -72,9 +72,9 @@ exercised by a push when this was written. Check the first one in the dashboard.
 Do not give `web` the `api` settings. On 2026-10-02 that briefly made `web` build the API
 image, and the public site returned 502 until it was corrected.
 
-## Not yet deployed: Phases 2–6 and the worker
+## Not yet deployed: Phases 2–7 and the worker
 
-Phases 2–6 add migrations `0003`–`0007` (applied by the pre-deploy command) and a background
+Phases 2–7 add migrations `0003`–`0008` (applied by the pre-deploy command) and a background
 **worker**: filings every 30 min, news every hour, alert rules every 5 min, and from Phase 6
 macro data and Bitcoin daily, research prices hourly within Tiingo's budget, features and
 predictions daily, the universe and models monthly, and 13F data sets weekly. When deploying:

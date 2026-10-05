@@ -353,6 +353,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/backtests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Backtests */
+        get: operations["list_backtests_api_v1_backtests_get"];
+        put?: never;
+        /**
+         * Create Backtest
+         * @description Run a factor-rule backtest now (about 10 seconds) and save it with its inputs.
+         */
+        post: operations["create_backtest_api_v1_backtests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/backtests/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Backtest Options */
+        get: operations["backtest_options_api_v1_backtests_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/backtests/{backtest_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Backtest */
+        get: operations["get_backtest_api_v1_backtests__backtest_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Backtest */
+        delete: operations["delete_backtest_api_v1_backtests__backtest_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/bitcoin": {
         parameters: {
             query?: never;
@@ -1233,6 +1289,118 @@ export interface components {
             /** Registration */
             registration: boolean;
         };
+        /** BacktestIn */
+        BacktestIn: {
+            /**
+             * Capital
+             * @default 1000000
+             */
+            capital: number;
+            costs?: components["schemas"]["CostsIn"];
+            /** End */
+            end?: string | null;
+            /** Factors */
+            factors: components["schemas"]["FactorWeight"][];
+            /**
+             * Max Weight
+             * @default 0.1
+             */
+            max_weight: number;
+            /** Name */
+            name: string;
+            /**
+             * Rebalance
+             * @default monthly
+             * @enum {string}
+             */
+            rebalance: "monthly" | "quarterly";
+            /**
+             * Selection
+             * @default top_n
+             * @enum {string}
+             */
+            selection: "top_n" | "top_quantile";
+            /** Start */
+            start?: string | null;
+            /**
+             * Top N
+             * @default 20
+             */
+            top_n: number;
+            /**
+             * Top Quantile
+             * @default 0.2
+             */
+            top_quantile: number;
+            /**
+             * Weighting
+             * @default equal
+             * @enum {string}
+             */
+            weighting: "equal" | "score" | "inverse_volatility";
+        };
+        /** BacktestOut */
+        BacktestOut: {
+            /** Code Version */
+            code_version: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Data Through */
+            data_through: string | null;
+            /** Duration Ms */
+            duration_ms: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Results */
+            results: {
+                [key: string]: unknown;
+            };
+            /** Spec */
+            spec: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            };
+        };
+        /** BacktestSummary */
+        BacktestSummary: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Spec */
+            spec: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            };
+        };
         /** BitcoinOut */
         BitcoinOut: {
             /** Available */
@@ -1419,6 +1587,50 @@ export interface components {
             sector: string | null;
             /** Ticker */
             ticker: string;
+        };
+        /** CostDefault */
+        CostDefault: {
+            /** Explanation */
+            explanation: string;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
+        };
+        /** CostsIn */
+        CostsIn: {
+            /**
+             * Commission Per Share
+             * @default 0.005
+             */
+            commission_per_share: number;
+            /**
+             * Impact Coefficient
+             * @default 0.5
+             */
+            impact_coefficient: number;
+            /**
+             * Max Participation
+             * @default 0.1
+             */
+            max_participation: number;
+            /**
+             * Min Commission
+             * @default 1
+             */
+            min_commission: number;
+            /**
+             * Spread Cap
+             * @default 0.02
+             */
+            spread_cap: number;
+            /**
+             * Spread Fallback
+             * @default 0.001
+             */
+            spread_fallback: number;
         };
         /** CurveOut */
         CurveOut: {
@@ -1721,6 +1933,15 @@ export interface components {
             /** Z */
             z: number;
         };
+        /** FactorOption */
+        FactorOption: {
+            /** Inputs */
+            inputs: string[];
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+        };
         /** FactorOut */
         FactorOut: {
             /** History */
@@ -1735,6 +1956,16 @@ export interface components {
             percentile: number;
             /** Score */
             score: number;
+        };
+        /** FactorWeight */
+        FactorWeight: {
+            /**
+             * Factor
+             * @enum {string}
+             */
+            factor: "value" | "quality" | "momentum" | "low_volatility" | "growth" | "size";
+            /** Weight */
+            weight: number;
         };
         /** FactorsOut */
         FactorsOut: {
@@ -2509,6 +2740,21 @@ export interface components {
             sources: components["schemas"]["SourceRef"][];
             /** Ticker */
             ticker: string;
+        };
+        /** OptionsOut */
+        OptionsOut: {
+            /** Costs */
+            costs: components["schemas"]["CostDefault"][];
+            /** Factors */
+            factors: components["schemas"]["FactorOption"][];
+            /** First Signal */
+            first_signal: string | null;
+            /** Last Signal */
+            last_signal: string | null;
+            /** Notes */
+            notes: string[];
+            /** Universe Size */
+            universe_size: number;
         };
         /** OwnershipOut */
         OwnershipOut: {
@@ -4225,6 +4471,139 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+        };
+    };
+    list_backtests_api_v1_backtests_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestSummary"][];
+                };
+            };
+        };
+    };
+    create_backtest_api_v1_backtests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BacktestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    backtest_options_api_v1_backtests_options_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OptionsOut"];
+                };
+            };
+        };
+    };
+    get_backtest_api_v1_backtests__backtest_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                backtest_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacktestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_backtest_api_v1_backtests__backtest_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                backtest_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
